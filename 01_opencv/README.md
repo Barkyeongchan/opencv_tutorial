@@ -110,6 +110,7 @@
    new_height = 300
    new_width = 300
 
+   # @빈 배열을 만들고 사이즈 조정
    dst = np.zeros((new_height, new_width), dtype=np.uint8)
    cv2.resize(image, (new_width, new_height), dst=dst)
 
@@ -119,3 +120,39 @@
    cv2.destroyAllWindows()
    ```
    <img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/88f29bf2-59fc-498b-a418-9da30fc0e44c" />
+
+5. **배율로 사이즈 변환**
+   ```python3
+   import cv2
+   
+   img = cv2.imread('../img/like_lenna.png')
+
+   # @이미지 사이즈를 배율로 조정
+   big_img = cv2.resize(img,dsize=None,fx=2,fy=2,)
+
+   cv2.imshow('big_img', big_img)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="448" height="448" alt="image" src="https://github.com/user-attachments/assets/e179a63f-844f-4692-89d4-d6f59bd427a8" />
+
+6. **대칭 변환**
+   ```python3
+   import cv2
+   
+   img = cv2.imread('../img/like_lenna.png')
+
+   # @이미지 대칭 변환
+   fliped_img = cv2.flip(img,0)   # 0 = 상하 대칭
+
+   cv2.imshow('fliped_img', fliped_img)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows() 
+   ```
+   <img width="224" height="224" alt="image" src="https://github.com/user-attachments/assets/7836676b-e9ea-4f7f-8ed7-86c879e0dfdd" />
+   ```python3
+   # @이미지 대칭 변환
+   fliped_img = cv2.flip(img,1)   # 1 = 좌우 대칭
+   ```
