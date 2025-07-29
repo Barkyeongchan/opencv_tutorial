@@ -3,6 +3,7 @@
 ## 목차
 1. openCV 라이브러리 설치
 2. 이미지 변환
+3. 도형 그리기
    
 
 ## 1. openCV 라이브러리 설치
@@ -205,3 +206,33 @@
    ```python3
    cuted_img = cv2_imshow(img[50:150,50:150])
    ```
+
+## 3. 도형 그리기
+
+1. **직선**
+   ```python3
+   import cv2
+   import numpy as np
+
+   # @배경이미지 만들기
+   space = np.zeros((500, 1000), dtype=np.uint8)   # 높이 500, 너비 1000 픽셀의 검은색(0) 배경 이미지 생성
+   line_color = 255   # 선 색깔 지정
+
+   # @선 그리기
+   space = cv2.line(space, (100, 100), (800, 400), line_color, 3, 1)
+   '''
+   cv2.line()함수 사용
+   space : 이미지 위에 선을 그림
+   (100, 100) : 시작점 좌표
+   (800, 400) : 끝점 좌표
+   line_color : 선 색깔 (255)
+   3 : 선 두께
+   1 : 선 종류 (cv2.LINE_AA)
+   '''
+
+   cv2.imshow('line', space)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="1000" height="500" alt="image" src="https://github.com/user-attachments/assets/56171c31-0b0e-46a4-8793-4fbe27a75b0b" />
