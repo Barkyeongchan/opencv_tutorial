@@ -9,11 +9,49 @@
 
 ## 1. 파이썬 가상환경(venv)생성 - Virtual Environment
 
-1-1. VSCode에서 원하는 리렉토리 경로 열기
+Visual Studio Code에서 원하는 디렉토리 열기
 
-1-2. 해당 경로에서 Git Bash 터미널 실행
+프로젝트를 저장할 폴더를 선택 후, 해당 폴더를 VSCode로 엽니다.
 
-1-3. 터미널 창에 ```python -m venv (가상환경 이름)``` 입력
+Git Bash 또는 VSCode 터미널 실행
+
+VSCode에서 Ctrl + ~ 단축키 또는 상단 메뉴 → Terminal > New Terminal 클릭
+
+터미널이 열린 경로가 현재 프로젝트 폴더인지 확인합니다.
+
+가상환경 생성
+
+bash
+복사
+편집
+python -m venv [가상환경이름]
+예시:
+
+bash
+복사
+편집
+python -m venv myvenv
+가상환경 활성화
+
+bash
+복사
+편집
+source [가상환경이름]/Scripts/activate
+예시:
+
+bash
+복사
+편집
+source myvenv/Scripts/activate
+(myvenv) 와 같이 프롬프트에 접두사가 생기면 가상환경이 성공적으로 활성화된 것입니다.
+
+가상환경 비활성화
+
+bash
+복사
+편집
+deactivate
+언제든지 가상환경을 종료하고 기본 환경으로 돌아갈 수 있습니다.
 
 
 ## 2. OpenCV 라이브러리
