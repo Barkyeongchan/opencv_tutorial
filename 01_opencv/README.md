@@ -2,7 +2,7 @@
 
 ## 목차
 1. openCV 라이브러리 설치
-2. 2
+2. 이미지 변환
 
 ## 1. openCV 라이브러리 설치
 
@@ -51,3 +51,34 @@
    tzdata          2025.2
    (myvenv)
    ```
+
+4. **디렉토리 만들기**
+   ```bash
+   mkdir src    # 소그코드 저장 디렉토리
+   mkdir img    # 이미지 저장 디렉토리
+   ```
+   - 파일 분류를 위해 디렉토리를 구분
+
+## 2. 이미지 제어
+
+1. **이미지 다운로드**
+   ```bash
+   cd img
+   curl -o like_lenna.png https://raw.githubusercontent.com/Cobslab/imageBible/main/image/like_lenna224.png
+   ```
+   - img 디렉토리에 `like_lenna.png' 이미지 파일 저장
+
+2. **이미지 읽어오기**
+   ```bash
+   import cv2   # openCV 임포트
+   
+   # @이미지 불러오기
+   img = cv2.imread('../img/like_lenna.png')
+
+   # @이미지를 보여주는 명령어
+   cv2.imshow('img', img)
+
+   cv2.waitKey(0)            # 이미지 창을 게속 열어두고 키보드 입력을 기다림
+   cv2.destroyAllWindows()   # 열려있는 이미지 창 닫음
+   ```
+   <img width="224" height="224" alt="image" src="https://github.com/user-attachments/assets/f20f47a8-f55f-4ba2-9f01-ec4a6c9803f1" />
