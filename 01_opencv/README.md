@@ -69,7 +69,7 @@
    - img 디렉토리에 `like_lenna.png' 이미지 파일 저장
 
 2. **이미지 읽어오기**
-   ```bash
+   ```python3
    import cv2   # openCV 임포트
    
    # @이미지 불러오기
@@ -82,3 +82,40 @@
    cv2.destroyAllWindows()   # 열려있는 이미지 창 닫음
    ```
    <img width="224" height="224" alt="image" src="https://github.com/user-attachments/assets/f20f47a8-f55f-4ba2-9f01-ec4a6c9803f1" />
+
+3. **사이즈 변환**
+   ```python3
+   import cv2   # openCV 임포트
+   
+   # @이미지 불러오기
+   img = cv2.imread('../img/like_lenna.png')
+   small_img = cv2.resize(img,(100,100))
+
+   # @이미지를 보여주는 명령어
+   cv2.imshow('small_img', small_img)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/08f34306-10d9-4403-80a6-aadaf0cdee31" />
+
+4. **변화하는 인자를 받아서 리사이징**
+   ```python3
+   import cv2
+   import numpy as np   # 넘파이 임포트
+
+   img = cv2.imread('../img/like_lenna.png')
+
+   # @이미지 크기를 인자로 받음
+   new_height = 300
+   new_width = 300
+
+   dst = np.zeros((new_height, new_width), dtype=np.uint8)
+   cv2.resize(image, (new_width, new_height), dst=dst)
+
+   cv2_imshow('dst', dst)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="300" height="300" alt="image" src="https://github.com/user-attachments/assets/88f29bf2-59fc-498b-a418-9da30fc0e44c" />
