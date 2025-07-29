@@ -3,6 +3,7 @@
 ## 목차
 1. openCV 라이브러리 설치
 2. 이미지 변환
+   
 
 ## 1. openCV 라이브러리 설치
 
@@ -155,4 +156,51 @@
    ```python3
    # @이미지 대칭 변환
    fliped_img = cv2.flip(img,1)   # 1 = 좌우 대칭
+   ```
+   <img width="224" height="224" alt="image" src="https://github.com/user-attachments/assets/bcb4c900-fd9a-4955-90ac-072e2cfbe019" />
+
+6. **회전 변환**
+   ```python3
+   import cv2
+   import numpy as np
+   
+   img = cv2.imread('../img/like_lenna.png')
+
+   # @이미지 회전 변환
+   height, width = img.shape   # 이미지 크기 가져오기
+
+   matrix = cv2.getRotationMatrix2D((width/2, height/2), 90, 1)   # 회전 변환 행렬 생성
+   # (width/2, height/2) = 이미지 중심 좌표, 90 = 회전 각도, 1 = 크기   
+   result = cv2.warpAffine(img, matrix, (width, height))        # 회전 변환 적용
+
+   cv2.imshow('result', result)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows() 
+   ```
+   <img width="224" height="224" alt="image" src="https://github.com/user-attachments/assets/3a58c653-9be9-49cd-aa86-1c5ef04d42fe" />
+
+6. **이미지 자르기**
+   ```python3
+   import cv2
+   
+   img = cv2.imread('../img/like_lenna.png')
+
+   # @이미지 자르기
+   cuted_img = cv2_imshow(img[:100,:100])
+
+   cv2.imshow('cuted_img', cuted_img)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows() 
+   ```
+   <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/092cb808-16fa-4d67-bff5-d6c5c5b33223" />
+   
+   ```python3
+   cuted_img = cv2_imshow(img[50:150,50:150])
+   ```
+   <img width="100" height="100" alt="image" src="https://github.com/user-attachments/assets/abeef95d-4b04-416c-a239-fbedf6e5726b" />
+
+   ```python3
+   cuted_img = cv2_imshow(img[50:150,50:150])
    ```
