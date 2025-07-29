@@ -153,6 +153,7 @@
    cv2.destroyAllWindows() 
    ```
    <img width="224" height="224" alt="image" src="https://github.com/user-attachments/assets/7836676b-e9ea-4f7f-8ed7-86c879e0dfdd" />
+   
    ```python3
    # @이미지 대칭 변환
    fliped_img = cv2.flip(img,1)   # 1 = 좌우 대칭
