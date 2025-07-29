@@ -9,49 +9,37 @@
 
 ## 1. 파이썬 가상환경(venv)생성 - Virtual Environment
 
-Visual Studio Code에서 원하는 디렉토리 열기
+1. **Visual Studio Code에서 원하는 디렉토리 열기**  
+   - 프로젝트를 저장할 폴더를 선택 후, 해당 폴더를 VSCode로 열기
 
-프로젝트를 저장할 폴더를 선택 후, 해당 폴더를 VSCode로 엽니다.
+2. **Git Bash 또는 VSCode 터미널 실행**  
+   - VSCode에서 `Ctrl + ~` 단축키 또는 상단 메뉴 → `Terminal > New Terminal` 클릭  
+   - 터미널이 열린 경로 확인 - 디렉토리 경로와 같아야 함
 
-Git Bash 또는 VSCode 터미널 실행
+3. **가상환경 생성**
+   ```bash
+   python -m venv [가상환경이름]
+   ```
+   예시:
+   ```bash
+   python -m venv myvenv
+   ```
 
-VSCode에서 Ctrl + ~ 단축키 또는 상단 메뉴 → Terminal > New Terminal 클릭
+4. **가상환경 활성화**
+   ```bash
+   source [가상환경이름]/Scripts/activate
+   ```
+   예시:
+   ```bash
+   source myvenv/Scripts/activate
+   ```
+   - 프롬포트에 `(myvenv)`가 생기면 가상환경이 활성화
 
-터미널이 열린 경로가 현재 프로젝트 폴더인지 확인합니다.
-
-가상환경 생성
-
-bash
-복사
-편집
-python -m venv [가상환경이름]
-예시:
-
-bash
-복사
-편집
-python -m venv myvenv
-가상환경 활성화
-
-bash
-복사
-편집
-source [가상환경이름]/Scripts/activate
-예시:
-
-bash
-복사
-편집
-source myvenv/Scripts/activate
-(myvenv) 와 같이 프롬프트에 접두사가 생기면 가상환경이 성공적으로 활성화된 것입니다.
-
-가상환경 비활성화
-
-bash
-복사
-편집
-deactivate
-언제든지 가상환경을 종료하고 기본 환경으로 돌아갈 수 있습니다.
+5. **가상환경 비활성화**
+   ```bash
+   deactivate
+   ```
+   - 가상환경을 종료하고 기본 환경으로 돌아감
 
 
 ## 2. OpenCV 라이브러리
