@@ -75,11 +75,17 @@ cv2.destroyAllWindows()
 
 `
 cv2.COLOR_BGR2GRAY: BGR 색상 이미지를 회색조 이미지로 변환
+
 cv2.COLOR_GRAY2BGR: 회색조 이미지를 BGR 색상 이미지로 변환
+
 cv2.COLOR_BGR2RGB: BGR 색상 이미지를 RGB 색상 이미지로 변환
+
 cv2.COLOR_BGR2HSV: BGR 색상 이미지를 HSV 색상 이미지로 변환
+
 cv2.COLOR_HSV2BGR: HSV 색상 이미지를 BGR 색상 이미지로 변환
+
 cv2.COLOR_BGR2YUV: BGR 색상 이미지를 YUV 색상 이미지로 변환
+
 cv2.COLOR_YUV2BGR: YUB 색상 이미지를 BGR 색상 이미지로 변환
 `
 
