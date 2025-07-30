@@ -220,6 +220,7 @@
 
    # @선 그리기
    space = cv2.line(space, (100, 100), (800, 400), line_color, 3, 1)
+
    '''
    cv2.line()함수 사용
    space : 이미지 위에 선을 그림
@@ -236,3 +237,161 @@
    cv2.destroyAllWindows()
    ```
    <img width="1000" height="500" alt="image" src="https://github.com/user-attachments/assets/56171c31-0b0e-46a4-8793-4fbe27a75b0b" />
+
+2. **원**
+   ```python3
+   import cv2
+   import numpy as np
+
+   space = np.zeros((500, 1000), dtype=np.uint8)
+   color = 255   # 색상 지정
+
+   # @원 그리기
+   space = cv2.circle(space, (600, 200), 100, color, 4, 1)
+
+   '''
+   cv2.circle()함수 사용
+   space : 이미지 위에 선을 그림
+   (600, 200) : 원의 중심 좌표
+   100 : 반지름
+   color : 색깔 (255)
+   4 : 선 두께
+   1 : 선 종류 (cv2.LINE_AA)
+   '''
+
+   cv2.imshow('circle', space)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="1000" height="500" alt="image" src="https://github.com/user-attachments/assets/67f24b50-9466-4d06-94a8-94d854ea5d38" />
+
+3. **사각형**
+   ```python3
+   import cv2
+   import numpy as np
+
+   space = np.zeros((500, 1000), dtype=np.uint8)
+   color = 255   # 색상 지정
+
+   # @사각형 그리기
+   space = cv2.rectangle(space, (500, 200), (800, 400), color, 5, 1)
+
+   '''
+   cv2.rectangle()함수 사용
+   space : 이미지 위에 선을 그림
+   (500, 200) : 좌상 좌표 = 왼쪽 상단
+   (800, 400) : 우하 좌표 = 오른쪽 하단
+   color : 색깔 (255)
+   5 : 선 두께
+   1 : 선 종류 (cv2.LINE_AA)
+   '''
+
+   cv2.imshow('rectangle', space)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="1388" height="768" alt="image" src="https://github.com/user-attachments/assets/b7ffb528-90a7-43ad-96d8-95e9c5f53a36" />
+
+3. **타원**
+   ```python3
+   import cv2
+   import numpy as np
+
+   space = np.zeros((500, 1000), dtype=np.uint8)
+   color = 255   # 색상 지정
+
+   # @타원 그리기
+   space = cv2.ellipse(space, (500, 300), (300, 200), 0, 90, 250, color, 4)
+
+   '''
+   cv2.ellipse()함수 사용
+   space : 이미지 위에 선을 그림
+   (500, 300) : 타원의 중심 좌표
+   (300, 200) : 타원의 반지름 크기
+   0 : 타원의 회전 각도
+   90 : 타원 그리기 시작 각도
+   250 : 타원 그리기 끝 각도
+   color : 색깔 (255)
+   4 : 선 두께
+   '''
+
+   cv2.imshow('ellipse', space)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="1388" height="768" alt="image" src="https://github.com/user-attachments/assets/8b42b171-6daa-4dcf-90fb-16673e1b9f44" />
+
+4. **다각형**
+   ```python3
+   import cv2
+   import numpy as np
+
+   space = np.zeros((500, 1000), dtype=np.uint8)
+   color = 255   # 색상 지정
+
+   # @다각형 그리기
+   obj1 = np.array([[300, 500], [500, 500], [400, 600], [200, 600]])   # 각 좌표값을 모서리로 가진 다각형 (이 코드에선 사다리꼴)
+   obj2 = np.array([[600, 500], [800, 500], [700, 200]])               # 각 좌표값을 모서리로 가진 다각형 (이 코드에선 삼각형)
+
+   # @다각형 정의
+   space = cv2.polylines(space, [obj1], True, color, 3)
+
+   '''
+   cv2.polylines()함수 사용
+   space : 이미지 위에 선을 그림
+   [obj1] : 좌표 배열 리스트
+   (300, 200) : 타원의 반지름 크기
+   True : 마지막 점과 첫 점 연결 유무 (True = 연결 / False = 연결하지 않음)
+   color : 색깔 (255)
+   3 : 선 두께
+   '''
+
+   space = cv2.fillPoly(space, [obj2], color, 1)
+
+   '''
+   cv2.fillPoly()함수 사용
+   space : 이미지 위에 선을 그림
+   [obj2] : 좌표 배열 리스트
+   color : 내부 채울 색깔
+   1 : 선 타입
+   '''
+
+   cv2.imshow('polygon', space)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
+   <img width="1388" height="768" alt="image" src="https://github.com/user-attachments/assets/e7650f4f-16af-49a6-af94-cf9fd06f5ca2" />
+
+5. **격자**
+   ```python3
+   import cv2
+   import numpy as np
+
+   space = np.zeros((500, 1000), dtype=np.uint8)
+
+   # @격자 간격 및 색상 설정
+   grid_spacing = 50
+   grid_color = 225
+
+   # @격자 그리기
+   for x in range(0, space.shape[1], grid_spacing):
+      cv2.line(space, (x, 0), (x, space.shape[0]), grid_color, 1)
+
+   for y in range(0, space.shape[0], grid_spacing):
+      cv2.line(space, (0, y), (space.shape[1], y), grid_color, 1)
+
+   '''
+   space.shape[1] : 이미지 가로 너비 width
+   space.shape[0] : 이미지 세로 높이 height
+   cv2.line()함수 사용
+   '''
+
+   cv2.imshow('ellipse', space)
+
+   cv2.waitKey(0)
+   cv2.destroyAllWindows()
+   ```
