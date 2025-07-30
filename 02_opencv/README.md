@@ -228,4 +228,145 @@ cv2.destroyAllWindows()
 <img width="900" height="547" alt="image" src="https://github.com/user-attachments/assets/6dca89ff-2ae8-4b2f-a3fc-f5dedef52e96" />
 
 
-## 3. 
+## 3. 스레시홀딩 (Thresholding)
+
+바이너리 이미지를 만드는 가장 대표적인 방법
+
+*바이너리 이미지란? 검은색과 흰색으로만 표현된 이미지*
+
+1. **전역 스레시홀딩**
+
+임계값을 임의로 정한 뒤 픽셀값이 임계값을 넘으면 255, 넘지 않으면 0으로 지정하는 방식
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+img = cv2.imread('../img/gray_gradient.jpg', cv2.IMREAD_GRAYSCALE) #이미지를 그레이 스케일로 읽기
+
+# --- ① NumPy API로 바이너리 이미지 만들기
+thresh_np = np.zeros_like(img)   # 원본과 동일한 크기의 0으로 채워진 이미지
+thresh_np[ img > 127] = 255      # 127 보다 큰 값만 255로 변경
+
+# ---② OpenCV API로 바이너리 이미지 만들기
+ret, thresh_cv = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY) 
+print(ret)  # 127.0, 바이너리 이미지에 사용된 문턱 값 반환
+
+# ---③ 원본과 결과물을 matplotlib으로 출력
+imgs = {'Original': img, 'NumPy API':thresh_np, 'cv2.threshold': thresh_cv}
+for i , (key, value) in enumerate(imgs.items()):
+    plt.subplot(1, 3, i+1)
+    plt.title(key)
+    plt.imshow(value, cmap='gray')
+    plt.xticks([]); plt.yticks([])
+
+plt.show()
+```
+<img width="794" height="248" alt="image" src="https://github.com/user-attachments/assets/054e507f-cdb4-494b-b411-b67354b26f3a" />
+
+
+2. **스레시홀딩 플래그 (Flag)**
+```
+cv2.THRESH_BINARY: 픽셀 값이 임계값을 넘으면 value로 지정하고, 넘지 못하면 0으로 지정
+cv2.THRESH_BINARY_INV: cv.THRESH_BINARY의 반대
+cv2.THRESH_TRUNC: 픽셀 값이 임계값을 넘으면 value로 지정하고, 넘지 못하면 원래 값 유지
+cv2.THRESH_TOZERO: 픽셀 값이 임계값을 넘으면 원래 값 유지, 넘지 못하면 0으로 지정
+cv2.THRESH_TOZERO_INV: cv2.THRESH_TOZERO의 반대
+```
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+img = cv2.imread('../img/gray_gradient.jpg', cv2.IMREAD_GRAYSCALE)
+
+_, t_bin = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+_, t_bininv = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY_INV)
+_, t_truc = cv2.threshold(img, 127, 255, cv2.THRESH_TRUNC)
+_, t_2zr = cv2.threshold(img, 127, 255, cv2.THRESH_TOZERO)
+_, t_2zrinv = cv2.threshold(img, 127, 255, cv2.THRESH_TOZERO_INV)
+
+imgs = {'origin':img, 'BINARY':t_bin, 'BINARY_INV':t_bininv, \
+        'TRUNC':t_truc, 'TOZERO':t_2zr, 'TOZERO_INV':t_2zrinv}
+for i, (key, value) in enumerate(imgs.items()):
+    plt.subplot(2,3, i+1)
+    plt.title(key)
+    plt.imshow(value, cmap='gray')
+    plt.xticks([]);    plt.yticks([])
+    
+plt.show()
+```
+<img width="790" height="511" alt="image" src="https://github.com/user-attachments/assets/4174f2de-6035-45c4-b4a8-c2519b2eea77" />
+
+
+3. **오츠의 이진화 알고리즘 (Otsu's binarization method)**
+
+임계값을 임의로 정해 두 부류로 나눈 픽셀의 **명암 분포가 가장 균일 할 때의 임계값**을 찾는 알고리즘
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+# 이미지를 그레이 스케일로 읽기
+img = cv2.imread('../img/scaned_paper.jpg', cv2.IMREAD_GRAYSCALE) 
+# 경계 값을 130으로 지정  ---①
+_, t_130 = cv2.threshold(img, 130, 255, cv2.THRESH_BINARY)        
+# 경계 값을 지정하지 않고 OTSU 알고리즘 선택 ---②
+t, t_otsu = cv2.threshold(img, -1, 255,  cv2.THRESH_BINARY | cv2.THRESH_OTSU) 
+print('otsu threshold:', t)                 # Otsu 알고리즘으로 선택된 경계 값 출력
+
+imgs = {'Original': img, 't:130':t_130, 'otsu:%d'%t: t_otsu}
+for i , (key, value) in enumerate(imgs.items()):
+    plt.subplot(1, 3, i+1)
+    plt.title(key)
+    plt.imshow(value, cmap='gray')
+    plt.xticks([]); plt.yticks([])
+
+plt.show()
+```
+<img width="1280" height="488" alt="image" src="https://github.com/user-attachments/assets/d59916da-ca3c-473a-b0fa-c84c4ed25afe" />
+
+
+4. **적응형 스레시홀딩 (Adaptive)**
+
+이미지를 여러 구역으로 나눈 뒤 나눈 구역 주변의 픽셀값만을 활용하여 임계값을 구하는 방식
+
+조명이 일정하지 않는 이미지도 바이너리 이미지로 만들 수 있다.
+
+```python3
+import cv2
+import numpy as np 
+import matplotlib.pyplot as plt 
+
+blk_size = 9        # 블럭 사이즈
+C = 5               # 차감 상수 
+img = cv2.imread('../img/sudoku.png', cv2.IMREAD_GRAYSCALE) # 그레이 스케일로  읽기
+
+# ---① 오츠의 알고리즘으로 단일 경계 값을 전체 이미지에 적용
+ret, th1 = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+# ---② 어뎁티드 쓰레시홀드를 평균과 가우시안 분포로 각각 적용
+th2 = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_MEAN_C,\
+                                      cv2.THRESH_BINARY, blk_size, C)
+th3 = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, \
+                                     cv2.THRESH_BINARY, blk_size, C)
+
+# ---③ 결과를 Matplot으로 출력
+imgs = {'Original': img, 'Global-Otsu:%d'%ret:th1, \
+        'Adapted-Mean':th2, 'Adapted-Gaussian': th3}
+for i, (k, v) in enumerate(imgs.items()):
+    plt.subplot(2,2,i+1)
+    plt.title(k)
+    plt.imshow(v,'gray')
+    plt.xticks([]),plt.yticks([])
+
+plt.show()
+```
+<img width="1048" height="1118" alt="image" src="https://github.com/user-attachments/assets/5122751b-e33a-42da-9ef0-2df8e90cb87e" />
+
+
+## 4. 히스토그램
+
