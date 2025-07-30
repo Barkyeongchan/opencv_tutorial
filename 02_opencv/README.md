@@ -45,6 +45,7 @@ cv2.destroyAllWindows()
 ```
 <img width="536" height="226" alt="image" src="https://github.com/user-attachments/assets/022e5d6d-614a-4492-b7cf-1561252e2ad2" />
 
+
 2. **회색조 이미지로 변환(Gray Scale)**
 
 이미지 연산의 양을 줄여 연삭 속도를 높이는데 필요함
@@ -72,6 +73,7 @@ cv2.destroyAllWindows()
 ```
 <img width="1280" height="359" alt="image" src="https://github.com/user-attachments/assets/727bda4b-d2b1-404f-b1d0-1cb10768b8df" />
 
+
 회색조 뿐 아니라 다양한 색상 표현 방식으로 변환 할 수 있다.
 
 ```
@@ -89,6 +91,7 @@ cv2.COLOR_BGR2YUV: BGR 색상 이미지를 YUV 색상 이미지로 변환
 
 cv2.COLOR_YUV2BGR: YUB 색상 이미지를 BGR 색상 이미지로 변환
 ```
+
 
 3. **HSV(Hue 색조, Saturation 채도, Value 명도) 방식**
 
@@ -122,12 +125,15 @@ print("yellow", yellow_hsv)
 
 RGB나 BGR 방식은 세가지 채널의 값을 모두 알아야 색상을 알 수 있지만, HSV 방식은 H(색조)값만 알면 바로 알 수 있다.
 
+
 ## 2.관심 영역 (ROI)
 
 말 그대로 이미지 내에서 관심 있는 영역을 말한다.
 
 <예제 이미지>
+
 <img width="600" height="338" alt="image" src="https://github.com/user-attachments/assets/72ebd297-0795-46d6-90de-51f66b453634" />
+
 
 1. **관심 영역 표시**
 ```python3
@@ -148,6 +154,7 @@ print(key)
 cv2.destroyAllWindows()
 ```
 <img width="896" height="548" alt="image" src="https://github.com/user-attachments/assets/65fb800a-6adb-4fc4-af7a-219ce2976212" />
+
 
 2. **관심 영역 복제 및 새 창에 띄우기**
 ```python3
@@ -170,6 +177,7 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 <img width="900" height="559" alt="image" src="https://github.com/user-attachments/assets/9e9c1c8f-2a0d-4758-a32b-840ee429aa36" />
+
 
 3. **마우스 이벤트로 관심 영역 지정, 표시, 저장**
 ```python3
@@ -218,5 +226,6 @@ cv2.waitKey()
 cv2.destroyAllWindows()
 ```
 <img width="900" height="547" alt="image" src="https://github.com/user-attachments/assets/6dca89ff-2ae8-4b2f-a3fc-f5dedef52e96" />
+
 
 ## 3. 
