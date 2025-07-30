@@ -73,7 +73,7 @@ cv2.destroyAllWindows()
 
 회색조 뿐 아니라 다양한 색상 표현 방식으로 변환 할 수 있다.
 
-`
+```
 cv2.COLOR_BGR2GRAY: BGR 색상 이미지를 회색조 이미지로 변환
 
 cv2.COLOR_GRAY2BGR: 회색조 이미지를 BGR 색상 이미지로 변환
@@ -87,7 +87,7 @@ cv2.COLOR_HSV2BGR: HSV 색상 이미지를 BGR 색상 이미지로 변환
 cv2.COLOR_BGR2YUV: BGR 색상 이미지를 YUV 색상 이미지로 변환
 
 cv2.COLOR_YUV2BGR: YUB 색상 이미지를 BGR 색상 이미지로 변환
-`
+```
 
 3. **HSV(Hue 색조, Saturation 채도, Value 명도) 방식**
 
