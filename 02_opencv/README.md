@@ -368,5 +368,289 @@ plt.show()
 <img width="1048" height="1118" alt="image" src="https://github.com/user-attachments/assets/5122751b-e33a-42da-9ef0-2df8e90cb87e" />
 
 
-## 4. 히스토그램
+## 4. 히스토그램 (Histogram)
 
+**히스토그램이란?** 
+
+도수 분포표를 그래프로 나타낸 것 즉, 무엇이 몇 개 있는지 개수를 세어놓은 것을 그래프화 한 것
+
+아래와 같은 형식을 갖는다.
+
+```
+cv2.calHist(img, channel, mask, histSize, ranges)
+
+img: 이미지 영상, [img]처럼 리스트로 감싸서 전달
+channel: 분석 처리할 채널, 리스트로 감싸서 전달 - 1 채널: [0], 2 채널: [0, 1], 3 채널: [0, 1, 2]
+mask: 마스크에 지정한 픽셀만 히스토그램 계산, None이면 전체 영역
+histSize: 계급(Bin)의 개수, 채널 개수에 맞게 리스트로 표현 - 1 채널: [256], 2 채널: [256, 256], 3 채널: [256, 256, 256]
+ranges: 각 픽셀이 가질 수 있는 값의 범위, RGB인 경우 [0, 256]
+```
+
+1. **그레이스케일 이미지 히스토그램 (1채널)**
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+#--① 이미지 그레이 스케일로 읽기 및 출력
+img = cv2.imread('../img/mountain.jpg', cv2.IMREAD_GRAYSCALE)
+cv2.imshow('img', img)
+
+#--② 히스토그램 계산 및 그리기
+hist = cv2.calcHist([img], [0], None, [256], [0,256])
+plt.plot(hist)
+
+print("hist.shape:", hist.shape)  #--③ 히스토그램의 shape (256,1)
+print("hist.sum():", hist.sum(), "img.shape:",img.shape) #--④ 히스토그램 총 합계와 이미지의 크기
+plt.show()
+```
+<img width="1280" height="505" alt="image" src="https://github.com/user-attachments/assets/d2099e2a-e2d9-48d5-a401-24bfab77a713" />
+
+
+2. **컬러 이미지를 RGB로 계산한 히스토그램 (3채널)**
+
+```python3
+# 색상 이미지 히스토그램 (histo_rgb.py)
+
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+#--① 이미지 읽기 및 출력
+img = cv2.imread('../img/mountain.jpg')
+cv2.imshow('img', img)
+
+#--② 히스토그램 계산 및 그리기
+channels = cv2.split(img)
+colors = ('b', 'g', 'r')
+for (ch, color) in zip (channels, colors):
+    hist = cv2.calcHist([ch], [0], None, [256], [0, 256])
+    plt.plot(hist, color = color)
+plt.show()
+```
+<img width="1280" height="498" alt="image" src="https://github.com/user-attachments/assets/88f34fd6-5bae-479f-8c34-159e14fa6b8f" />
+
+
+3. **정규화 (Normalization)**
+
+**정규화란?**
+
+특정 영역에 몰려 있는 화지을을 개선하거나, 이미지 간의 연산 조건이 다른 경우 같은 조건으로 만드는 등 이미지를 개선하는 작업
+
+아래와 같은 형식을 갖는다.
+
+```
+dst = cv2.normalize(src, dst, alpha, beta, type_flag)
+
+src: 정규화 이전의 데이터
+dst: 정규화 이후의 데이터
+alpha: 정규화 구간 1
+beta: 정규화 구간 2, 구간 정규화가 아닌 경우 사용 안 함
+type_flag: 정규화 알고리즘 선택 플래그 상수
+```
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+#--① 그레이 스케일로 영상 읽기
+img = cv2.imread('../img/abnormal.jpg', cv2.IMREAD_GRAYSCALE)
+
+#--② 직접 연산한 정규화
+img_f = img.astype(np.float32)
+img_norm = ((img_f - img_f.min()) * (255) / (img_f.max() - img_f.min()))
+img_norm = img_norm.astype(np.uint8)
+
+#--③ OpenCV API를 이용한 정규화
+img_norm2 = cv2.normalize(img, None, 0, 255, cv2.NORM_MINMAX)
+
+#--④ 히스토그램 계산
+hist = cv2.calcHist([img], [0], None, [256], [0, 255])
+hist_norm = cv2.calcHist([img_norm], [0], None, [256], [0, 255])
+hist_norm2 = cv2.calcHist([img_norm2], [0], None, [256], [0, 255])
+
+cv2.imshow('Before', img)
+cv2.imshow('Manual', img_norm)
+cv2.imshow('cv2.normalize()', img_norm2)
+
+hists = {'Before' : hist, 'Manual':hist_norm, 'cv2.normalize()':hist_norm2}
+for i, (k, v) in enumerate(hists.items()):
+    plt.subplot(1,3,i+1)
+    plt.title(k)
+    plt.plot(v)
+plt.show()
+```
+<img width="1280" height="613" alt="image" src="https://github.com/user-attachments/assets/da45b145-bab5-4be2-a85b-a6d72090a6ad" />
+
+
+4. **평탄화 (equalization)**
+
+**평탄화란?**
+
+특정 영역에 집중되어 있는 분포를 전체에 골고루 분포하도록 하는 작업, 명암 대비 개선에 효과적
+
+<img width="300" height="135" alt="image" src="https://github.com/user-attachments/assets/e520ad1d-506b-465b-b35a-f46d062355eb" />
+
+아래와 같은 형식을 갖는다.
+
+```
+dst = cv2.equalizeHist(src, dst)
+
+src: 대상 이미지, 8비트 1 채널
+dst(optional): 결과 이미지
+```
+
+색상 이미지에 적용한 예
+
+```python3
+import numpy as np, cv2
+
+img = cv2.imread('../img/yate.jpg') #이미지 읽기, BGR 스케일
+
+#--① 컬러 스케일을 BGR에서 YUV로 변경
+img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV) 
+
+#--② YUV 컬러 스케일의 첫번째 채널에 대해서 이퀄라이즈 적용
+img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0]) 
+
+#--③ 컬러 스케일을 YUV에서 BGR로 변경
+img2 = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR) 
+
+cv2.imshow('Before', img)
+cv2.imshow('After', img2)
+cv2.waitKey()
+cv2.destroyAllWindows()
+```
+<img width="1280" height="508" alt="image" src="https://github.com/user-attachments/assets/556ade99-466b-4146-8437-5db81967bc6a" />
+
+
+5. **CLAHE (Contrast Limited Adaptive Histogram Equalization)**
+
+**CLAHE란?**
+
+<img width="1039" height="513" alt="image" src="https://github.com/user-attachments/assets/9b520a71-99d7-4583-8b46-54ace9e72a28" />
+
+위 이미지처럼 평탄화를 적용한 후 하이라이트 부분의 데이터가 없어지는 경우가 생기는데 (과노출), 이런 현상을 막기 위해
+
+일정 영역을 나누어 평탄화를 진행한다(적응형 스레시홀딩과 유사).
+
+하지만 이런 경우 일정 영역 내에서 극단적은 명암이 있는 경우 노이즈가 생기는데, 이 문제를 피하기 위해
+
+***어떤 영역이든 지정된 제한값을 넘으면 그 픽셀을 다른 영역에 균일하게 배분하여 적용***하는 방법
+
+적응형 스레시홀딩과 평탄화를 섞은 듯한 느낌
+
+<img width="300" height="109" alt="image" src="https://github.com/user-attachments/assets/915f2b4d-4133-4b3d-8b3d-c41be6d8997c" />
+
+아래와 같은 형식을 갖는다.
+
+```
+clahe = cv2.createCLAHE(clipLimit, tileGridSize)
+
+clipLimit: 대비(Contrast) 제한 경계 값, default=40.0
+tileGridSize: 영역 크기, default=8 x 8
+clahe: 생성된 CLAHE 객체
+
+clahe.apply(src): CLAHE 적용
+
+src: 입력 이미지
+```
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+#--①이미지 읽어서 YUV 컬러스페이스로 변경
+img = cv2.imread('../img/bright.jpg')
+img_yuv = cv2.cvtColor(img, cv2.COLOR_BGR2YUV)
+
+#--② 밝기 채널에 대해서 이퀄라이즈 적용
+img_eq = img_yuv.copy()
+img_eq[:,:,0] = cv2.equalizeHist(img_eq[:,:,0])
+img_eq = cv2.cvtColor(img_eq, cv2.COLOR_YUV2BGR)
+
+#--③ 밝기 채널에 대해서 CLAHE 적용
+img_clahe = img_yuv.copy()
+clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8)) #CLAHE 생성
+img_clahe[:,:,0] = clahe.apply(img_clahe[:,:,0])           #CLAHE 적용
+img_clahe = cv2.cvtColor(img_clahe, cv2.COLOR_YUV2BGR)
+
+#--④ 결과 출력
+cv2.imshow('Before', img)
+cv2.imshow('CLAHE', img_clahe)
+cv2.imshow('equalizeHist', img_eq)
+cv2.waitKey()
+cv2.destroyAllWindows()
+```
+<img width="1280" height="313" alt="image" src="https://github.com/user-attachments/assets/97b8cb56-b6e7-45d4-9b55-748090b84b09" />
+
+
+## 5. 개인 프로젝트
+
+목표 : 앞서 배운 색상 표현 방식, 스레시홀딩을 사용하여 이미지 결과물을 비교해 본다.
+
+```python3
+import cv2
+import numpy as np
+import matplotlib.pylab as plt
+
+# @이미지 가져오기
+img = cv2.imread('../img/sample.jpg')
+
+# @이미지 리사이징
+img = cv2.resize(img, dsize=None, fx=0.2, fy=0.2)
+
+# 이미지 크롭하기 위해 현재 사이즈 구함
+h, w = img.shape[:2]
+side = min(h, w)
+center_x, center_y = w // 2, h // 2
+x1 = center_x - side // 2
+x2 = center_x + side // 2
+y1 = center_y - side // 2
+y2 = center_y + side // 2
+
+# @크롭된 이미지
+crop = img[y1:y2, x1:x2].copy()
+
+# @이미지 꾸미기 (cropped만 사용)
+bgra = cv2.cvtColor(crop, cv2.COLOR_BGR2BGRA)  # 알파채널 추가
+gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)  # 흑백 변환
+
+blk_size = 9
+C = 5
+adap = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                             cv2.THRESH_BINARY, blk_size, C)    
+
+ret, thresh_cv_gray = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+
+ret, thresh_cv = cv2.threshold(crop, 127, 255, cv2.THRESH_BINARY)
+
+# @결과 출력
+imgs = {
+    'Original': crop,
+    'BGRA': bgra,
+    'Gray Scale': gray,
+    'Threshold' : thresh_cv,
+    'Gray Scalr Threshold' : thresh_cv_gray,
+    'Adaptive Threshold': adap
+}
+
+for i, (key, value) in enumerate(imgs.items()):
+    plt.subplot(3, 2, i + 1)
+    plt.title(key)
+    # 컬러는 RGB로 바꿔서 보여주고, 흑백은 그대로
+    if len(value.shape) == 3 and value.shape[2] == 3:
+        plt.imshow(cv2.cvtColor(value, cv2.COLOR_BGR2RGB))
+    elif len(value.shape) == 3 and value.shape[2] == 4:
+        plt.imshow(cv2.cvtColor(value, cv2.COLOR_BGRA2RGBA))
+    else:
+        plt.imshow(value, 'gray')
+    plt.xticks([]), plt.yticks([])
+
+plt.tight_layout()
+plt.show()
+```
+<img width="640" height="480" alt="Figure_1" src="https://github.com/user-attachments/assets/d93765a9-1df1-466c-8f94-105f97b6818e" />
