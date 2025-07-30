@@ -3,7 +3,6 @@ import numpy as np
 
 image = cv2.imread('../img/like_lenna.png')
 lenna_img = cv2.resize(image, (500, 500))
-space = np.zeros((500, 500), dtype=np.uint8)
 color = (147, 20, 255)
 
 # @격자 만들기
