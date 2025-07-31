@@ -118,7 +118,7 @@ def adaptive_threshold_plate(enhanced_plate):
     _, thresh_otsu = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     # @직접 임계값 조정
-    threshold_value = 25
+    threshold_value = 35
     _, thresh_manual = cv2.threshold(blurred, threshold_value, 255, cv2.THRESH_BINARY_INV)
 
     # 4단계: 결과 비교
@@ -229,6 +229,53 @@ def find_contours_in_plate(thresh_plate):
 
     return contours, contour_image
 
+# @무인이동체 시점에서 윤곽선 활용
+def prepare_for_next_step(contours, contours_plate):
+
+    """다음 단계(글자 분석)를 위한 기본 정보 준비"""
+
+    
+
+    print("=== 다음 단계 준비 ===")
+
+    
+
+    # 윤곽선이 충분히 검출되었는지 확인
+
+    if len(contours) < 5:
+
+        print("윤곽선이 적게 검출되었습니다. 전처리 단계를 재검토하세요.")
+
+    elif len(contours) > 20:
+
+        print("윤곽선이 너무 많이 검출되었습니다. 노이즈 제거가 필요할 수 있습니다.")
+
+    else:
+
+        print("적절한 수의 윤곽선이 검출되었습니다.")
+
+    
+
+    # 잠재적 글자 후보 개수 추정
+
+    potential_chars = 0
+
+    for contour in contours:
+
+        area = cv2.contourArea(contour)
+
+        if 30 < area < 2000:  # 글자 크기 범위 추정
+
+            potential_chars += 1
+
+    
+
+    print(f"잠재적 글자 후보: {potential_chars}개")
+
+    
+
+    return potential_chars
+
 
 # @메인 실행
 plate_img = load_extracted_plate('plate_01')        # plate_01.png 불러옴
@@ -237,11 +284,13 @@ if plate_img is not None:
 
 enhanced_plate = maximize_contrast(gray_plate)      # 대비 향상
 
-#advanced_plate = advanced_contrast_enhancement(enhanced_plate)  # 대비 추가 향상
+advanced_plate = advanced_contrast_enhancement(enhanced_plate)  # 대비 추가 향상
 
-thresh_adaptive, thresh_otsu, thresh_manual = adaptive_threshold_plate(enhanced_plate)
+thresh_adaptive, thresh_otsu, thresh_manual = adaptive_threshold_plate(advanced_plate)  #스레시홀딩
 
-contours_plate = find_contours_in_plate(thresh_manual)
+contours, contours_plate = find_contours_in_plate(thresh_manual)  #윤곽선 검출
+
+potential_chars = prepare_for_next_step(contours, contours_plate)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
