@@ -20,6 +20,7 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
 
         pts[pts_cnt] = [x,y]            # 마우스 좌표 저장
         pts_cnt+=1
+        
         if pts_cnt == 4:                       # 좌표가 4개 수집됨 
             # 좌표 4개 중 상하좌우 찾기 ---② 
             sm = pts.sum(axis=1)                 # 4쌍의 좌표 각각 x+y 계산
