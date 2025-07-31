@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# openCV를 활용한 그레이스케일, 쓰레스홀딩
-=======
 # openCV 색상 표현 방식와 관심 영역(ROI), 스레시홀딩(Thresholding), 히스토그램(Histogram)
 
 ## 목차
@@ -10,8 +7,9 @@
 4. 히스토그램(Histogram)
 5. 개인 프로젝트
    
-
-## 1. 색상 표현 방식
+<details>
+<summary>## 1. 색상 표현 방식</summary>
+<div markdown="1">
 
 1. **RGB와 BGR/BGRA**
 
@@ -128,6 +126,8 @@ print("yellow", yellow_hsv)
 
 RGB나 BGR 방식은 세가지 채널의 값을 모두 알아야 색상을 알 수 있지만, HSV 방식은 H(색조)값만 알면 바로 알 수 있다.
 
+</div>
+</details>
 
 ## 2.관심 영역 (ROI)
 
