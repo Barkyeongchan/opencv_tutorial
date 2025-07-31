@@ -84,6 +84,13 @@ def maximize_contrast(gray_plate):
 
     return enhanced
 
+# @대비 향상 기법 추가 함수 
+def advanced_contrast_enhancement(gray_plate): 
+
+    # CLAHE (적응형 히스토그램 균등화)
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(2,1))  # 번호판용 설정
+    clahe_result = clahe.apply(gray_plate)
+    cv2.imshow('advanced_contrast', clahe_result)
 
 # @메인 실행
 plate_img = load_extracted_plate('plate_01')        # plate_01.png 불러옴
@@ -91,6 +98,8 @@ if plate_img is not None:
     gray_plate = convert_to_grayscale(plate_img)    # 그레이 스케일로 변환
 
 enhanced_plate = maximize_contrast(gray_plate)      # 대비 향상
+
+advanced_plate = advanced_contrast_enhancement(enhanced_plate)  # 대비 추가 향상
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
