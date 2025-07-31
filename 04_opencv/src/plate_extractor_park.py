@@ -12,6 +12,10 @@ car_plate03 = cv2.imread('../img/car_03.jpg')
 car_plate04 = cv2.imread('../img/car_04.jpg')
 car_plate05 = cv2.imread('../img/car_05.jpg')
 
+if car_plate01 is None:
+    print("❌ car_plate01 이미지가 제대로 불러와지지 않았습니다.")
+    exit()
+
 win_name = "License Plate Extractor"
 rows, cols = car_plate01.shape[:2]
 draw = car_plate01.copy()
@@ -68,6 +72,9 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             result = cv2.warpPerspective(car_plate01, mtrx, (int(width), int(height)))
             cv2.imshow('scanned', result)
 
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
             # @파일 저장 기능 구현
 
             # 1. 저장 경로 처리
@@ -80,11 +87,8 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             #filename = f"extracted_plates/plate_{timestamp}.png"    # png형식 선택
 
             # 3. 순번 기반
-            existing_files = len(os.listdir("extracted_plates"))
+            existing_files = len(os.listdir(save_dir))
             filename = f"extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
-
-            # 4. 자동 저장 실행
-            result = cv2.warpPerspective(car_plate01, mtrx, (width, height))
 
             success = cv2.imwrite(filename, result) # 파일 저장
             if success:
