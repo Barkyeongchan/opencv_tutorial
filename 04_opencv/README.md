@@ -1,6 +1,6 @@
-## 1. 이미지 이동
+## 1. 이미지 제어
 
-**이미지 이동이란?**
+1. **이미지 이동(Translation)**
 
 원래 있던 좌표에 이동 하려는 거리만큼 더한다.
 
@@ -22,3 +22,6 @@ borderMode(optional): 외곽 영역 보정 플래그
 borderValue(optional): cv2.BORDER_CONSTANT 외곽 영역 보정 플래그일 경우 사용할 색상 값 (default=0)
 dst: 결과 이미지
 ```
+
+2. **확대/축소(Scaling)**
+
