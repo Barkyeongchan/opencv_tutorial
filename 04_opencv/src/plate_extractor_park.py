@@ -68,27 +68,27 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             result = cv2.warpPerspective(car_plate01, mtrx, (int(width), int(height)))
             cv2.imshow('scanned', result)
 
-# @파일 저장 기능 구현
-
-# 1. 저장 경로 처리
-save_dir = "extracted_plates"   # 저장 폴더가 없으면 생성
-if not os.path.exists(save_dir):
-    os.makedirs(save_dir)
-
-# 2. 타임 스탬프 기반
-timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-filename = f"extracted_plates/plate_{timestamp}.png"    # png형식 선택
-
-## 3. 순번 기반
-#existing_files = len(os.listdir("extracted_plates"))
-#filename = f"extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
-
-# 4. 자동 저장 실행
-result = cv2.warpPerspective(car_plate01, mtrx, (width, height))
-
-success = cv2.imwrite(filename, result) # 파일 저장
-if success:
-    print(f"번호판 저장 완료: {filename}")
-    cv2.imshow('Extracted Plate', result)
-else:
-    print("저장 실패!")
+            # @파일 저장 기능 구현
+            
+            # 1. 저장 경로 처리
+            save_dir = "extracted_plates"   # 저장 폴더가 없으면 생성
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+            
+            # 2. 타임 스탬프 기반
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"extracted_plates/plate_{timestamp}.png"    # png형식 선택
+            
+            ## 3. 순번 기반
+            #existing_files = len(os.listdir("extracted_plates"))
+            #filename = f"extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
+            
+            # 4. 자동 저장 실행
+            result = cv2.warpPerspective(car_plate01, mtrx, (width, height))
+            
+            success = cv2.imwrite(filename, result) # 파일 저장
+            if success:
+                print(f"번호판 저장 완료: {filename}")
+                cv2.imshow('Extracted Plate', result)
+            else:
+                print("저장 실패!")
