@@ -4,22 +4,19 @@ import cv2
 import numpy as np
 import datetime
 import os
-from matplotlib import pyplot as plt
 
 # @변수 정의
-car_plate01 = cv2.imread('../img/car_01.jpg')
-car_plate02 = cv2.imread('../img/car_02.jpg')
-car_plate03 = cv2.imread('../img/car_03.jpg')
-car_plate04 = cv2.imread('../img/car_04.jpg')
-car_plate05 = cv2.imread('../img/car_05.jpg')
+car_img = input('이미지 파일명을 입력하세요.')
+full_path = '../img/' + car_img
+car_plate = cv2.imread(full_path)
 
-if car_plate01 is None:
+if car_plate is None:
     print("❌ car_plate01 이미지가 제대로 불러와지지 않았습니다.")
     exit()
 
 win_name = "License Plate Extractor"
-rows, cols = car_plate01.shape[:2]
-draw = car_plate01.copy()
+rows, cols = car_plate.shape[:2]
+draw = car_plate.copy()
 pts_cnt = 0
 pts = np.zeros((4,2), dtype=np.float32)
 
@@ -70,23 +67,22 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             # 변환 행렬 계산 
             mtrx = cv2.getPerspectiveTransform(pts1, pts2)
             # 원근 변환 적용
-            result = cv2.warpPerspective(car_plate01, mtrx, (int(width), int(height)))
-            cv2.imshow('scanned', result)
+            result = cv2.warpPerspective(car_plate, mtrx, (int(width), int(height)))
 
             # @파일 저장 기능 구현
 
             # 1. 저장 경로 처리
-            save_dir = "extracted_plates"   # 저장 폴더가 없으면 생성
+            save_dir = "../extracted_plates"   # 저장 폴더가 없으면 생성
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
 
             ## 2. 타임 스탬프 기반
             #timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            #filename = f"extracted_plates/plate_{timestamp}.png"    # png형식 선택
+            #filename = f"../extracted_plates/plate_{timestamp}.png"    # png형식 선택
 
             # 3. 순번 기반
             existing_files = len(os.listdir(save_dir))
-            filename = f"extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
+            filename = f"../extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
 
             success = cv2.imwrite(filename, result) # 파일 저장
             if success:
@@ -95,7 +91,7 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             else:
                 print("저장 실패!")
 
-cv2.imshow(win_name, car_plate01)
+cv2.imshow(win_name, car_plate)
 cv2.setMouseCallback(win_name, onMouse)
 
 cv2.waitKey(0)
