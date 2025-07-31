@@ -13,7 +13,8 @@
 <summary></summary>
 <div markdown="1">
 
-1. **RGB와 BGR/BGRA**
+
+## **1-1. RGB와 BGR/BGRA**
 
 RGB : Red, Green, Blue 순서대로 값을 표기함
 
@@ -49,7 +50,7 @@ cv2.destroyAllWindows()
 <img width="536" height="226" alt="image" src="https://github.com/user-attachments/assets/022e5d6d-614a-4492-b7cf-1561252e2ad2" />
 
 
-2. **회색조 이미지로 변환(Gray Scale)**
+## **1-2. 회색조 이미지로 변환(Gray Scale)**
 
 이미지 연산의 양을 줄여 연삭 속도를 높이는데 필요함
 
@@ -96,7 +97,7 @@ cv2.COLOR_YUV2BGR: YUB 색상 이미지를 BGR 색상 이미지로 변환
 ```
 
 
-3. **HSV(Hue 색조, Saturation 채도, Value 명도) 방식**
+## **1-3. HSV(Hue 색조, Saturation 채도, Value 명도) 방식**
 
 <img width="640" height="480" alt="image" src="https://github.com/user-attachments/assets/42574139-0989-4e63-915d-38bc2af1775d" />
 
