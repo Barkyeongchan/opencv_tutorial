@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import datetime
 import os
+from matplotlib import pyplot as plt
 
 # @변수 정의
 car_plate01 = cv2.imread('../img/car_01.jpg')
@@ -72,9 +73,6 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             result = cv2.warpPerspective(car_plate01, mtrx, (int(width), int(height)))
             cv2.imshow('scanned', result)
 
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
             # @파일 저장 기능 구현
 
             # 1. 저장 경로 처리
@@ -96,3 +94,9 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
                 cv2.imshow('Extracted Plate', result)
             else:
                 print("저장 실패!")
+
+cv2.imshow(win_name, car_plate01)
+cv2.setMouseCallback(win_name, onMouse)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
