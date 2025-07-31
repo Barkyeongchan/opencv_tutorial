@@ -90,7 +90,56 @@ def advanced_contrast_enhancement(gray_plate):
     # CLAHE (적응형 히스토그램 균등화)
     clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(2,1))  # 번호판용 설정
     clahe_result = clahe.apply(gray_plate)
-    cv2.imshow('advanced_contrast', clahe_result)
+
+    return clahe_result
+
+# @번호판 적응형 임계처리 함수
+def adaptive_threshold_plate(enhanced_plate):
+
+    # 1단계: 가벼운 블러링 (노이즈 제거, 글자는 보존)
+    blurred = cv2.GaussianBlur(enhanced_plate, (3, 3), 0)  # 5x5 → 3x3로 축소
+
+    # 2단계: 번호판 최적화 적응형 임계처리
+    thresh_adaptive = cv2.adaptiveThreshold(
+
+        blurred,
+        maxValue=255,
+        adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        thresholdType=cv2.THRESH_BINARY,  # BINARY_INV 대신 BINARY 사용
+        blockSize=11,  # 19 → 11로 축소 (번호판 크기에 맞춤)
+        C=2           # 9 → 2로 축소 (세밀한 조정)
+    )
+
+    # 3단계: Otsu 임계처리와 비교
+    _, thresh_otsu = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    # 4단계: 결과 비교
+    plt.figure(figsize=(16, 4))   
+
+    plt.subplot(1, 4, 1)
+    plt.imshow(enhanced_plate, cmap='gray')     # 대비 향상 이미지
+    plt.title('Enhanced Plate')
+    plt.axis('off')
+
+    plt.subplot(1, 4, 2)
+    plt.imshow(blurred, cmap='gray')            # 블러링
+    plt.title('Blurred')
+    plt.axis('off')
+
+    plt.subplot(1, 4, 3)
+    plt.imshow(thresh_adaptive, cmap='gray')    # 적응형 쓰레시홀딩
+    plt.title('Adaptive Threshold')
+    plt.axis('off')
+
+    plt.subplot(1, 4, 4)
+    plt.imshow(thresh_otsu, cmap='gray')        # 오츠의 이진화 알고리즘
+    plt.title('Otsu Threshold')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.show()
+
+    return thresh_adaptive, thresh_otsu
 
 # @메인 실행
 plate_img = load_extracted_plate('plate_01')        # plate_01.png 불러옴
@@ -100,6 +149,8 @@ if plate_img is not None:
 enhanced_plate = maximize_contrast(gray_plate)      # 대비 향상
 
 advanced_plate = advanced_contrast_enhancement(enhanced_plate)  # 대비 추가 향상
+
+thresh_adaptive, thresh_otsu = adaptive_threshold_plate(advanced_plate)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
