@@ -6,7 +6,7 @@ import datetime
 import os
 
 # @변수 정의
-car_img = input('이미지 파일명을 입력하세요.')
+car_img = input('이미지 파일명을 입력하세요. 예) car_01.jpg : ')
 full_path = '../img/' + car_img
 car_plate = cv2.imread(full_path)
 
@@ -76,17 +76,24 @@ def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
 
-            ## 2. 타임 스탬프 기반
-            #timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            #filename = f"../extracted_plates/plate_{timestamp}.png"    # png형식 선택
+            # 2. 타임 스탬프 기반
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename_time = f"../extracted_plates/plate_{timestamp}.png"    # png형식 선택
 
             # 3. 순번 기반
             existing_files = len(os.listdir(save_dir))
-            filename = f"../extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
+            filename_os = f"../extracted_plates/plate_{existing_files+1:03d}.png" # png형식 선택
 
-            success = cv2.imwrite(filename, result) # 파일 저장
+            success = cv2.imwrite(filename_time, result) # 타임 스탬프 파일 저장
             if success:
-                print(f"번호판 저장 완료: {filename}")
+                print(f"번호판 저장 완료: {filename_time}")
+                cv2.imshow('Extracted Plate', result)
+            else:
+                print("저장 실패!")
+
+            success = cv2.imwrite(filename_os, result) # 순번 파일 저장
+            if success:
+                print(f"번호판 저장 완료: {filename_os}")
                 cv2.imshow('Extracted Plate', result)
             else:
                 print("저장 실패!")
