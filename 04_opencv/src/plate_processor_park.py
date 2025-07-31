@@ -22,6 +22,7 @@ def load_extracted_plate(plate_name):
 def convert_to_grayscale(plate_img):
     gray_plate = cv2.cvtColor(plate_img, cv2.COLOR_BGR2GRAY)    # BGR을 그레이스케일로 변환
     plt.figure(figsize=(12, 4))    # 결과 비교 시각화
+
     plt.subplot(1, 2, 1)
     plt.imshow(cv2.cvtColor(plate_img, cv2.COLOR_BGR2RGB))
     plt.title('Original Extracted Plate')
@@ -37,10 +38,59 @@ def convert_to_grayscale(plate_img):
 
     return gray_plate
 
-# @함수 사용
-plate_img = load_extracted_plate('plate_01')  # plate_01.png 불러옴
+# @추출된 번호판 이미지 대비 최대화 함수
+def maximize_contrast(gray_plate):
+    # 모폴로지 연산용 구조화 요소 (번호판용으로 작게 설정)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))  # 3x3 → 2x2로 축소
+    
+    # Top Hat: 밝은 세부사항 (흰 배경) 강조
+    tophat = cv2.morphologyEx(gray_plate, cv2.MORPH_TOPHAT, kernel)
+    
+    # Black Hat: 어두운 세부사항 (검은 글자) 강조  
+    blackhat = cv2.morphologyEx(gray_plate, cv2.MORPH_BLACKHAT, kernel) 
+    
+    # 대비 향상 적용
+    enhanced = cv2.add(gray_plate, tophat)
+    enhanced = cv2.subtract(enhanced, blackhat)
+
+    # 추가: 히스토그램 균등화로 대비 더욱 향상
+    enhanced = cv2.equalizeHist(enhanced)   
+
+    # 결과 비교
+    plt.figure(figsize=(15, 4))
+
+    plt.subplot(1, 4, 1)        # 1행 4열의 배열에서 첫 번째 위치
+    plt.imshow(gray_plate, cmap='gray') # 그레이스케일된 이미지
+    plt.title('Original Gray')  # 서브플롯 제목
+    plt.axis('off')             # 축 눈금, 테두리 제거
+
+    plt.subplot(1, 4, 2)
+    plt.imshow(tophat, cmap='gray')     # 탑햇
+    plt.title('Top Hat')
+    plt.axis('off')
+
+    plt.subplot(1, 4, 3)
+    plt.imshow(blackhat, cmap='gray')   # 블랫햇
+    plt.title('Black Hat')
+    plt.axis('off')
+
+    plt.subplot(1, 4, 4)
+    plt.imshow(enhanced, cmap='gray')   # 대비 향상된 이미지 
+    plt.title('Enhanced Contrast')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.show()
+
+    return enhanced
+
+
+# @메인 실행
+plate_img = load_extracted_plate('plate_01')        # plate_01.png 불러옴
 if plate_img is not None:
-    gray_plate = convert_to_grayscale(plate_img)
+    gray_plate = convert_to_grayscale(plate_img)    # 그레이 스케일로 변환
+
+enhanced_plate = maximize_contrast(gray_plate)      # 대비 향상
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
