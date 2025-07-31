@@ -436,4 +436,6 @@ cv2.imshow('Image Window', lenna_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
+
 <img width="627" height="627" alt="practice_like_lenna" src="https://github.com/user-attachments/assets/045b2d34-595c-42a4-bebd-6f9a5743090a" />
+
