@@ -5,7 +5,8 @@ import numpy as np
 import datetime
 import os
 
-for i in range(1, 5):
+max_img = input('추출하려는 이미지 개수를 입력해 주세요.(최대 5): ')
+for i in range(1, int(max_img)+1):
     # @변수 정의
     full_path = '../img/car_0' + str(i) +'.jpg'
     car_plate = cv2.imread(full_path)
@@ -100,6 +101,6 @@ for i in range(1, 5):
 
     cv2.imshow(win_name, car_plate)
     cv2.setMouseCallback(win_name, onMouse)
-    
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
