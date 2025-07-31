@@ -6,9 +6,11 @@
 3. 스레시홀딩 (Thresholding)
 4. 히스토그램(Histogram)
 5. 개인 프로젝트
-   
+
+## 1. 색상 표현 방식
+  
 <details>
-<summary>## 1. 색상 표현 방식</summary>
+<summary></summary>
 <div markdown="1">
 
 1. **RGB와 BGR/BGRA**
