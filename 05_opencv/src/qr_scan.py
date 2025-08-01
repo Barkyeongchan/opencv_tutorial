@@ -6,7 +6,7 @@ img = cv2.imread('../img/frame.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 #plt.imshow(img)
-plt.imshow(gray)
+plt.imshow(gray, cmap='gray')   # 매트플롯에서 그레이로 정의 필요
 plt.show()
 
 cv2.waitKey(0)
