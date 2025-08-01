@@ -15,8 +15,13 @@ plt.show()
 decoded = pyzbar.decode(gray)
 print(decoded)
 
-# @QR인식을 위한 사각형 그리기
-cv2.rectangle(img, ())
+# @QR코드의 데이터와 형식 출력
+for d in decoded:
+    print(d.data.decode('utf-8'))
+    print(d.type)
+
+    # @QR인식을 위한 사각형 그리기
+    #cv2.rectangle(img, ())
 '''
 img: 사각형을 그릴 이미지입니다.
 pt1: 사각형의 왼쪽 상단 꼭지점 좌표입니다. (x, y) 형식의 튜플이어야 합니다.
