@@ -8,8 +8,8 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    # 이미지 그레이스케일
 
 # @결과 출력
 #plt.imshow(img)
-plt.imshow(gray, cmap='gray')   # 맷플롯에서 그레이로 정의 필요
-plt.show()
+#plt.imshow(gray, cmap='gray')   # 맷플롯에서 그레이로 정의 필요
+#plt.show()
 
 # @디코딩(pyzbar)
 decoded = pyzbar.decode(gray)
@@ -21,7 +21,8 @@ for d in decoded:
     print(d.type)
 
     # @QR인식을 위한 사각형 그리기
-    #cv2.rectangle(img, ())
+    cv2.rectangle(img, (d.rect[0], d.rect[1]), (d.rect[0] + d.rect[2], d.rect[1] + d.rect[3]),\
+                  (0, 255, 0), 20)
 '''
 img: 사각형을 그릴 이미지입니다.
 pt1: 사각형의 왼쪽 상단 꼭지점 좌표입니다. (x, y) 형식의 튜플이어야 합니다.
@@ -31,6 +32,9 @@ thickness: 선택적으로 사각형의 선 두께를 지정합니다. 기본값
 lineType: 선택적으로 선의 형태를 지정합니다. 기본값은 cv2.LINE_8입니다.
 shift: 선택적으로 좌표값의 소수 부분을 비트 시프트할 양을 지정합니다.
 '''
+
+plt.imshow(img)
+plt.show()
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
