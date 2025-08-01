@@ -1,9 +1,13 @@
 import cv2
 import matplotlib.pyplot as plt
 import pyzbar.pyzbar as pyzbar
+import webbrowser
 
 # @카메라 캡쳐 활성화
 cap = cv2.VideoCapture(0)
+
+# @웹 사이트 이동 횟수 제한 조건
+link_opened = False
 
 # @카메라 캡쳐 조건 추가
 while (cap.isOpened()):     # 카메라 캡쳐가 열려있는 동안 
@@ -20,6 +24,11 @@ while (cap.isOpened()):     # 카메라 캡쳐가 열려있는 동안
         x, y, w, h = d.rect     # QR코드의 x, y, w, h 값은 d.rect에 저장됨
         barcode_data = d.data.decode('utf-8')
         barcode_type = d.type
+
+        # @웹 사이트 한 번 만 열기
+        if not link_opened and barcode_data.startswith("http"):
+            webbrowser.open(barcode_data)
+            link_opened = True
 
         text = '%s (%s)' % (barcode_data, barcode_type) # 바코드 데이터와 형식을 text에 저장
 
