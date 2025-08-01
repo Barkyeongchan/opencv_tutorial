@@ -134,6 +134,10 @@ RGB나 BGR 방식은 세가지 채널의 값을 모두 알아야 색상을 알 �
 
 ## 2.관심 영역 (ROI)
 
+<details>
+<summary></summary>
+<div markdown="1">
+
 말 그대로 이미지 내에서 관심 있는 영역을 말한다.
 
 <예제 이미지>
@@ -141,7 +145,7 @@ RGB나 BGR 방식은 세가지 채널의 값을 모두 알아야 색상을 알 �
 <img width="600" height="338" alt="image" src="https://github.com/user-attachments/assets/72ebd297-0795-46d6-90de-51f66b453634" />
 
 
-1. **관심 영역 표시**
+## **2-1. 관심 영역 표시**
 ```python3
 import cv2
 import numpy as np
@@ -162,7 +166,7 @@ cv2.destroyAllWindows()
 <img width="896" height="548" alt="image" src="https://github.com/user-attachments/assets/65fb800a-6adb-4fc4-af7a-219ce2976212" />
 
 
-2. **관심 영역 복제 및 새 창에 띄우기**
+## **2-2. 관심 영역 복제 및 새 창에 띄우기**
 ```python3
 import cv2
 import numpy as np
@@ -185,7 +189,7 @@ cv2.destroyAllWindows()
 <img width="900" height="559" alt="image" src="https://github.com/user-attachments/assets/9e9c1c8f-2a0d-4758-a32b-840ee429aa36" />
 
 
-3. **마우스 이벤트로 관심 영역 지정, 표시, 저장**
+## **2-3. 마우스 이벤트로 관심 영역 지정, 표시, 저장**
 ```python3
 import cv2
 import numpy as np
@@ -233,14 +237,20 @@ cv2.destroyAllWindows()
 ```
 <img width="900" height="547" alt="image" src="https://github.com/user-attachments/assets/6dca89ff-2ae8-4b2f-a3fc-f5dedef52e96" />
 
+</div>
+</details>
 
 ## 3. 스레시홀딩 (Thresholding)
+
+<details>
+<summary></summary>
+<div markdown="1">
 
 바이너리 이미지를 만드는 가장 대표적인 방법
 
 *바이너리 이미지란? 검은색과 흰색으로만 표현된 이미지*
 
-1. **전역 스레시홀딩**
+## **3-1. 전역 스레시홀딩**
 
 임계값을 임의로 정한 뒤 픽셀값이 임계값을 넘으면 255, 넘지 않으면 0으로 지정하는 방식
 
@@ -272,7 +282,7 @@ plt.show()
 <img width="794" height="248" alt="image" src="https://github.com/user-attachments/assets/054e507f-cdb4-494b-b411-b67354b26f3a" />
 
 
-2. **스레시홀딩 플래그 (Flag)**
+## **3-2. 스레시홀딩 플래그 (Flag)**
 ```
 cv2.THRESH_BINARY: 픽셀 값이 임계값을 넘으면 value로 지정하고, 넘지 못하면 0으로 지정
 cv2.THRESH_BINARY_INV: cv.THRESH_BINARY의 반대
@@ -307,7 +317,7 @@ plt.show()
 <img width="790" height="511" alt="image" src="https://github.com/user-attachments/assets/4174f2de-6035-45c4-b4a8-c2519b2eea77" />
 
 
-3. **오츠의 이진화 알고리즘 (Otsu's binarization method)**
+## **3-3. 오츠의 이진화 알고리즘 (Otsu's binarization method)**
 
 임계값을 임의로 정해 두 부류로 나눈 픽셀의 **명암 분포가 가장 균일 할 때의 임계값**을 찾는 알고리즘
 
@@ -336,7 +346,7 @@ plt.show()
 <img width="1280" height="488" alt="image" src="https://github.com/user-attachments/assets/d59916da-ca3c-473a-b0fa-c84c4ed25afe" />
 
 
-4. **적응형 스레시홀딩 (Adaptive)**
+## **3-4. 적응형 스레시홀딩 (Adaptive)**
 
 이미지를 여러 구역으로 나눈 뒤 나눈 구역 주변의 픽셀값만을 활용하여 임계값을 구하는 방식
 
@@ -373,10 +383,16 @@ plt.show()
 ```
 <img width="1048" height="1118" alt="image" src="https://github.com/user-attachments/assets/5122751b-e33a-42da-9ef0-2df8e90cb87e" />
 
+</div>
+</details>
 
 ## 4. 히스토그램 (Histogram)
 
-**히스토그램이란?** 
+<details>
+<summary></summary>
+<div markdown="1">
+
+## **히스토그램이란?** 
 
 도수 분포표를 그래프로 나타낸 것 즉, 무엇이 몇 개 있는지 개수를 세어놓은 것을 그래프화 한 것
 
@@ -392,7 +408,7 @@ histSize: 계급(Bin)의 개수, 채널 개수에 맞게 리스트로 표현 - 1
 ranges: 각 픽셀이 가질 수 있는 값의 범위, RGB인 경우 [0, 256]
 ```
 
-1. **그레이스케일 이미지 히스토그램 (1채널)**
+## **4-1. 그레이스케일 이미지 히스토그램 (1채널)**
 
 ```python3
 import cv2
@@ -414,7 +430,7 @@ plt.show()
 <img width="1280" height="505" alt="image" src="https://github.com/user-attachments/assets/d2099e2a-e2d9-48d5-a401-24bfab77a713" />
 
 
-2. **컬러 이미지를 RGB로 계산한 히스토그램 (3채널)**
+## **4-2. 컬러 이미지를 RGB로 계산한 히스토그램 (3채널)**
 
 ```python3
 # 색상 이미지 히스토그램 (histo_rgb.py)
@@ -438,7 +454,7 @@ plt.show()
 <img width="1280" height="498" alt="image" src="https://github.com/user-attachments/assets/88f34fd6-5bae-479f-8c34-159e14fa6b8f" />
 
 
-3. **정규화 (Normalization)**
+## **4-3. 정규화 (Normalization)**
 
 **정규화란?**
 
@@ -491,7 +507,7 @@ plt.show()
 <img width="1280" height="613" alt="image" src="https://github.com/user-attachments/assets/da45b145-bab5-4be2-a85b-a6d72090a6ad" />
 
 
-4. **평탄화 (equalization)**
+## **4-4. 평탄화 (equalization)**
 
 **평탄화란?**
 
@@ -532,7 +548,7 @@ cv2.destroyAllWindows()
 <img width="1280" height="508" alt="image" src="https://github.com/user-attachments/assets/556ade99-466b-4146-8437-5db81967bc6a" />
 
 
-5. **CLAHE (Contrast Limited Adaptive Histogram Equalization)**
+## **4-5. CLAHE (Contrast Limited Adaptive Histogram Equalization)**
 
 **CLAHE란?**
 
@@ -593,8 +609,14 @@ cv2.destroyAllWindows()
 ```
 <img width="1280" height="313" alt="image" src="https://github.com/user-attachments/assets/97b8cb56-b6e7-45d4-9b55-748090b84b09" />
 
+</div>
+</details>
 
 ## 5. 개인 프로젝트
+
+<details>
+<summary></summary>
+<div markdown="1">
 
 목표 : 앞서 배운 색상 표현 방식, 스레시홀딩을 사용하여 이미지 결과물을 비교해 본다.
 
@@ -660,5 +682,7 @@ plt.tight_layout()
 plt.show()
 
 <img width="640" height="480" alt="Figure_1" src="https://github.com/user-attachments/assets/d93765a9-1df1-466c-8f94-105f97b6818e" />
+```
 
->>>>>>> 8e665caf898e29312c928bdf80d0c93460ccf648
+</div>
+</details>
