@@ -13,14 +13,27 @@ ret, imthres = cv2.threshold(imgray, 127, 255, cv2.THRESH_BINARY_INV)
 # @가장 바깥 컨투어만 수집
 contour, hierarchy = cv2.findContours(imthres, cv2.RETR_EXTERNAL, \
                                                 cv2.CHAIN_APPROX_NONE)
-# @컨투어 갯수와 계층 트리 출력
+# @가장 바깥 컨투어 갯수와 계층 트리 출력
 print(len(contour), hierarchy)
+'''
+3 [[[ 1 -1 -1 -1]
+  [ 2  0 -1 -1]
+  [-1  1 -1 -1]]]
+'''
 
 # @모든 컨투어를 트리 계층 으로 수집
 contour2, hierarchy = cv2.findContours(imthres, cv2.RETR_TREE, \
                                             cv2.CHAIN_APPROX_SIMPLE)
-# @컨투어 갯수와 계층 트리 출력
+# @모든 컨투어 갯수와 계층 트리 출력
 print(len(contour2), hierarchy)
+'''
+6 [[[ 2 -1  1 -1]
+  [-1 -1 -1  0]
+  [ 4  0  3 -1]
+  [-1 -1 -1  2]
+  [-1  2  5 -1]
+  [-1 -1 -1  4]]]
+'''
 
 # @가장 바깥 컨투어만 그리기
 cv2.drawContours(img, contour, -1, (0,255,0), 3)
