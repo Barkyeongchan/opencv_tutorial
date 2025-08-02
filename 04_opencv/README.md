@@ -9,6 +9,9 @@
 6. 경계 검출
 
 ## 1. 이미지 제어
+<details>
+<summary></summary>
+<div markdown="1">
 
 1. **이미지 이동(Translation)**
 
@@ -50,6 +53,9 @@ _borderMode 값_
 ```python3
 
 ```
+
+</div>
+</details>
 
 2. **이미지 확대/축소(Scaling)**
 
