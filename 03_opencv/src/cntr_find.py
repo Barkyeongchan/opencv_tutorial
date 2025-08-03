@@ -12,12 +12,13 @@ imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # @스레시홀드로 바이너리 이미지로 만들어서 검은배경에 흰색전경으로 반전
 ret, imthres = cv2.threshold(imgray, 127, 255, cv2.THRESH_BINARY_INV)
 
-# @가장 바깥쪽 컨투어에 대해 모든 좌표 반환 / openCV 4.x 이상 버전에는 img값을 리턴하지 않음
+# @가장 바깥쪽 컨투어에 대해 모든 좌표 반환 / openCV 4.x 이상 버전에는 im2값을 리턴하지 않음
 contour, hierarchy = cv2.findContours(imthres, cv2.RETR_EXTERNAL, \
-                                                 cv2.CHAIN_APPROX_NONE)
-# @가장 바깥쪽 컨투어에 대해 꼭지점 좌표만 반환 / openCV 4.x 이상 버전에는 img값을 리턴하지 않음
+                                                 cv2.CHAIN_APPROX_NONE) # 모든 좌표에 컨투어 그림
+
+# @가장 바깥쪽 컨투어에 대해 꼭지점 좌표만 반환 / openCV 4.x 이상 버전에는 im2값을 리턴하지 않음
 contour2, hierarchy = cv2.findContours(imthres, cv2.RETR_EXTERNAL, \
-                                                cv2.CHAIN_APPROX_SIMPLE)
+                                                cv2.CHAIN_APPROX_SIMPLE) # 꼭짓점만 표시
 # @각각의 컨투의 갯수 출력
 print('도형의 갯수: %d(%d)'% (len(contour), len(contour2)))
 
