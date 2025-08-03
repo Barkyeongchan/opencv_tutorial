@@ -1011,7 +1011,7 @@ cv2.destroyAllWindows()
 </div>
 </details>
 
-## 6. 개인 프로젝트 (검출된 번호판 경계 검출)
+## 6. 개인 프로젝트 (번호판 경계 검출)
 <details>
 <summary></summary>
 <div markdown="1">
