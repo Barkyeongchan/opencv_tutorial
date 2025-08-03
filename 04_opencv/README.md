@@ -13,7 +13,7 @@
 <summary></summary>
 <div markdown="1">
 
-1. **이미지 이동(Translation)**
+## 1. **이미지 이동(Translation)**
 
 **이미지 이동이란?**
 
@@ -92,7 +92,7 @@ cv2.destroyAllWindows()
 <img width="1073" height="1027" alt="image" src="https://github.com/user-attachments/assets/06e0185c-a725-4bc3-9f5e-2dfcb663055e" />
 
 
-2. **이미지 확대/축소(Scaling)**
+## 2. **이미지 확대/축소(Scaling)**
 
 **이미지 확대/축소란?**
 
@@ -170,7 +170,7 @@ cv2.destroyAllWindows()
 <img width="766" height="815" alt="image" src="https://github.com/user-attachments/assets/4a6f2459-82e3-41ec-bd70-8c554da0ef03" />
 
 
-3. **이미지 회전(Rotation)**
+## 3. **이미지 회전(Rotation)**
 
 **이미지 회전을 위한 변환 행렬식**
 
@@ -194,23 +194,62 @@ mtrx = cv2.getRotationMatrix2D(center, angle, scale)
 </details>
 
 ## 2. 이미지 뒤틀기
-
-1. **어핀 변환(Affine Transform)**
+<details>
+<summary></summary>
+<div markdown="1">
+  
+## 1. **어핀 변환(Affine Transform)**
 
 **어핀 변환이란?**
 
 뒤틀기 방법 중 하나로 이미지에 좌표를 지정한 후 그 좌표 값을 원하는 좌표로 이동하며 이미지를 뒤트는 방법 (2차원)
 
+ cv2.getAffineTransform() 함수를 사용한다.
+
 ```
 martix = cv2.getAffineTransform(pts1, pts2)
-
-pts1: 변환 전 영상의 좌표 3개, 3 x 2 배열
-pts2: 변환 후 영상의 좌표 3개, 3 x 2 배열
-matrix: 변환 행렬 반환, 2 x 3 행렬
 ```
 
-</div>
-</details>
+`pts1` : 변환 전 영상의 좌표 3개, 3 x 2 배열
+`pts2` : 변환 후 영상의 좌표 3개, 3 x 2 배열
+`matrix` : 변환 행렬 반환, 2 x 3 행렬
+
+```python3
+# 어핀(Affine) 변환
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+file_name = '../img/fish.jpg'
+img = cv2.imread(file_name)
+rows, cols = img.shape[:2]  # 영상 크기 제어
+
+# @변환 전, 후 각 3개의 좌표 생성
+pts1 = np.float32([[100, 50], [200, 50], [100, 200]])
+pts2 = np.float32([[80, 70], [210, 60], [250, 120]])
+
+# @변환 전 좌표를 이미지에 표시
+cv2.circle(img, (100, 50), 5, (255, 0, 0), -1)
+cv2.circle(img, (200, 50), 5, (0, 255, 0), -1)
+cv2.circle(img, (100, 200), 5, (0, 0, 255), -1)
+
+# @짝지은 3개의 좌표로 변환 행렬 계산
+mtrx = cv2.getAffineTransform(pts1, pts2)
+
+# #어핀 변환 적용
+dst = cv2.warpAffine(img, mtrx, (int(cols*1.5), rows))
+
+# @이미지 출력
+cv2.imshow('origin',img)
+cv2.imshow('affin', dst)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="959" height="426" alt="image" src="https://github.com/user-attachments/assets/b920ac99-035f-4a46-a927-ac27609389d3" />
+
 
 2. **원근 변환(Perspective Transform)**
 
@@ -218,14 +257,125 @@ matrix: 변환 행렬 반환, 2 x 3 행렬
 
 원근법의 원리를 적용해 변환하는 방법 (3차원)
 
+cv2.getPerspectiveTransform() 함수를 사용한다.
+
 ```
 mtrx = cv2.getPerspectiveTransform(pts1, pts2)
-
-pts1: 변환 이전 영상의 좌표 4개, 4 x 2 배열
-pts2: 변환 이후 영상의 좌표 4개, 4 x 2 배열
-mtrx: 변환행렬 반환, 3 x 3 행렬
 ```
 
+`pts1` : 변환 이전 영상의 좌표 4개, 4 x 2 배열
+`pts2` : 변환 이후 영상의 좌표 4개, 4 x 2 배열
+`mtrx` : 변환행렬 반환, 3 x 3 행렬
+
+```python3
+# 원근(Perspective) 변환
+
+import cv2
+import numpy as np
+
+file_name = "../img/fish.jpg"
+img = cv2.imread(file_name)
+rows, cols = img.shape[:2]
+
+# @원근 변환 전 후 4개 좌표
+pts1 = np.float32([[0,0], [0,rows], [cols, 0], [cols,rows]])
+pts2 = np.float32([[100,50], [10,rows-50], [cols-100, 50], [cols-10,rows-50]])
+
+# @변환 전 좌표를 원본 이미지에 표시
+cv2.circle(img, (0,0), 10, (255,0,0), -1)
+cv2.circle(img, (0,rows), 10, (0,255,0), -1)
+cv2.circle(img, (cols,0), 10, (0,0,255), -1)
+cv2.circle(img, (cols,rows), 10, (0,255,255), -1)
+
+# @원근 변환 행렬 계산
+mtrx = cv2.getPerspectiveTransform(pts1, pts2)
+
+# @원근 변환 적용
+dst = cv2.warpPerspective(img, mtrx, (cols, rows))
+
+cv2.imshow("origin", img)
+cv2.imshow('perspective', dst)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="770" height="428" alt="image" src="https://github.com/user-attachments/assets/56e5960b-8604-414c-80fc-f8eb2a27c7cd" />
+
+
+##3. **마우스와 원근 변환을 사용해 문서 스캔 효과 만들기**
+
+```python3
+# 마우스 이벤트로 원근 변환을 사용해 문서 스캔효과 내기
+
+import cv2
+import numpy as np
+
+# @변수 정의
+win_name = "scanning"
+img = cv2.imread("../img/paper.jpg")
+rows, cols = img.shape[:2]
+draw = img.copy()
+pts_cnt = 0
+pts = np.zeros((4,2), dtype=np.float32)
+
+# @마우스 이벤트 함수
+def onMouse(event, x, y, flags, param):  # 마우스 이벤트 콜백 함수 구현
+    global  pts_cnt                      # 마우스로 찍은 좌표의 갯수 저장
+    if event == cv2.EVENT_LBUTTONDOWN:  
+        cv2.circle(draw, (x,y), 10, (0,255,0), -1) # 좌표에 초록색 동그라미 표시
+        cv2.imshow(win_name, draw)
+
+        pts[pts_cnt] = [x,y]            # 마우스 좌표 저장
+        pts_cnt+=1
+        
+        if pts_cnt == 4:                       # 좌표가 4개 수집됨 
+            # 좌표 4개 중 상하좌우 찾기 ---② 
+            sm = pts.sum(axis=1)                 # 4쌍의 좌표 각각 x+y 계산
+            diff = np.diff(pts, axis = 1)        # 4쌍의 좌표 각각 x-y 계산
+
+            topLeft = pts[np.argmin(sm)]         # x+y가 가장 작은 값이 좌상단 좌표
+            bottomRight = pts[np.argmax(sm)]     # x+y가 가장 큰 값이 우하단 좌표
+            topRight = pts[np.argmin(diff)]      # x-y가 가장 작은 것이 우상단 좌표
+            bottomLeft = pts[np.argmax(diff)]    # x-y가 가장 큰 값이 좌하단 좌표
+
+            # 변환 전 4개 좌표 
+            pts1 = np.float32([topLeft, topRight, bottomRight , bottomLeft])
+
+            # 변환 후 영상에 사용할 서류의 폭과 높이 계산 
+            w1 = abs(bottomRight[0] - bottomLeft[0])    # 상단 좌우 좌표간의 거리
+            w2 = abs(topRight[0] - topLeft[0])          # 하당 좌우 좌표간의 거리
+            h1 = abs(topRight[1] - bottomRight[1])      # 우측 상하 좌표간의 거리
+            h2 = abs(topLeft[1] - bottomLeft[1])        # 좌측 상하 좌표간의 거리
+            width = max([w1, w2])                       # 두 좌우 거리간의 최대값이 서류의 폭
+            height = max([h1, h2])                      # 두 상하 거리간의 최대값이 서류의 높이
+            
+            # 변환 후 4개 좌표
+            pts2 = np.float32([[0,0], [width-1,0], 
+                                [width-1,height-1], [0,height-1]])
+
+            # 변환 행렬 계산 
+            mtrx = cv2.getPerspectiveTransform(pts1, pts2)
+            # 원근 변환 적용
+            result = cv2.warpPerspective(img, mtrx, (int(width), int(height)))
+            cv2.imshow('scanned', result)
+
+# @이미지 출력            
+cv2.imshow(win_name, img)
+cv2.setMouseCallback(win_name, onMouse)    # 마우스 콜백 함수를 GUI 윈도우에 등록
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="1280" height="920" alt="image" src="https://github.com/user-attachments/assets/8fa77abd-32ae-4ef4-9675-d0e6d2c5e6c2" />
+
+
+</div>
+</details>
+
 ## 3. 개인 프로젝트
+<details>
+<summary></summary>
+<div markdown="1">
 
 **목표 : 기울어진 자동차 번호판 이미지를 변환하여 규격화한 후 저장한다.
