@@ -5,7 +5,8 @@
 2. 관심 영역 (ROI)
 
 ## 1. QR코드 스캔
-
+<details>
+<summery></summery>
 ## **1-1.pyzbar**
 
 **pyzbar란?
