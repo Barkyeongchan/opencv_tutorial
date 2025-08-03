@@ -33,24 +33,40 @@ dst = cv2.warpAffine(src, matrix, dsize, dst, flags, borderMode, borderValue)
 ```
 
 `src` : 원본 이미지, numpy 배열
+
 `matrix` : 2 x 3 변환행렬, dtype=float32
+
 `dsize` : 결과 이미지의 크기, (width, height)
+
 `flags(optional)` : 보간법 알고리즘 플래그
+
 `borderMode(optional)` : 외곽 영역 보정 플래그
+
 `borderValue(optional)` : cv2.BORDER_CONSTANT 외곽 영역 보정 플래그일 경우 사용할 색상 값 (default=0)
+
 `dst` : 결과 이미지
 
 
 _flags 값_
+
 `cv2.INTER_LINEAR` default 값, 인접한 4개 픽셀 값에 거리 가중치 사용
+
 `cv2.INTER_NEAREST` 가장 가까운 픽셀 값 사용
+
 `cv2.INTER_AREA` 픽셀 영역 관계를 이용한 재샘플링
+
 `cv2.INTER_CUBIC` 인정합 16개 픽셀 값에 거리 가중치 사용
 
+
+
 _borderMode 값_
+
 `cv2.BORDER_CONSTANT` 고정 색상 값
+
 `cv2.BORDER_REPLICATE` 가장자리 복제
+
 `cv2.BORDER_WRAP` 반복
+
 `cv2.BORDER_REFLECT` 반사
 
 ```python3
@@ -92,6 +108,7 @@ cv2.destroyAllWindows()
 <img width="1073" height="1027" alt="image" src="https://github.com/user-attachments/assets/06e0185c-a725-4bc3-9f5e-2dfcb663055e" />
 
 
+
 ## 1-2. **이미지 확대/축소(Scaling)**
 
 **이미지 확대/축소란?**
@@ -105,6 +122,8 @@ y_new = a₂ * y_old
 
 <img width="321" height="95" alt="image" src="https://github.com/user-attachments/assets/b3afdf9d-d392-4e4e-8f8b-5ca55578822f" />
 
+
+
 cv2.resize() 함수를 사용한다.
 
 ```
@@ -112,9 +131,13 @@ cv2.resize(src, dsize, dst, fx, fy, interpolation)\
 ```
 
 `src` : 입력 원본 이미지
+
 `dsize` : 출력 영상 크기(확대/축소 목표 크기, (width, height)형식), 생략하면 fx, fy 배율을 적용
+
 `fx, fy` : 크기 배율, dsize가 주어지면 dsize를 적용함
+
 `interpolation` : 보간법 알고리즘 선택 플래그 (cv2.warpAffine()과 동일)
+
 `dst` : 결과 이미지
 
 > _보간법 (Interpolation)_
@@ -170,11 +193,13 @@ cv2.destroyAllWindows()
 <img width="766" height="815" alt="image" src="https://github.com/user-attachments/assets/4a6f2459-82e3-41ec-bd70-8c554da0ef03" />
 
 
+
 ## 1-3. **이미지 회전(Rotation)**
 
 **이미지 회전을 위한 변환 행렬식**
 
 <img width="966" height="638" alt="image" src="https://github.com/user-attachments/assets/82fd1e5b-35de-4ac7-956c-77c271e679e4" />
+
 
 
 > _호도법_
@@ -187,7 +212,9 @@ cv2.getRotationMatrix2D() 함수를 사용한다.
 mtrx = cv2.getRotationMatrix2D(center, angle, scale)
 ```
 `center` : 회전축 중심 좌표 (x, y)
+
 `angle` : 회전할 각도, 60진법
+
 `scale` : 확대 및 축소비율
 
 </div>
@@ -211,7 +238,9 @@ martix = cv2.getAffineTransform(pts1, pts2)
 ```
 
 `pts1` : 변환 전 영상의 좌표 3개, 3 x 2 배열
+
 `pts2` : 변환 후 영상의 좌표 3개, 3 x 2 배열
+
 `matrix` : 변환 행렬 반환, 2 x 3 행렬
 
 ```python3
@@ -251,6 +280,7 @@ cv2.destroyAllWindows()
 <img width="959" height="426" alt="image" src="https://github.com/user-attachments/assets/b920ac99-035f-4a46-a927-ac27609389d3" />
 
 
+
 ## 2-2. **원근 변환(Perspective Transform)**
 
 **원근 변환이란?**
@@ -264,7 +294,9 @@ mtrx = cv2.getPerspectiveTransform(pts1, pts2)
 ```
 
 `pts1` : 변환 이전 영상의 좌표 4개, 4 x 2 배열
+
 `pts2` : 변환 이후 영상의 좌표 4개, 4 x 2 배열
+
 `mtrx` : 변환행렬 반환, 3 x 3 행렬
 
 ```python3
@@ -300,6 +332,7 @@ cv2.destroyAllWindows()
 ```
 
 <img width="770" height="428" alt="image" src="https://github.com/user-attachments/assets/56e5960b-8604-414c-80fc-f8eb2a27c7cd" />
+
 
 
 ## 2-3. **마우스와 원근 변환을 사용해 문서 스캔 효과 만들기**
@@ -503,6 +536,8 @@ for i in range(1, int(max_img)+1):
 
 <img width="772" height="527" alt="image" src="https://github.com/user-attachments/assets/81a166c0-3044-429a-a8f4-94d0fa48ea83" />
 
+
+
 cv2.filter2D() 함수를 사용한다.
 
 ```
@@ -510,12 +545,20 @@ dst = cv2.filter2D(src, ddepth, kernel, dst, anchor, delta, borderType)
 ```
 
 `src` : 입력 영상, Numpy 배열
+
 `ddepth` : 출력 영상의 dtype (-1: 입력 영상과 동일)
+
 `kernel` : 컨볼루션 커널, float32의 n x n 크기 배열
+
 `dst(optional)` : 결과 영상
+
 `anchor(optional)` : 커널의 기준점, default: 중심점 (-1, -1)
+
 `delta(optional)` : 필터가 적용된 결과에 추가할 값
+
 `borderType(optional)` : 외곽 픽셀 보정 방법 지정
+
+
 
 ## **4-2. 평균 블러링 (Average Blurring)**
 
@@ -526,14 +569,20 @@ cv2.blur()와 cv2.boxFilter() 함수를 사용한다.
 dst = cv2.blur(src, ksize, dst, anchor, borderType)
 ```
 `src` : 입력 영상, numpy 배열
+
 `ksize` : 커널의 크기
+
 `나머지 파라미터는 cv2.filter2D()와 동일`
+
+
 
 ```
 dst = cv2.boxFilter(src, ddepth, ksize, dst, anchor, normalize, borderType)
 ```
 `ddepth` : 출력 영상의 dtype (-1: 입력 영상과 동일)
+
 `normalize(optional)` : 커널 크기로 정규화(1/ksize²) 지정 여부 (Boolean), default=True
+
 `나머지 파라미터는 cv2.filter2D()와 동일`
 
  ```python3
@@ -571,4 +620,150 @@ cv2.imshow('blur', merged)
 
 cv2.waitKey()
 cv2.destroyAllWindows()
- ```
+```
+
+<img width="1280" height="516" alt="image" src="https://github.com/user-attachments/assets/c32d668d-25d6-43b4-ae72-a1ae09690d27" />
+
+<img width="1280" height="505" alt="image" src="https://github.com/user-attachments/assets/744cacc8-c5dc-41df-ab86-eb9bb60f178a" />
+
+
+
+## **4-3. 가우시안 블러링(Gaussian Blurring)**
+
+가우시안 분포를 갖는 커널로 블러링 하는 작업
+
+<img width="500" height="213" alt="image" src="https://github.com/user-attachments/assets/15495532-6d31-45ed-82f8-06b04dbfe742" />
+
+
+
+cv2.GaussianBlur() 함수와 cv2.getGaussianKernel() 함수를 사용한다.
+```
+cv2.GaussianBlur(src, ksize, sigmaX, sigmaY, borderType)\
+```
+`src` : 입력 영상
+
+`ksize` : 커널 크기 (주로 홀수)
+
+`sigmaX` : X 방향 표준편차 (0: auto)
+
+`sigmaY(optional)` : Y 방향 표준편차 (default: sigmaX)
+
+`borderType(optional)` : 외곽 테두리 보정 방식
+
+
+
+```
+ret = cv2.getGaussianKernel(ksize, sigma, ktype)
+```
+`ret` : 가우시안 커널 (1차원이므로 ret * ret.T 형태로 사용해야 함)
+
+```python3
+# 가우시안 블러링
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/gaussian_noise.jpg')
+
+# @가우시안 커널을 직접 생성해서 블러링
+k1 = np.array([[1, 2, 1],
+                   [2, 4, 2],
+                   [1, 2, 1]]) *(1/16)
+blur1 = cv2.filter2D(img, -1, k1)
+
+# @가우시안 커널을 API로 얻어서 블러링
+k2 = cv2.getGaussianKernel(3, 0)
+blur2 = cv2.filter2D(img, -1, k2*k2.T)
+
+# @가우시안 블러 API로 블러링 ---③
+blur3 = cv2.GaussianBlur(img, (3, 3), 0)
+
+# @이미지 출력
+print('k1:', k1)
+print('k2:', k2*k2.T)
+
+merged = np.hstack((img, blur1, blur2, blur3))
+cv2.imshow('gaussian blur', merged)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="1280" height="349" alt="image" src="https://github.com/user-attachments/assets/5a312d48-b433-4fee-8bda-cbb52a5003fb" />
+
+
+
+## **4-4. 미디언 블러링(Median Blurring)**
+
+커널의 픽셀 값 중 중앙값을 선택하는 것
+
+cv2.medianBlur() 함수를 사용한다.
+```
+dst = cv2.medianBlur(src, ksize)
+```
+`src` : 입력 영상
+
+`ksize` : 커널 크기
+
+```python3
+# 미디언 블러링
+
+import cv2
+import numpy as np
+
+img = cv2.imread("../img/salt_pepper_noise.jpg")
+
+# @미디언 블러 적용
+blur = cv2.medianBlur(img, 5)
+
+# @이미지 출력 
+merged = np.hstack((img,blur))
+cv2.imshow('media', merged)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="649" height="450" alt="image" src="https://github.com/user-attachments/assets/ea316fec-1b45-46b3-99aa-e9f328101bd6" />
+
+
+
+## **4-5. 바이레터럴 필터 (Bilateral Filter)**
+
+가우시안 필터와 경계 필터를 결합하여 노이즈는 줄이고 경계는 선명하게 만들지만 속도가 다소 느린 단점이 있다.
+
+cv2.bilateralFilter() 함수를 사용한다.
+```
+dst = cv2.bilateralFilter(src, d, sigmaColor, sigmaSpace, dst, borderType)
+```
+`src` : 입력 영상
+
+`d` : 필터의 직경(diameter), 5보다 크면 매우 느림
+
+`sigmaColor` : 색공간의 시그마 값
+
+`sigmaSpace` : 좌표 공간의 시그마 값
+
+```python3
+# 바이레터럴 필터
+
+import cv2
+import numpy as np
+
+img = cv2.imread("../img/gaussian_noise.jpg")
+
+# @가우시안 필터 적용
+blur1 = cv2.GaussianBlur(img, (5,5), 0)
+
+# @바이레터럴 필터 적용
+blur2 = cv2.bilateralFilter(img, 5, 75, 75)
+
+# @이미지 출력
+merged = np.hstack((img, blur1, blur2))
+cv2.imshow('bilateral', merged)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="1148" height="425" alt="image" src="https://github.com/user-attachments/assets/90011719-8fd9-47ac-841c-8fe3b5ccabaa" />
+
+</div>
+</details>
