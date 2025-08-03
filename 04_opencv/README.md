@@ -406,7 +406,7 @@ cv2.destroyAllWindows()
 </div>
 </details>
 
-## 3. 개인 프로젝트
+## 3. 개인 프로젝트 (자동차 번호판 추출)
 <details>
 <summary></summary>
 <div markdown="1">
@@ -525,7 +525,7 @@ for i in range(1, int(max_img)+1):
 </div>
 </details>
 
-## 4. 영상 필터와 컨볼루션
+## 4. 영상 필터와 블러링링
 <details>
 <summary></summary>
 <div markdown="1">
@@ -767,3 +767,249 @@ cv2.destroyAllWindows()
 
 </div>
 </details>
+
+## 5. 경계 검출
+<details>
+<summary></summary>
+<div markdown="1">
+
+## 5-1. **캐니 엣지 (Canny Edge)**
+
+**다음의 4단계 알고리즘에 따라 경계를 검출한다.**
+
+1. 노이즈 제거: 5 x 5 가우시안 블러링 필터로 노이즈 제거
+   
+2. 경계 그레디언트 방향 계산: 소벨 필터로 경계 및 그레디언트 방향 검출
+   
+3. 비최대치 억제(Non-Maximum Suppression): 그레디언트 방향에서 검출된 경계 중 가장 큰 값만 선택하고 나머지는 제거
+   
+4. 이력 스레시홀딩: 두 개의 경계 값(Max, Min)을 지정해서 경계 영역에 있는 픽셀들 중 큰 경계 값(Max) 밖의 픽셀과 연결성이 없는 픽셀 제거
+
+cv2.Canny() 함수를 사용한다.
+```
+edges = cv2.Canny(img, threshold1, threshold2, edges, apertureSize, L2gardient)
+```
+`img` : 입력 영상
+
+`threshold1, threshold2` : 이력 스레시홀딩에 사용할 Min, Max 값
+
+`apertureSize` : 소벨 마스크에 사용할 커널 크기
+
+`L2gradient` : 그레디언트 강도를 구할 방식 (True: 제곱 합의 루트 False: 절댓값의 합)
+
+`edges` : 엣지 결과 값을 갖는 2차원 배열
+
+```python3
+# 캐니 엣지
+
+import cv2, time
+import numpy as np
+
+img = cv2.imread("../img/sudoku.jpg")
+
+# @케니 엣지 적용 
+edges = cv2.Canny(img,100,200)
+
+# @이미지 출력
+cv2.imshow('Original', img)
+cv2.imshow('Canny', edges)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="676" height="484" alt="image" src="https://github.com/user-attachments/assets/c66e0b67-274c-47ee-8caa-eab9c9075ae4" />
+
+
+
+## **5-2. 모폴로지 (Morphology)**
+
+**모폴로지란?**
+
+'형태학'이라는 뜻으로, 노이즈 제거 / 구멍 채우기 / 끊어진 선 이어 붙이기 등에 쓰이는 형태학적 연산을 말한다.
+
+바이너리 이미지(흑백으로만 이루어진 이미지)에만 적용 할 수 있다.
+
+## **5-3. 침식 연산 (Erosion)**
+
+**이미지를 깍아내는 연산**
+
+0과 1로 이루어진 구조화 요소 커널을 사용한다.
+
+<img width="720" height="300" alt="image" src="https://github.com/user-attachments/assets/ecd874e0-1669-4a37-b8fc-d26a11c4a697" />
+
+
+
+구조화 생성을 위해 cv2.getStructuringElement() 함수를 사용한다.
+```
+cv2.getStructuringElement(shape, ksize, anchor)
+```
+`shape` : 구조화 요소 커널 모양 (cv2.MORPH_RECT: 사각형, cv2.MORPH_EPLIPSE: 타원형, cv2.MORPH_CROSS: 십자형)
+
+`ksize` : 커널 크기
+
+`anchor(optional)` : 구조화 요소의 기준점, cv2.MORPH_CROSS에만 의미 있으며 기본 값은 중심점 (-1, -1)
+
+위의 구조화 요소 커널로 침식 연산을 수행할 때에는 cv2.erode() 함수를 사용한다.
+```
+dst = cv2.erode(src, kernel, anchor, iterations, borderType, borderValue)
+```
+`src` : 입력 영상, 바이너리
+
+`kernel` : 구조화 요소 커널
+
+`anchor(optional)` : cv2.getStructuringElement()와 동일
+
+`iterations(optional)` : 침식 연산 적용 반복 횟수
+
+`boderType(optional)` : 외곽 영역 보정 방법 
+
+`boderValue(optional)` : 외곽 영역 보정 값
+
+```python3
+# 침식 연산
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/morph_dot.png')
+
+# @구조화 요소 커널, 사각형 (3x3) 생성
+k = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+
+# @침식 연산 적용
+erosion = cv2.erode(img, k)
+
+# @이미지 출력
+merged = np.hstack((img, erosion))
+cv2.imshow('Erode', merged)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="337" height="273" alt="image" src="https://github.com/user-attachments/assets/fb879369-db5d-4d91-842e-1d51c1e2e43b" />
+
+
+
+## **5-4. 팽창 연산 (Dilatation)**
+
+**물체 주변을 확장하는 연산**
+
+<img width="720" height="350" alt="image" src="https://github.com/user-attachments/assets/d3595fa2-1f34-4942-b446-d8f7f9f9fbec" />
+
+
+
+cv2.dilate() 함수를 사용한다.
+```
+dst = cv2.dilate(src, kernel, dst, anchor, iterations, bordeType, borderValue)
+```
+`모든 파라미터는 cv2.erode()와 동일합니다.`
+
+```python3
+# 팽창 연산
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/morph_hole.png')
+
+# @구조화 요소 커널, 사각형 (3x3) 생성
+k = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+
+# @팽창 연산 적용 
+dst = cv2.dilate(img, k)
+
+# @이미지 출력
+merged = np.hstack((img, dst))
+cv2.imshow('Dilation', merged)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="334" height="264" alt="image" src="https://github.com/user-attachments/assets/82964102-b4eb-42cd-8046-150f7b1ef790" />
+
+
+
+## **5-5. 열림(Opening)/닫힘(Closing) 연산과 그레디언트 연산 (Gradient)
+
+**열림 연산 : 침식 연산 후 팽창 연산을 적용 = 주변보다 밝은 노이즈를 제거, 맞닿은 독립개체를 분리하거나 돌출된 모양을 제거하는데 효과적.**
+
+**닫힘 연산 : 팽창 연산 후 침식 연산을 적용 = 주변보다 어두운 노이즈를 제거, 끊어진 걔체를 연결하거나 구멍을 메우는데 효과적**
+
+**그레디언트 연산 : 팽창 연산 적용 이미지 - 침식 연산 적용 이미지  = 경계 픽셀만 검출, 경계 검출과 비슷한 결과물을 얻을 수 있다.**
+
+cv2.morphologyEx() 함수를 사용한다.
+```
+dst = cv2.morphologyEx(src, op, kernel, dst, anchor, iteration, borderType, borderValue)
+```
+`src` : 입력 영상
+
+`op` : 모폴로지 연산 종류 (cv2.MORPH_OPEN: 열림 연산, cv2.MORPH_COLSE: 닫힘 연산, cv2.MORPH_GRADIENT: 그레디언트 연산, cv2.MORPH_TOPHAT: 탑햇 연산, cv2.MORPH_BLACKHAT: 블랙햇 연산)
+
+`kernel` : 구조화 요소 커널
+
+`dst(optional)` : 결과 영상
+
+`anchor(optional)` : 커널의 기준점
+
+`iteration(optional)` : 연산 반복 횟수
+
+`borderType(optional)` : 외곽 영역 보정 방법
+
+`borderValue(optional)` : 외곽 영역 보정 값
+
+```python3
+# 열림과 닫힘 연산으로 노이즈 제거
+
+import cv2
+import numpy as np
+
+img1 = cv2.imread('../img/morph_dot.png', cv2.IMREAD_GRAYSCALE)
+img2 = cv2.imread('../img/morph_hole.png', cv2.IMREAD_GRAYSCALE)    
+
+# @구조화 요소 커널, 사각형 (5x5) 생성
+k = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+# @열림 연산 적용
+opening = cv2.morphologyEx(img1, cv2.MORPH_OPEN, k)
+# @닫힘 연산 적용
+closing = cv2.morphologyEx(img2, cv2.MORPH_CLOSE, k)
+
+# @이미지 출력
+merged1 = np.hstack((img1, opening))
+merged2 = np.hstack((img2, closing))
+merged3 = np.vstack((merged1, merged2))
+cv2.imshow('opening, closing', merged3)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="330" height="490" alt="image" src="https://github.com/user-attachments/assets/d2311f66-c3ba-4abf-856c-fbbf1d1ff030" />
+
+
+
+```python3
+# 모폴로지 그레이언트
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/morphological.png')
+
+# @구조화 요소 커널, 사각형 (3x3) 생성
+k = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+# @열림 연산 적용
+gradient = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, k)
+
+# @이미지 출력
+merged = np.hstack((img, gradient))
+cv2.imshow('gradient', merged)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+
+<img width="330" height="263" alt="image" src="https://github.com/user-attachments/assets/02fb0eee-b9f4-4a97-9b60-4ce7c12152a3" />
+
+</div>
+</details>
+
+
+
