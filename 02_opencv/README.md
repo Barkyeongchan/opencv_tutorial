@@ -5,22 +5,26 @@
    - RGB와 BGR/BGRA
    - 회색조 이미지로 변환(Gray Scale)
    - HSV(Hue 색조, Saturation 채도, Value 명도) 방식
-3. 관심 영역 (ROI)
+     
+2. 관심 영역 (ROI)
    - 관심 영역 표시
    - 관심 영역 복제 및 새 창에 띄우기
    - 마우스 이벤트로 관심 영역 지정, 표시, 저장
-5. 스레시홀딩 (Thresholding)
+     
+3. 스레시홀딩 (Thresholding)
    - 전역 스레시홀딩
    - 스레시홀딩 플래그 (Flag)
    - 오츠의 이진화 알고리즘 (Otsu's binarization method)
    - 적응형 스레시홀딩 (Adaptive)
-7. 히스토그램(Histogram)
+     
+4. 히스토그램(Histogram)
    - 그레이스케일 이미지 히스토그램 (1채널)
    - 컬러 이미지를 RGB로 계산한 히스토그램 (3채널)
    - 정규화 (Normalization)
    - 평탄화 (equalization)
    - CLAHE (Contrast Limited Adaptive Histogram Equalization)
-9. 개인 프로젝트
+     
+5. 개인 프로젝트
 
 ## 1. 색상 표현 방식
   
