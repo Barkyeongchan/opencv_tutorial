@@ -492,3 +492,83 @@ for i in range(1, int(max_img)+1):
 </div>
 </details>
 
+## 4. 영상 필터와 컨볼루션
+<details>
+<summary></summary>
+<div markdown="1">
+
+## **4-1. 컨볼루션 연산 (Convolution Operation)**
+
+입력 신호(또는 이미지)에 **커널(또는 필터)**을 슬라이딩하면서 곱하고 더해서 출력하는 연산
+
+<img width="772" height="527" alt="image" src="https://github.com/user-attachments/assets/81a166c0-3044-429a-a8f4-94d0fa48ea83" />
+
+cv2.filter2D() 함수를 사용한다.
+
+```
+dst = cv2.filter2D(src, ddepth, kernel, dst, anchor, delta, borderType)
+```
+
+`src` : 입력 영상, Numpy 배열
+`ddepth` : 출력 영상의 dtype (-1: 입력 영상과 동일)
+`kernel` : 컨볼루션 커널, float32의 n x n 크기 배열
+`dst(optional)` : 결과 영상
+`anchor(optional)` : 커널의 기준점, default: 중심점 (-1, -1)
+`delta(optional)` : 필터가 적용된 결과에 추가할 값
+`borderType(optional)` : 외곽 픽셀 보정 방법 지정
+
+## **4-2. 평균 블러링 (Average Blurring)**
+
+주변 픽셀 값의 평균을 적용하여 영상을 흐릿하게 하는 작업
+
+cv2.blur()와 cv2.boxFilter() 함수를 사용한다.
+```
+dst = cv2.blur(src, ksize, dst, anchor, borderType)
+```
+`src` : 입력 영상, numpy 배열
+`ksize` : 커널의 크기
+`나머지 파라미터는 cv2.filter2D()와 동일`
+
+```
+dst = cv2.boxFilter(src, ddepth, ksize, dst, anchor, normalize, borderType)
+```
+`ddepth` : 출력 영상의 dtype (-1: 입력 영상과 동일)
+`normalize(optional)` : 커널 크기로 정규화(1/ksize²) 지정 여부 (Boolean), default=True
+`나머지 파라미터는 cv2.filter2D()와 동일`
+
+ ```python3
+# 평균 필터를 생성하여 블러 적용
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/paper.jpg')
+'''
+# @5x5 평균 필터 커널 생성
+kernel = np.array([[0.04, 0.04, 0.04, 0.04, 0.04],
+                   [0.04, 0.04, 0.04, 0.04, 0.04],
+                   [0.04, 0.04, 0.04, 0.04, 0.04],
+                   [0.04, 0.04, 0.04, 0.04, 0.04],
+                   [0.04, 0.04, 0.04, 0.04, 0.04]])
+'''
+# @5X5 평균 필터 커널 생성
+kernel = np.ones((5,5))/5**2
+
+# @필터 적용
+blured = cv2.filter2D(img, -1, kernel)
+
+# @이미지 출력
+cv2.imshow('origin', img)
+cv2.imshow('avrg blur', blured)
+
+# @blur() 함수로 블러링
+blur1 = cv2.blur(img, (10,10))
+# @boxFilter() 함수로 블러링 적용
+blur2 = cv2.boxFilter(img, -1, (10,10))
+
+merged = np.hstack( (img, blur1, blur2))
+cv2.imshow('blur', merged)
+
+cv2.waitKey()
+cv2.destroyAllWindows()
+ ```
