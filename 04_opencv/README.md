@@ -190,6 +190,9 @@ mtrx = cv2.getRotationMatrix2D(center, angle, scale)
 `angle` : 회전할 각도, 60진법
 `scale` : 확대 및 축소비율
 
+</div>
+</details>
+
 ## 2. 이미지 뒤틀기
 
 1. **어핀 변환(Affine Transform)**
