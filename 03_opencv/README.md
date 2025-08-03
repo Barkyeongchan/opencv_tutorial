@@ -1,6 +1,14 @@
 # 컨투어 (Contour)
 
-## 1. 컨투어
+##목차
+1. 컨투어 (Contour)
+   - 컨투어란?
+   - 컨투어 찾기와 그리기
+   - 트리 계층의 컨투어 그리기
+   - 컨투어 단순화
+   - 컨투어 볼록 선체 (Convex hull)
+
+## 1. 컨투어(Contour)
 <details>
 <summary></summary>
 <div markdown="1">
