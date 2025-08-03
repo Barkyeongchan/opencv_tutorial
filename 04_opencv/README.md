@@ -2,10 +2,31 @@
 
 ## 목차
 1. 이미지 제어
+   - 이미지 이동(Translation)
+   - 이미지 확대/축소(Scaling)
+   - 이미지 회전(Rotation)
+     
 2. 이미지 뒤틀기
+   - 어핀 변환(Affine Transform)
+   - 원근 변환(Perspective Transform)
+   - 마우스와 원근 변환을 사용해 문서 스캔 효과 만들기
+
 3. 개인 프로젝트 (자동차 번호판 추출)
+   
 4. 영상 필터와 블러링
+   - 컨볼루션 연산 (Convolution Operation)
+   - 평균 블러링 (Average Blurring)
+   - 가우시안 블러링(Gaussian Blurring)
+   - 미디언 블러링(Median Blurring)
+   -  바이레터럴 필터 (Bilateral Filter)
+
 5. 경계 검출과 모폴로지
+   - 캐니 엣지 (Canny Edge)
+   - 모폴로지 (Morphology)
+   - 침식 연산 (Erosion)
+   - 팽창 연산 (Dilatation)
+   - 열림(Opening)/닫힘(Closing) 연산과 그레디언트 연산 (Gradient)
+  
 6. 개인 프로젝트 (번호판 경계 검출)
 
 ## 1. 이미지 제어
