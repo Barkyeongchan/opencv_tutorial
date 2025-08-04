@@ -35,6 +35,9 @@
    - Tracking API란?
 
 8. 개인 프로젝트 (책 표지 검색 시스템)
+   - 예제 방법
+   - ORB 검출기와 FLANN 매칭기를 활용한 방법
+   - ROI 방식과 FLANN 매칭기를 활용한 방식
       
 ## 1. 이미지 매칭 (Image Matching)
 <details>
@@ -1604,7 +1607,7 @@ cv2.destroyAllWindows()
 <semmary></semmary>
 <div markdown="1">
 
-## **[1. 예제 방법]**
+## **8-1. 예제 방법**
 
 ```python3
 import cv2 , glob, numpy as np
@@ -1761,7 +1764,7 @@ print(f"검색 시간: {search_time:.2f}초")
 
 <br><br>
 
-## **[2. ORB 검출기와 FLANN 매칭기를 활용한 방법]**
+## **8-2. ORB 검출기와 FLANN 매칭기를 활용한 방법**
 
 ```python3
 import cv2, glob, numpy as np
@@ -1896,7 +1899,7 @@ cv2.destroyAllWindows()
 
 <br><br>
 
-## **[3. ROI 방식과 FLANN 매칭기를 활용한 방식]**
+## **8-3. ROI 방식과 FLANN 매칭기를 활용한 방식**
 
 ```python3
 import cv2
