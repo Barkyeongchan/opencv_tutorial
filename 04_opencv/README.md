@@ -47,6 +47,8 @@ y_new = y_old + d₂
 
 <img width="354" height="105" alt="image" src="https://github.com/user-attachments/assets/86735ca7-f85c-4534-aa56-3f0ea7407b40" />
 
+<br><br>
+
 cv2.warpAffine 함수를 사용한다.
 
 ```
@@ -67,6 +69,7 @@ dst = cv2.warpAffine(src, matrix, dsize, dst, flags, borderMode, borderValue)
 
 `dst` : 결과 이미지
 
+<br><br>
 
 _flags 값_
 
@@ -89,6 +92,8 @@ _borderMode 값_
 `cv2.BORDER_WRAP` 반복
 
 `cv2.BORDER_REFLECT` 반사
+
+<br><br>
 
 ```python3
 # 평행 이동
@@ -128,7 +133,7 @@ cv2.destroyAllWindows()
 
 <img width="1073" height="1027" alt="image" src="https://github.com/user-attachments/assets/06e0185c-a725-4bc3-9f5e-2dfcb663055e" />
 
-
+<br><br>
 
 ## 1-2. **이미지 확대/축소(Scaling)**
 
@@ -143,7 +148,7 @@ y_new = a₂ * y_old
 
 <img width="321" height="95" alt="image" src="https://github.com/user-attachments/assets/b3afdf9d-d392-4e4e-8f8b-5ca55578822f" />
 
-
+<br><br>
 
 cv2.resize() 함수를 사용한다.
 
@@ -160,6 +165,8 @@ cv2.resize(src, dsize, dst, fx, fy, interpolation)\
 `interpolation` : 보간법 알고리즘 선택 플래그 (cv2.warpAffine()과 동일)
 
 `dst` : 결과 이미지
+
+<br><br>
 
 > _보간법 (Interpolation)_
 > 알려진 몇 개의 데이터 점을 바탕으로, 그 사이 존재하는 값을 추정하는 방법
@@ -213,7 +220,7 @@ cv2.destroyAllWindows()
 
 <img width="766" height="815" alt="image" src="https://github.com/user-attachments/assets/4a6f2459-82e3-41ec-bd70-8c554da0ef03" />
 
-
+<br><br>
 
 ## 1-3. **이미지 회전(Rotation)**
 
@@ -221,7 +228,7 @@ cv2.destroyAllWindows()
 
 <img width="966" height="638" alt="image" src="https://github.com/user-attachments/assets/82fd1e5b-35de-4ac7-956c-77c271e679e4" />
 
-
+<br><br>
 
 > _호도법_
 > 원의 반지름과 호의 길이의 비율을 이용해 각도를 나타내는 방법
@@ -264,6 +271,8 @@ martix = cv2.getAffineTransform(pts1, pts2)
 
 `matrix` : 변환 행렬 반환, 2 x 3 행렬
 
+<br><br>
+
 ```python3
 # 어핀(Affine) 변환
 
@@ -300,7 +309,7 @@ cv2.destroyAllWindows()
 
 <img width="959" height="426" alt="image" src="https://github.com/user-attachments/assets/b920ac99-035f-4a46-a927-ac27609389d3" />
 
-
+<br><br>
 
 ## 2-2. **원근 변환(Perspective Transform)**
 
@@ -319,6 +328,8 @@ mtrx = cv2.getPerspectiveTransform(pts1, pts2)
 `pts2` : 변환 이후 영상의 좌표 4개, 4 x 2 배열
 
 `mtrx` : 변환행렬 반환, 3 x 3 행렬
+
+<br><br>
 
 ```python3
 # 원근(Perspective) 변환
@@ -354,7 +365,7 @@ cv2.destroyAllWindows()
 
 <img width="770" height="428" alt="image" src="https://github.com/user-attachments/assets/56e5960b-8604-414c-80fc-f8eb2a27c7cd" />
 
-
+<br><br>
 
 ## 2-3. **마우스와 원근 변환을 사용해 문서 스캔 효과 만들기**
 
@@ -422,7 +433,6 @@ cv2.destroyAllWindows()
 ```
 
 <img width="1280" height="920" alt="image" src="https://github.com/user-attachments/assets/8fa77abd-32ae-4ef4-9675-d0e6d2c5e6c2" />
-
 
 </div>
 </details>
@@ -557,7 +567,7 @@ for i in range(1, int(max_img)+1):
 
 <img width="772" height="527" alt="image" src="https://github.com/user-attachments/assets/81a166c0-3044-429a-a8f4-94d0fa48ea83" />
 
-
+<br><br>
 
 cv2.filter2D() 함수를 사용한다.
 
@@ -579,13 +589,14 @@ dst = cv2.filter2D(src, ddepth, kernel, dst, anchor, delta, borderType)
 
 `borderType(optional)` : 외곽 픽셀 보정 방법 지정
 
-
+<br><br>
 
 ## **4-2. 평균 블러링 (Average Blurring)**
 
 주변 픽셀 값의 평균을 적용하여 영상을 흐릿하게 하는 작업
 
 cv2.blur()와 cv2.boxFilter() 함수를 사용한다.
+
 ```
 dst = cv2.blur(src, ksize, dst, anchor, borderType)
 ```
@@ -595,7 +606,7 @@ dst = cv2.blur(src, ksize, dst, anchor, borderType)
 
 `나머지 파라미터는 cv2.filter2D()와 동일`
 
-
+<br><br>
 
 ```
 dst = cv2.boxFilter(src, ddepth, ksize, dst, anchor, normalize, borderType)
@@ -605,6 +616,8 @@ dst = cv2.boxFilter(src, ddepth, ksize, dst, anchor, normalize, borderType)
 `normalize(optional)` : 커널 크기로 정규화(1/ksize²) 지정 여부 (Boolean), default=True
 
 `나머지 파라미터는 cv2.filter2D()와 동일`
+
+<br><br>
 
  ```python3
 # 평균 필터를 생성하여 블러 적용
@@ -647,7 +660,7 @@ cv2.destroyAllWindows()
 
 <img width="1280" height="505" alt="image" src="https://github.com/user-attachments/assets/744cacc8-c5dc-41df-ab86-eb9bb60f178a" />
 
-
+<br><br>
 
 ## **4-3. 가우시안 블러링(Gaussian Blurring)**
 
@@ -655,7 +668,7 @@ cv2.destroyAllWindows()
 
 <img width="500" height="213" alt="image" src="https://github.com/user-attachments/assets/15495532-6d31-45ed-82f8-06b04dbfe742" />
 
-
+<br><br>
 
 cv2.GaussianBlur() 함수와 cv2.getGaussianKernel() 함수를 사용한다.
 ```
@@ -671,12 +684,14 @@ cv2.GaussianBlur(src, ksize, sigmaX, sigmaY, borderType)\
 
 `borderType(optional)` : 외곽 테두리 보정 방식
 
-
+<br><br>
 
 ```
 ret = cv2.getGaussianKernel(ksize, sigma, ktype)
 ```
 `ret` : 가우시안 커널 (1차원이므로 ret * ret.T 형태로 사용해야 함)
+
+<br><br>
 
 ```python3
 # 가우시안 블러링
@@ -711,7 +726,7 @@ cv2.destroyAllWindows()
 
 <img width="1280" height="349" alt="image" src="https://github.com/user-attachments/assets/5a312d48-b433-4fee-8bda-cbb52a5003fb" />
 
-
+<br><br>
 
 ## **4-4. 미디언 블러링(Median Blurring)**
 
@@ -724,6 +739,8 @@ dst = cv2.medianBlur(src, ksize)
 `src` : 입력 영상
 
 `ksize` : 커널 크기
+
+<br><br>
 
 ```python3
 # 미디언 블러링
@@ -745,7 +762,7 @@ cv2.destroyAllWindows()
 
 <img width="649" height="450" alt="image" src="https://github.com/user-attachments/assets/ea316fec-1b45-46b3-99aa-e9f328101bd6" />
 
-
+<br><br>
 
 ## **4-5. 바이레터럴 필터 (Bilateral Filter)**
 
@@ -762,6 +779,8 @@ dst = cv2.bilateralFilter(src, d, sigmaColor, sigmaSpace, dst, borderType)
 `sigmaColor` : 색공간의 시그마 값
 
 `sigmaSpace` : 좌표 공간의 시그마 값
+
+<br><br>
 
 ```python3
 # 바이레터럴 필터
@@ -820,6 +839,8 @@ edges = cv2.Canny(img, threshold1, threshold2, edges, apertureSize, L2gardient)
 
 `edges` : 엣지 결과 값을 갖는 2차원 배열
 
+<br><br>
+
 ```python3
 # 캐니 엣지
 
@@ -840,7 +861,7 @@ cv2.destroyAllWindows()
 
 <img width="676" height="484" alt="image" src="https://github.com/user-attachments/assets/c66e0b67-274c-47ee-8caa-eab9c9075ae4" />
 
-
+<br><br>
 
 ## **5-2. 모폴로지 (Morphology)**
 
@@ -858,7 +879,7 @@ cv2.destroyAllWindows()
 
 <img width="720" height="300" alt="image" src="https://github.com/user-attachments/assets/ecd874e0-1669-4a37-b8fc-d26a11c4a697" />
 
-
+<br><br>
 
 구조화 생성을 위해 cv2.getStructuringElement() 함수를 사용한다.
 ```
@@ -869,6 +890,8 @@ cv2.getStructuringElement(shape, ksize, anchor)
 `ksize` : 커널 크기
 
 `anchor(optional)` : 구조화 요소의 기준점, cv2.MORPH_CROSS에만 의미 있으며 기본 값은 중심점 (-1, -1)
+
+<br><br>
 
 위의 구조화 요소 커널로 침식 연산을 수행할 때에는 cv2.erode() 함수를 사용한다.
 ```
@@ -885,6 +908,8 @@ dst = cv2.erode(src, kernel, anchor, iterations, borderType, borderValue)
 `boderType(optional)` : 외곽 영역 보정 방법 
 
 `boderValue(optional)` : 외곽 영역 보정 값
+
+<br><br>
 
 ```python3
 # 침식 연산
@@ -909,7 +934,7 @@ cv2.destroyAllWindows()
 
 <img width="337" height="273" alt="image" src="https://github.com/user-attachments/assets/fb879369-db5d-4d91-842e-1d51c1e2e43b" />
 
-
+<br><br>
 
 ## **5-4. 팽창 연산 (Dilatation)**
 
@@ -917,13 +942,15 @@ cv2.destroyAllWindows()
 
 <img width="720" height="350" alt="image" src="https://github.com/user-attachments/assets/d3595fa2-1f34-4942-b446-d8f7f9f9fbec" />
 
-
+<br><br>
 
 cv2.dilate() 함수를 사용한다.
 ```
 dst = cv2.dilate(src, kernel, dst, anchor, iterations, bordeType, borderValue)
 ```
 `모든 파라미터는 cv2.erode()와 동일합니다.`
+
+<br><br>
 
 ```python3
 # 팽창 연산
@@ -948,7 +975,7 @@ cv2.destroyAllWindows()
 
 <img width="334" height="264" alt="image" src="https://github.com/user-attachments/assets/82964102-b4eb-42cd-8046-150f7b1ef790" />
 
-
+<br><br>
 
 ## **5-5. 열림(Opening)/닫힘(Closing) 연산과 그레디언트 연산 (Gradient)
 
@@ -978,6 +1005,8 @@ dst = cv2.morphologyEx(src, op, kernel, dst, anchor, iteration, borderType, bord
 
 `borderValue(optional)` : 외곽 영역 보정 값
 
+<br><br>
+
 ```python3
 # 열림과 닫힘 연산으로 노이즈 제거
 
@@ -1005,7 +1034,7 @@ cv2.destroyAllWindows()
 
 <img width="330" height="490" alt="image" src="https://github.com/user-attachments/assets/d2311f66-c3ba-4abf-856c-fbbf1d1ff030" />
 
-
+<br><br>
 
 ```python3
 # 모폴로지 그레이언트
