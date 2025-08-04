@@ -31,7 +31,6 @@ def resize_image(img, max_width=400):
     return img
 
 def serch(img):
-
     # 쿼리 이미지(카메라로 촬영한 책) 전처리
     gray1 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     kp1, desc1 = detector.detectAndCompute(gray1, None)
