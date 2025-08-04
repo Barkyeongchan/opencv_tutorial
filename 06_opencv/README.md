@@ -1,13 +1,14 @@
-# 이미지 매칭 / 
+# 이미지 매칭 / 이미지 특징점과 검출기
 
 ## 목차
 1. 이미지 매칭
- - 이미지 매칭이란?
- - 평균 해시 매칭(Average Hash Matching)
- - 유클리드 거리 (Euclidian distance)와 해밍 거리(Hamming distance)
- - 템플릿 매칭 (Template Matching)
+   - 이미지 매칭이란?
+   - 평균 해시 매칭(Average Hash Matching)
+   - 유클리드 거리 (Euclidian distance)와 해밍 거리(Hamming distance)
+   - 템플릿 매칭 (Template Matching)
 
-2. 
+2. 이미지 특징점과 검출기
+   - 
 
 ## 1. 이미지 매칭 (Image Matching)
 <details>
@@ -272,3 +273,326 @@ cv2.destroyAllWindows()
 
 </div>
 </details>
+
+## 2. 이미지 특징점과 검출기
+
+<details>
+<sumarry></sumarry>
+<div markdown="1">
+
+## **2-1. 이미지 특징점이란?**
+
+말 그대로 **이미지에서 특징이 되는 부분**
+
+이미지끼리 매칭시 각 이미지에서 특징이 되는 부분을 비교한다. 즉, 이미지 특징점은 이미지를 매칭 할 때 사용됨
+
+키포인트(Keypoints)라고 하며, 주로 **물체의 모서리나 코너를 특징점으로 사용**한다.
+
+## **2-2. 해리스 코너 검출 (Harris Corner Detection)**
+
+소벨(Sobel) 미분을 사용해 경곗값을 검출하여 경곗값의 경사도 변화량을 측정하여
+
+**변화량이 수직, 수평, 대각선 방향으로 크게 변화하는 것을 코너로 판단하는 방법**
+
+즉, 꼭직점을 특징점으로 사용하여 물체의 특징을 구분한다.
+
+<img width="840" height="359" alt="image" src="https://github.com/user-attachments/assets/4e1262da-5853-47e6-9ef1-01961b1863c6" />
+
+
+
+cv2.cornerHarris() 함수를 사용한다.
+```
+dst = cv2.cornerHarris(src, blockSize, ksize, k, dst, borderType)
+```
+`src` : 입력 이미지, 그레이 스케일
+
+`blockSize` : 이웃 픽셀 범위
+
+`ksize` : 소벨 미분 필터 크기
+
+`k(optional)` : 코너 검출 상수 (보토 0.04~0.06)
+
+`dst(optional)` : 코너 검출 결과 (src와 같은 크기의 1 채널 배열, 변화량의 값, 지역 최대 값이 코너점을 의미)
+
+`borderType(optional)` : 외곽 영역 보정 형식
+
+```python3
+# 해리스 코너 검출
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/house.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# @해리스 코너 검출
+corner = cv2.cornerHarris(gray, 2, 3, 0.04)
+
+# @변화량 결과의 최대값 10% 이상의 좌표 구하기
+coord = np.where(corner > 0.1* corner.max())
+coord = np.stack((coord[1], coord[0]), axis=-1)
+
+# @코너 좌표에 동그리미 그리기
+for x, y in coord:
+    cv2.circle(img, (x,y), 5, (0,0,255), 1, cv2.LINE_AA)
+
+# @변화량을 영상으로 표현하기 위해서 0~255로 정규화
+corner_norm = cv2.normalize(corner, None, 0, 255, cv2.NORM_MINMAX, cv2.CV_8U)
+
+# @화면에 출력
+corner_norm = cv2.cvtColor(corner_norm, cv2.COLOR_GRAY2BGR)
+merged = np.hstack((corner_norm, img))
+
+cv2.imshow('Harris Corner', merged)
+cv2.waitKey()
+cv2.destroyAllWindows()
+```
+<img width="1062" height="350" alt="image" src="https://github.com/user-attachments/assets/2da5b165-b1df-4765-9fb4-fd5987f9488b" />
+
+
+
+## **2-3. 시-토마시 검출 (Shi & Tomasi Detection)**
+
+해리스 코너 검출을 개선한 알고리즘
+
+cv2.goodFeaturesToTrack() 함수를 사용한다.
+```
+corners = cv2.goodFeaturesToTrack(img, maxCorners, qualityLevel, minDistance, corners, mask, blockSize, useHarrisDetector, k)
+```
+`img` : 입력 이미지
+
+`maxCorners` : 얻고 싶은 코너의 개수, 강한 것 순으로
+
+`qualityLevel` : 코너로 판단할 스레시홀드 값
+
+`minDistance` : 코너 간 최소 거리
+
+`mask(optional)` : 검출에 제외할 마스크
+
+`blockSize(optional)=3` : 코너 주변 영역의 크기
+
+`useHarrisDetector(optional)=False` : 코너 검출 방법 선택 (True: 해리스 코너 검출 방법, False: 시와 토마시 코너 검출 방법)
+
+`k(optional)` : 해리스 코너 검출 방법에 사용할 k 계수
+
+`corners` : 코너 검출 좌표 결과, N x 1 x 2 크기의 배열, 실수 값이므로 정수로 변형 필요
+
+**useHarrisDetector 파라미터에 True를 전달하면 해리스 코너 검출**
+
+**디폴트 값인 False를 전달하면 시와 토마시 코너 검출**
+
+```python3
+# 시와 토마시 코너 검출
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/house.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# @시-토마스의 코너 검출 메서드
+corners = cv2.goodFeaturesToTrack(gray, 80, 0.01, 10)
+
+# @실수 좌표를 정수 좌표로 변환
+corners = np.int32(corners)
+
+# @좌표에 동그라미 표시
+for corner in corners:
+    x, y = corner[0]
+    cv2.circle(img, (x, y), 5, (0,0,255), 1, cv2.LINE_AA)
+
+cv2.imshow('Corners', img)
+cv2.waitKey()
+cv2.destroyAllWindows()
+```
+<img width="531" height="350" alt="image" src="https://github.com/user-attachments/assets/85040fea-5ab9-459c-8341-9ed3f3c0e246" />
+
+
+
+## **2-4. 특징점 검출기**
+
+특징점 검출기의 반환 결과는 특징점의 좌표뿐 아니라 **다양한 정보도 함께 출력**한다.
+
+detector.detect() 함수를 사용한다._(detector에 각 특징점 검출기 함수를 대입)_
+```
+keypoints = detector.detect(img, mask): 특징점 검출 함수
+```
+`img` : 입력 이미지
+
+`mask(optional)` : 검출 제외 마스크
+
+`keypoints` : 특징점 검출 결과 (KeyPoint의 리스트)
+
+```
+Keypoint: 특징점 정보를 담는 객체
+```
+`pt` : 특징점 좌표(x, y), float 타입으로 정수 변환 필요
+
+`size` : 의미 있는 특징점 이웃의 반지름
+
+`angle` : 특징점 방향 (시계방향, -1=의미 없음)
+
+`response` : 특징점 반응 강도 (추출기에 따라 다름)
+
+`octave` : 발견된 이미지 피라미드 계층
+
+`class_id` : 특징점이 속한 객체 ID
+
+특징점을 표시해주는 전용 함수 cv2.drawKeypoints()를 사용한다.
+```
+outImg = cv2.drawKeypoints(img, keypoints, outImg, color, flags)
+```
+`img` : 입력 이미지
+
+`keypoints` : 표시할 특징점 리스트
+
+`outImg` : 특징점이 그려진 결과 이미지
+
+`color(optional)` : 표시할 색상 (default: 랜덤)
+
+`flags(optional)' : 표시 방법
+
+(cv2.DRAW_MATCHES_FLAGS_DEFAULT: 좌표 중심에 동그라미만 그림(default)
+
+cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS : 동그라미의 크기를 size와 angle을 반영해서 그림)
+
+## **2-5. 검출기 예제**
+
+**[1. GFTTDetector]**
+```python3
+# GFTTDetector로 특징점 검출
+
+import cv2
+import numpy as np
+ 
+img = cv2.imread("../img/house.jpg")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Good feature to trac 검출기 생성
+gftt = cv2.GFTTDetector_create() 
+# 특징점 검출
+keypoints = gftt.detect(gray, None)
+# 특징점 그리기
+img_draw = cv2.drawKeypoints(img, keypoints, None)
+
+# 결과 출력
+cv2.imshow('GFTTDectector', img_draw)
+cv2.waitKey(0)
+cv2.destrolyAllWindows()
+```
+<img width="531" height="350" alt="image" src="https://github.com/user-attachments/assets/4f8587c4-220d-4e30-bafd-4edc91108bdf" />
+
+
+
+**[2. FAST(Feature from Accelerated Segment Test)]**
+
+미분 계산을 하지않고 픽셀 중심으로 원을 그려 코너로 판단함
+
+<img width="550" height="263" alt="image" src="https://github.com/user-attachments/assets/0a0959b3-0638-459a-ba53-01b1fc725e6b" />
+
+
+
+```python3
+# FAST로 특징점 검출
+
+import cv2
+import numpy as np
+
+img = cv2.imread('../img/house.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# FASt 특징 검출기 생성
+fast = cv2.FastFeatureDetector_create(50)
+
+# 특징점 검출
+keypoints = fast.detect(gray, None)
+
+# 특징점 그리기
+img = cv2.drawKeypoints(img, keypoints, None)
+
+# 결과 출력
+cv2.imshow('FAST', img)
+cv2.waitKey()
+cv2.destroyAllWindows()
+```
+<img width="531" height="350" alt="image" src="https://github.com/user-attachments/assets/f5256f33-a410-4144-b8bf-cdf811954f8d" />
+
+
+
+**[3. SimpleBlobDetector]**
+
+이진 스케일로 연결된 픽셀 그룹, 자잘한 객체는 노이즈로 한단하고 일정 크기 이상의 큰 객체만 찾는 검출기
+
+```python3
+# SimpleBolbDetector 검출기
+
+import cv2
+import numpy as np
+ 
+img = cv2.imread("../img/house.jpg")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# SimpleBlobDetector 생성
+detector = cv2.SimpleBlobDetector_create()
+
+# 키 포인트 검출
+keypoints = detector.detect(gray)
+
+# 키 포인트를 빨간색으로 표시
+img = cv2.drawKeypoints(img, keypoints, None, (0,0,255),\
+                flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+ 
+cv2.imshow("Blob", img)
+cv2.waitKey(0)
+```
+<img width="531" height="350" alt="image" src="https://github.com/user-attachments/assets/4e910264-2a0e-4930-b2ea-e0f464e957c1" />
+
+
+
+**[4. SimpleBlobDetector에 필터 옵션 추가]**
+```python3
+# 필터 옵션으로 생성한 SimpleBlobDetector 검출기
+
+import cv2
+import numpy as np
+ 
+img = cv2.imread("../img/house.jpg")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# blob 검출 필터 파라미터 생성
+params = cv2.SimpleBlobDetector_Params()
+
+# 경계값 조정
+params.minThreshold = 10
+params.maxThreshold = 240
+params.thresholdStep = 5
+
+# 면적 필터 켜고 최소 값 지정
+params.filterByArea = True
+params.minArea = 200
+  
+# 컬러, 볼록 비율, 원형비율 필터 옵션 끄기
+params.filterByColor = False
+params.filterByConvexity = False
+params.filterByInertia = False
+params.filterByCircularity = False 
+
+# 필터 파라미터로 blob 검출기 생성
+detector = cv2.SimpleBlobDetector_create(params)
+
+# 키 포인트 검출
+keypoints = detector.detect(gray)
+
+# 키 포인트 그리기
+img_draw = cv2.drawKeypoints(img, keypoints, None, None,\
+                     cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+cv2.imshow("Blob with Params", img_draw)
+cv2.waitKey(0)
+```
+<img width="531" height="350" alt="image" src="https://github.com/user-attachments/assets/1272d5b1-089a-4b51-9f45-b8d140081da6" />
+
+</div>
+</details>
+
+## 3. 
