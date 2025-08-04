@@ -36,6 +36,7 @@ contours, hierarchy = cv2.findContours(src, mode, method, contours, hierarchy, o
 
 `offset(optional)` : ROI 등으로 인해 이동한 컨투어 좌표의 오프셋
 
+<br><br>
 
 컨투어를 그리기 위해서는 cv2.drawContours() 함수를 사용한다.
 ```
@@ -50,6 +51,8 @@ cv2.drawContours(img, contours, contourIdx, color, thickness)
 `color` : 색상 값
 
 `thickness` : 선 두께, 0: 채우기
+
+<br><br>
 
 ## **1-2. 컨투어 찾기와 그리기**
 
@@ -185,6 +188,7 @@ approx = cv2.approxPolyDP(contour, epsilon, closed)
 
 `approx` : 근사 계산한 컨투어 좌표
 
+<br><br>
 
 ```python3
 # 근사 컨투어
@@ -240,7 +244,7 @@ hull = cv2.convexHull(points, hull, clockwise, returnPoints)
 
 `returnPoints(optional)` : 결과 좌표 형식 선택 (True: 볼록 선체 좌표 변환, False: 입력 컨투어 중에 볼록 선체에 해당하는 인덱스 반환)
 
-
+<br><br>
 
 cv2.isContourConvex() : 볼록 선체 만족 여부 확인 함수
 ```
@@ -248,7 +252,7 @@ retval = cv2.isContourConvex(contour)
 ```
 `retval` : True인 경우 볼록 선체임
 
-
+<br><br>
 
 cv2.convexityDefects() : 볼록 선체 결함 찾는 함수
 ```
@@ -267,6 +271,8 @@ defects = cv2.convexityDefects(contour, convexhull)
 `farthest` : 볼록 선체에서 가장 먼 오목한 지점의 컨투어 인덱스
 
 `distance` : farthest와 볼록 선체와의 거리
+
+<br><br>
 
 ```python3
 # 볼록 선체
