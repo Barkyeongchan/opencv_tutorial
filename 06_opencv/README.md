@@ -63,3 +63,18 @@ cv2.namedWindow('pistol', cv2.WINDOW_GUI_NORMAL)
 cv2.imshow('pistol', img)
 cv2.waitKey(0)
 ```
+<img width="410" height="266" alt="image" src="https://github.com/user-attachments/assets/072499eb-fed2-427c-b5b2-e194448c7312" />
+
+<img width="770" height="415" alt="image" src="https://github.com/user-attachments/assets/e895f9ef-c752-47bb-adfc-d445c43d52fd" />
+
+
+
+## **1-3. 유클리드 거리 (Euclidian distance)와 해밍 거리(Hamming distance)
+
+**두 이미지가 얼마나 비슷한지를 측정하는 방법 중 가장 대표적인 두 가지는 다음과 같다.**
+
+## [유클리드 거리]
+
+**두 값의 차이로 거리를 계산한다.**
+
+예) 5를 각각 1과 7로 비교할 경우, 5와의 유클리드 거리 5-1 = 4와 7과의 유클리드 거리 7 - 5 = 2이므로 차이가 작은 7이 5와 더 유사하다.
