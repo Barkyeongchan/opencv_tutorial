@@ -47,12 +47,22 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    # 이미지 그레이스케일�
 
 plt.imshow(gray, cmap='gray')   # 매트플롯에서 그레이로 정의 필요
 ```
+<img width="640" height="545" alt="캡처1" src="https://github.com/user-attachments/assets/ac4d644b-9c08-48b8-b87b-853e5ba1c8b6" />
+
+
 
 [3. pyzbar 디코딩 추가]
 ```python3
 # @디코딩(pyzbar)
 decoded = pyzbar.decode(gray)
 print(decoded)
+```
+```
+# 디코딩 풀력 값
+
+[Decoded(data=b'https://qrco.de/bgBytm', type='QRCODE', rect=Rect(left=318, top=318, width=2372, height=2372), polygon=[Point(x=318, y=2676), Point(x=2690, y=2690), Point(x=2676, y=318), Point(x=320, 
+y=320)], quality=1, orientation='UP')]
+
 ```
 
 [4. QR코드의 데이터와 형식 출력 추가]
@@ -65,6 +75,12 @@ for d in decoded:
     # @QR인식을 위한 사각형 그리기
     #cv2.rectangle(img, ())
 ```
+```
+# 데이터와 형식 출력 값
+
+https://qrco.de/bgBytm
+QRCODE
+```
 
 [5. 인식된 QR코드의 테두리를 표시하는 사각형 그리기]
 ```python3
@@ -72,6 +88,9 @@ for d in decoded:
 cv2.rectangle(img, (d.rect[0], d.rect[1]), (d.rect[0] + d.rect[2], d.rect[1] + d.rect[3]),\
              (0, 255, 0), 20)
 ```
+<img width="640" height="546" alt="캡처2" src="https://github.com/user-attachments/assets/4170d8af-9ff6-4b67-b09a-7184ae47f142" />
+
+
 
 [6. 인식된 QR코드에 데이터와 형식 텍스트를 출력하기]
 ```python3
@@ -84,6 +103,9 @@ text = '%s (%s)' % (barcode_data, barcode_type) # 바코드 데이터와 형식�
 cv2.putText(img, text, (d.rect[0], d.rect[3] + 450), cv2.FONT_HERSHEY_SIMPLEX, 3,\
            (0, 0, 0), 5, cv2.LINE_AA)
 ```
+<img width="639" height="546" alt="캡처3" src="https://github.com/user-attachments/assets/f8c4bf7e-eacc-48b6-98c1-957d62a12fd3" />
+
+
 
 [7. 카메라 캡쳐를 사용하여 QR코드 인식]
 ```python3
@@ -101,6 +123,9 @@ key = cv2.waitKey(1)
 if key == ord('q'):
     break
 ```
+<img width="637" height="506" alt="캡처4" src="https://github.com/user-attachments/assets/5a3c0617-e546-4777-ba94-c6359b41a5f2" />
+
+
 
 [8. QR코드 인식 후 입력된 웹사이트로 이동하기]
 ```python3
