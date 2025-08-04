@@ -230,6 +230,13 @@ cv2.imshow('template', template)
 # @3가지 매칭 메서드 순회
 methods = ['cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR_NORMED', \
                                      'cv2.TM_SQDIFF_NORMED']
+'''
+출력 값
+cv2.TM_CCOEFF_NORMED 0.5131933093070984
+cv2.TM_CCORR_NORMED 0.9238022565841675
+cv2.TM_SQDIFF_NORMED 0.17028295993804932
+'''
+
 for i, method_name in enumerate(methods):
     img_draw = img.copy()
     method = eval(method_name)
@@ -262,6 +269,4 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 <img width="1280" height="470" alt="image" src="https://github.com/user-attachments/assets/da7b2714-c98c-477d-a650-3bcfeffc02a5" />
-
-
 
