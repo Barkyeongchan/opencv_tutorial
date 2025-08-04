@@ -777,6 +777,9 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+<img width="639" height="506" alt="캡처5" src="https://github.com/user-attachments/assets/0bf3a347-1a81-40a6-be4d-1358f8761d0c" />
+
+
 
 [4. 거리에 따른 경고 메세지 출력 알고리즘 적용]
 ```python3
@@ -988,6 +991,9 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+<img width="639" height="513" alt="캡처6" src="https://github.com/user-attachments/assets/20e79983-0447-46b5-8114-152f99fe1dcb" />
+
+
 
 </div>
 </details>
