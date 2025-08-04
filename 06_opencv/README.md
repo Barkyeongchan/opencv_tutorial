@@ -19,7 +19,7 @@
 
 ## 1. 이미지 매칭 (Image Matching)
 <details>
-<summary></sumamry>
+<summary></summary>
 <div markdown="1">
 
 ## **1-1. 이미지 매칭이란?**
@@ -628,7 +628,11 @@ matcher = cv2.DescriptorMatcher_create(matcherType): 매칭기 생성자
 
 "FlannBased": NORM_L2를 사용하는 FlannBasedMatcher)
 
+---
+
 cv2.DescriptorMatcher_create() 함수를 사용하여 생성된 특징 매칭기에서 두 개의 디스크립터를 비교하는 함수는 세 가지가 있다.
+
+
 
 **[1. matcher.match()]**
 ```
@@ -642,6 +646,8 @@ matches: matcher.match(queryDescriptors, trainDescriptors, mask): 1개의 최적
 
 `matches` : 매칭 결과, DMatch 객체의 리스트
 
+
+
 **[2. matcher.knnMatch()]**
 ```
 matches = matcher.knnMatch(queryDescriptors, trainDescriptors, k, mask, compactResult): k개의 가장 근접한 매칭
@@ -649,11 +655,15 @@ matches = matcher.knnMatch(queryDescriptors, trainDescriptors, k, mask, compactR
 `k` : 매칭할 근접 이웃 개수
 `compactResult(optional)` : True: 매칭이 없는 경우 매칭 결과에 불포함 (default=False)
 
+
+
 **[3. matcher.radiusMatch()]**
 ```
 matches = matcher.radiusMatch(queryDescriptors, trainDescriptors, maxDistance, mask, compactResult): maxDistance 이내의 거리 매칭
 ```
 `maxDistance` : 매칭 대상 거리
+
+
 
 위의 세 함수의 반환 결과는 DMatch 객체 리스트로 받는다.
 ```
@@ -666,6 +676,8 @@ DMatch: 매칭 결과를 표현하는 객체
 `imgIdx` : trainDescriptor의 이미지 인덱스
 
 `distance` : 유사도 거리
+
+
 
 매칭 결과를 시작적으로 표현하기 위해서 두 이미지를 하나로 합친 후 매칭점끼리 선으로 연결하는 작업을 drawMatches() 함수로 할 수 있다.
 ```
