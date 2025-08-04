@@ -41,6 +41,8 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 
+<br><br>
+
 [2. 이미지 흑백(그레이스케일)으로 변환]
 ```python3
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    # 이미지 그레이스케일로 불러오기
@@ -49,7 +51,7 @@ plt.imshow(gray, cmap='gray')   # 매트플롯에서 그레이로 정의 필요
 ```
 <img width="640" height="545" alt="캡처1" src="https://github.com/user-attachments/assets/ac4d644b-9c08-48b8-b87b-853e5ba1c8b6" />
 
-
+<br><br>
 
 [3. pyzbar 디코딩 추가]
 ```python3
@@ -64,6 +66,8 @@ print(decoded)
 y=320)], quality=1, orientation='UP')]
 
 ```
+
+<br><br>
 
 [4. QR코드의 데이터와 형식 출력 추가]
 ```python3
@@ -82,6 +86,8 @@ https://qrco.de/bgBytm
 QRCODE
 ```
 
+<br><br>
+
 [5. 인식된 QR코드의 테두리를 표시하는 사각형 그리기]
 ```python3
 # @QR을 인식하는 사각형 그리기
@@ -90,7 +96,7 @@ cv2.rectangle(img, (d.rect[0], d.rect[1]), (d.rect[0] + d.rect[2], d.rect[1] + d
 ```
 <img width="640" height="546" alt="캡처2" src="https://github.com/user-attachments/assets/4170d8af-9ff6-4b67-b09a-7184ae47f142" />
 
-
+<br><br>
 
 [6. 인식된 QR코드에 데이터와 형식 텍스트를 출력하기]
 ```python3
@@ -105,7 +111,7 @@ cv2.putText(img, text, (d.rect[0], d.rect[3] + 450), cv2.FONT_HERSHEY_SIMPLEX, 3
 ```
 <img width="639" height="546" alt="캡처3" src="https://github.com/user-attachments/assets/f8c4bf7e-eacc-48b6-98c1-957d62a12fd3" />
 
-
+<br><br>
 
 [7. 카메라 캡쳐를 사용하여 QR코드 인식]
 ```python3
@@ -125,7 +131,7 @@ if key == ord('q'):
 ```
 <img width="637" height="506" alt="캡처4" src="https://github.com/user-attachments/assets/5a3c0617-e546-4777-ba94-c6359b41a5f2" />
 
-
+<br><br>
 
 [8. QR코드 인식 후 입력된 웹사이트로 이동하기]
 ```python3
@@ -140,6 +146,8 @@ if not link_opened and barcode_data.startswith("http"):
     webbrowser.open(barcode_data)
     link_opened = True
 ```
+
+<br><br>
 
 [9. 최종 코드]
 ```python3
@@ -208,7 +216,7 @@ ArUco marker는 **정사각형의 흑백 코드 마커로 고유의 ID를 가진
 
 <img width="414" height="350" alt="image" src="https://github.com/user-attachments/assets/0dea7850-021b-4bcb-9d33-6bb1404a458c" />
 
-
+<br><br>
 
 ## **2-2. 아루코 마커를 사용해 거리에 따른 경고 메세지 출력 알고리즘 만들기**
 
@@ -252,7 +260,7 @@ cv2.destroyAllWindows()
 ```
 <img width="640" height="480" alt="image" src="https://github.com/user-attachments/assets/0008e74c-916c-4a3b-899e-8825dd5177a1" />
 
-
+<br><br>
 
 [2. 촬영한 이미지를 활용해 켈리브레이션 실행하기]
 ```python3
@@ -615,6 +623,8 @@ if __name__ == "__main__":
         print("4. 다양한 각도에서 촬영된 이미지들인지 확인")
 ```
 
+<br><br>
+
 [3. 아루코 마커 인식 시키기]
 ```python3
 import cv2
@@ -779,7 +789,7 @@ if __name__ == "__main__":
 ```
 <img width="639" height="506" alt="캡처5" src="https://github.com/user-attachments/assets/0bf3a347-1a81-40a6-be4d-1358f8761d0c" />
 
-
+<br><br>
 
 [4. 거리에 따른 경고 메세지 출력 알고리즘 적용]
 ```python3
