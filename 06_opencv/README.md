@@ -270,3 +270,5 @@ cv2.destroyAllWindows()
 ```
 <img width="1280" height="470" alt="image" src="https://github.com/user-attachments/assets/da7b2714-c98c-477d-a650-3bcfeffc02a5" />
 
+</div>
+</details>
