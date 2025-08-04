@@ -157,7 +157,7 @@ RGB나 BGR 방식은 세가지 채널의 값을 모두 알아야 색상을 알 �
 <summary></summary>
 <div markdown="1">
 
-말 그대로 이미지 내에서 관심 있는 영역을 말한다.
+## 말 그대로 이미지 내에서 관심 있는 영역을 말한다.
 
 <예제 이미지>
 
@@ -475,21 +475,26 @@ plt.show()
 
 ## **4-3. 정규화 (Normalization)**
 
-**정규화란?**
+## **정규화란?**
 
 특정 영역에 몰려 있는 화지을을 개선하거나, 이미지 간의 연산 조건이 다른 경우 같은 조건으로 만드는 등 이미지를 개선하는 작업
 
-아래와 같은 형식을 갖는다.
+cv2.normalize() 함수를 사용한다.
 
 ```
 dst = cv2.normalize(src, dst, alpha, beta, type_flag)
-
-src: 정규화 이전의 데이터
-dst: 정규화 이후의 데이터
-alpha: 정규화 구간 1
-beta: 정규화 구간 2, 구간 정규화가 아닌 경우 사용 안 함
-type_flag: 정규화 알고리즘 선택 플래그 상수
 ```
+`src` : 정규화 이전의 데이터
+
+`dst` : 정규화 이후의 데이터
+
+`alpha` : 정규화 구간 1
+
+`beta` : 정규화 구간 2, 구간 정규화가 아닌 경우 사용 안 함
+
+`type_flag` : 정규화 알고리즘 선택 플래그 상수
+
+<br><br>
 
 ```python3
 import cv2
@@ -528,20 +533,22 @@ plt.show()
 
 ## **4-4. 평탄화 (equalization)**
 
-**평탄화란?**
+## **평탄화란?**
 
 특정 영역에 집중되어 있는 분포를 전체에 골고루 분포하도록 하는 작업, 명암 대비 개선에 효과적
 
 <img width="300" height="135" alt="image" src="https://github.com/user-attachments/assets/e520ad1d-506b-465b-b35a-f46d062355eb" />
 
-아래와 같은 형식을 갖는다.
+cv2.equalizeHist() 함수를 사용한다.
 
 ```
 dst = cv2.equalizeHist(src, dst)
-
-src: 대상 이미지, 8비트 1 채널
-dst(optional): 결과 이미지
 ```
+`src` : 대상 이미지, 8비트 1 채널
+
+`dst(optional)` : 결과 이미지
+
+<br><br>
 
 색상 이미지에 적용한 예
 
@@ -569,7 +576,7 @@ cv2.destroyAllWindows()
 
 ## **4-5. CLAHE (Contrast Limited Adaptive Histogram Equalization)**
 
-**CLAHE란?**
+## **CLAHE란?**
 
 <img width="1039" height="513" alt="image" src="https://github.com/user-attachments/assets/9b520a71-99d7-4583-8b46-54ace9e72a28" />
 
@@ -585,19 +592,24 @@ cv2.destroyAllWindows()
 
 <img width="300" height="109" alt="image" src="https://github.com/user-attachments/assets/915f2b4d-4133-4b3d-8b3d-c41be6d8997c" />
 
-아래와 같은 형식을 갖는다.
+<br><br>
+
+cv2.createCLAHE() 함수를 사용한다.
 
 ```
 clahe = cv2.createCLAHE(clipLimit, tileGridSize)
-
-clipLimit: 대비(Contrast) 제한 경계 값, default=40.0
-tileGridSize: 영역 크기, default=8 x 8
-clahe: 생성된 CLAHE 객체
-
-clahe.apply(src): CLAHE 적용
-
-src: 입력 이미지
 ```
+`clipLimit` : 대비(Contrast) 제한 경계 값, default=40.0
+
+`tileGridSiz` e: 영역 크기, default=8 x 8
+
+`clahe` : 생성된 CLAHE 객체
+
+`clahe.apply(src)` : CLAHE 적용
+
+`src` : 입력 이미지
+
+<br><br>
 
 ```python3
 import cv2
