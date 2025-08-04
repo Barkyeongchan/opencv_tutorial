@@ -1,4 +1,4 @@
-# 이미지 매칭 / 이미지 특징점과 검출기
+# 이미지 매칭 / 이미지 특징점과 검출기 / 특징 매칭
 
 ## 목차
 1. 이미지 매칭
@@ -14,11 +14,12 @@
    - 특징점 검출기
    - 검출기 예제
   
-3. 
+3. 특징 매칭
+   - 
 
 ## 1. 이미지 매칭 (Image Matching)
 <details>
-<sumarry></sumarry>
+<summary></sumamry>
 <div markdown="1">
 
 ## **1-1. 이미지 매칭이란?**
@@ -280,10 +281,10 @@ cv2.destroyAllWindows()
 </div>
 </details>
 
-## 2. 이미지 특징점과 검출기
+## 2. 이미지 특징점 (Keypoints)과 검출기 (Keypoints detector)
 
 <details>
-<sumarry></sumarry>
+<summary></summary>
 <div markdown="1">
 
 ## **2-1. 이미지 특징점이란?**
@@ -601,10 +602,87 @@ cv2.waitKey(0)
 </div>
 </details>
 
-## 3. 
+## 3. 특징 매칭 (Feature Matching)
 
 <details>
-<sumarry></sumarry>
+<summary></summary>
 <div markdown="1">
 
-## **3-1. 
+## **3-1. 특징 매칭이란?**
+
+서로 다른 두 이미지에서 **특징점과 특징 디스크립터**를 비교해 비슷한 객체끼리 짝짖는 것
+
+cv2.DescriptorMatcher_create() 함수를 사용한다.
+```
+matcher = cv2.DescriptorMatcher_create(matcherType): 매칭기 생성자
+```
+`matcherType` : 생성할 구현 클래스의 알고리즘
+
+("BruteForce": NORM_L2를 사용하는 BFMatcher
+
+"BruteForce-L1": NORM_L1을 사용하는 BFMatcher
+
+"BruteForce-Hamming": NORM_HAMMING을 사용하는 BRMatcher
+
+"BruteForce-Hamming(2)": NORM_HAMMING2를 사용하는 BFMatcher
+
+"FlannBased": NORM_L2를 사용하는 FlannBasedMatcher)
+
+cv2.DescriptorMatcher_create() 함수를 사용하여 생성된 특징 매칭기에서 두 개의 디스크립터를 비교하는 함수는 세 가지가 있다.
+
+**[1. matcher.match()]**
+```
+matches: matcher.match(queryDescriptors, trainDescriptors, mask): 1개의 최적 매칭
+```
+`queryDescriptors` : 특징 디스크립터 배열, 매칭의 기준이 될 디스크립터
+
+`trainDescriptors` : 특징 디스크립터 배열, 매칭의 대상이 될 디스크립터
+
+`mask(optional)` : 매칭 진행 여부 마스크
+
+`matches` : 매칭 결과, DMatch 객체의 리스트
+
+**[2. matcher.knnMatch()]**
+```
+matches = matcher.knnMatch(queryDescriptors, trainDescriptors, k, mask, compactResult): k개의 가장 근접한 매칭
+```
+`k` : 매칭할 근접 이웃 개수
+`compactResult(optional)` : True: 매칭이 없는 경우 매칭 결과에 불포함 (default=False)
+
+**[3. matcher.radiusMatch()]**
+```
+matches = matcher.radiusMatch(queryDescriptors, trainDescriptors, maxDistance, mask, compactResult): maxDistance 이내의 거리 매칭
+```
+`maxDistance` : 매칭 대상 거리
+
+위의 세 함수의 반환 결과는 DMatch 객체 리스트로 받는다.
+```
+DMatch: 매칭 결과를 표현하는 객체
+```
+`queryIdx` : queryDescriptors의 인덱스
+
+`trainIdx` : trainDescriptors의 인덱스
+
+`imgIdx` : trainDescriptor의 이미지 인덱스
+
+`distance` : 유사도 거리
+
+매칭 결과를 시작적으로 표현하기 위해서 두 이미지를 하나로 합친 후 매칭점끼리 선으로 연결하는 작업을 drawMatches() 함수로 할 수 있다.
+```
+cv2.drawMatches(img1, kp1, img2, kp2, matches, flags): 매칭점을 이미지에 표시
+```
+`img1, kp1` : queryDescriptor의 이미지와 특징점
+
+`img2, kp2` : trainDescriptor의 이미지와 특징점
+
+`matches` : 매칭 결과
+
+`flags` : 매칭점 그리기 옵션 (cv2.DRAW_MATCHES_FLAGS_DEFAULT: 결과 이미지 새로 생성(default값)
+
+cv2.DRAW_MATCHES_FLAGS_DRAW_OVER_OUTIMG: 결과 이미지 새로 생성 안 함
+
+cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS: 특징점 크기와 방향도 그리기
+
+cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS: 한쪽만 있는 매칭 결과 그리기 제외)
+
+## **3-2. **
