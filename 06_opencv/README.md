@@ -1,4 +1,4 @@
-# 이미지 매칭 / 이미지 특징점과 검출기 / 특징 매칭
+# 이미지 매칭 / 이미지 특징점과 검출기 / 특징 매칭 / 배경 제거
 
 ## 목차
 1. 이미지 매칭
@@ -15,7 +15,12 @@
    - 검출기 예제
   
 3. 특징 매칭
-   - 
+   - 특징 매칭이란?
+   - 카메라 캡쳐를 사용한 특징 매칭
+  
+4. 개인 프로젝트 (카메라 캡쳐를 사용한 바코드 특징 매칭)
+
+5. 배경 제거
 
 ## 1. 이미지 매칭 (Image Matching)
 <details>
@@ -817,3 +822,255 @@ cv2.destroyAllWindows()
 
 </div>
 </details>
+
+## 4. 개인 프로젝트 ()
+
+<details>
+<summary></summary>
+<div markdown="1">
+
+```python3
+'''
+1. 사용자가 스페이스 바를 누름
+2. ROI 선택
+3. 참조 이미지 저장
+4. 실시간 매칭 시작
+'''
+
+import cv2, numpy as np
+import time     # @@@타임 라이브러리 추가
+
+last_match_time = 0     # @@@초기 값 선언
+is_matching = False     # @@@현재 매칭 상태
+
+# @초기 설정
+img1 = None                     # ROI로 선택할 이미지
+win_name = 'Camera Matching'    # 윈도우 이름
+MIN_MATCH = 10                  # 최소 매칭점 갯수 (이 값 이하면 매칭 실패로 간주)
+
+# @ORB 검출기 생성
+# ORB_craete() = 이미지에서 ()개의 특징점을 찾는 알고리즘
+detector = cv2.ORB_create(1000)
+
+# @Flann 추출기 생성
+# 두 이미지의 특징점을 빠르게 매칭
+FLANN_INDEX_LSH = 6
+index_params = dict(algorithm=FLANN_INDEX_LSH,
+                   table_number=6,
+                   key_size=12,
+                   multi_probe_level=1)
+search_params = dict(checks=32)
+matcher = cv2.FlannBasedMatcher(index_params, search_params)
+
+# @카메라 캡쳐 연결 및 프레임 크기 축소
+cap = cv2.VideoCapture(0)              
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+while cap.isOpened():         # 카메라가 계속 작동하는 동안 
+    ret, frame = cap.read() 
+    if not ret:
+        break
+        
+    if img1 is None:  # 등록된 이미지 없음, 카메라 바이패스
+        res = frame
+    else:             # 등록된 이미지 있는 경우, 매칭 시작
+        img2 = frame
+
+        # [step 1]
+        gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)  # 참조 이미지, 그레이스케일로 바꿈
+        gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)  # 현재 카메라 프레임, 그레이스케일로 바꿈
+        gray1 = cv2.GaussianBlur(gray1, (5,5), 0) # @@@ 가우시안으로 전처리
+        gray2 = cv2.GaussianBlur(gray2, (5,5), 0) # @@@ 가우시안으로 전처리
+
+        # [step 2]
+        # @키포인트와 디스크립터 추출
+        # kp : keypoints 특징점 위치정보
+        # desc : 특징점의 특성을 숫자로 표현
+        kp1, desc1 = detector.detectAndCompute(gray1, None) # 참조 이미지의 특징점
+        kp2, desc2 = detector.detectAndCompute(img2, None)  # 현재 카메라 이미지의 특징점
+        
+        # @디스크립터가 없으면 건너뛰기
+        if desc1 is None or desc2 is None or len(desc1) < 2 or len(desc2) < 2:
+            res = frame
+        else:
+            # [step 3]
+            # k=2로 knnMatch : 각 특징점마다 가장 유사한 2개의 후보를 찾음
+            matches = matcher.knnMatch(desc1, desc2, 2)
+            
+            # [step 4]
+            # @이웃 거리의 50%로 좋은 매칭점 추출
+            ratio = 0.5
+            good_matches = []
+            for match_pair in matches:
+                if len(match_pair) == 2:
+                    m, n = match_pair # 1등, 2등
+                    if m.distance < n.distance * ratio: # 1등이 2등보다 25% 좋으면 
+                        good_matches.append(m) # 추가한다.
+            
+            print('good matches:%d/%d' % (len(good_matches), len(matches)))
+            
+            # @matchesMask 초기화를 None으로 설정
+            matchesMask = None
+            
+            # @좋은 매칭점 최소 갯수 이상인 경우
+            if len(good_matches) > MIN_MATCH: 
+
+                # 좋은 매칭점으로 원본과 대상 영상의 좌표 구하기
+                src_pts = np.float32([kp1[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+                dst_pts = np.float32([kp2[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
+                
+                # 원근 변환 행렬 구하기
+                # RANSAC : 잘못된 매칭점의 outline 제거
+                mtrx, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+                
+                if mtrx is not None:
+                    accuracy = float(mask.sum()) / mask.size
+                    print("accuracy: %d/%d(%.2f%%)" % (mask.sum(), mask.size, accuracy * 100))
+                    
+                    if mask.sum() > MIN_MATCH:  # 정상치 매칭점 최소 갯수 이상인 경우
+                        # 마스크를 리스트로 변환 (정수형으로)
+                        matchesMask = [int(x) for x in mask.ravel()]
+                        
+                        # 결과 시작화
+                        # 원본 영상 좌표로 원근 변환 후 영역 표시
+                        h, w = img1.shape[:2]
+                        pts = np.float32([[[0, 0]], [[0, h-1]], [[w-1, h-1]], [[w-1, 0]]])
+                        dst = cv2.perspectiveTransform(pts, mtrx)
+                        img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3, cv2.LINE_AA)
+
+                        # @@@ MATCH! 텍스트 출력 조건 추가
+                        if mask.size >= 40 and accuracy * 100 >= 95.0:
+                            last_match_time = time.time()
+                            is_matching = True
+            
+            # @매칭점 그리기
+            res = cv2.drawMatches(img1, kp1, img2, kp2, good_matches, None, 
+                                matchColor=(0, 255, 0),
+                                singlePointColor=None,
+                                matchesMask=matchesMask,
+                                flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
+ 
+            # @@@ MATCH! 글자 출력 2초 동안 유지
+            if time.time() - last_match_time <= 2.0:  # 최근 2초 이내라면
+                cv2.putText(res, 'MATCH!', (50, 70), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (0, 0, 255), 4, cv2.LINE_AA)
+            else:
+                cv2.putText(res, 'NOT MATCH', (50, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3, cv2.LINE_AA)
+   
+    # @결과 출력
+    cv2.imshow(win_name, res)
+    key = cv2.waitKey(1) & 0xFF
+    
+    if key == 27:    # Esc, 종료
+        break          
+    elif key == ord(' '):  # 스페이스바를 누르면 ROI로 img1 설정
+        x, y, w, h = cv2.selectROI(win_name, frame, False)
+        if w and h:
+            img1 = frame[y:y+h, x:x+w]
+            print("ROI 선택됨: (%d, %d, %d, %d)" % (x, y, w, h))
+
+cap.release()                          
+cv2.destroyAllWindows()
+```
+<img width="639" height="508" alt="image" src="https://github.com/user-attachments/assets/80496cf1-f5f8-43e3-9535-fd06a4508dc6" />
+
+<br><br>
+
+<img width="638" height="508" alt="image" src="https://github.com/user-attachments/assets/0b7f378f-8c8b-4ad0-8745-5902caea5e80" />
+
+<br><br>
+
+<img width="1058" height="507" alt="image" src="https://github.com/user-attachments/assets/078d9410-5318-47fc-baff-068525719526" />
+
+<br><br>
+
+<img width="1058" height="508" alt="image" src="https://github.com/user-attachments/assets/1ea69aba-5b37-473f-9195-ef376b35656a" />
+
+</div>
+</details>
+
+## 5. 배경 제거
+
+<details>
+<semmary></semmary>
+<div markdown="1">
+
+## **5-1. 객체 추적 (Object Tracking)**
+
+**동영상에서 지속적으로 움직이는 객체를 찾는 방법**
+
+배경 제거는 객체 추적의 다양한 방법 중 하나이다.
+
+## **5-2. 배경 제거(Background Subtraction)**
+
+객체를 명확하게 파악하기 위해서 객체를 포함하는 영상에서 **객체가 없는 배경 영상을 빼는 방법** 즉, 배경을 모두 제거하여 객체만 남기는 것
+
+<img width="473" height="250" alt="image" src="https://github.com/user-attachments/assets/e163899f-1baa-418e-a93a-c8022a63e66f" />
+
+<br><br>
+
+cv2.bgsegm.createBackgroundSubtractorMOG() 함수를 사용한다.
+```
+cv2.bgsegm.createBackgroundSubtractorMOG(history, nmixtures, backgroundRatio, noiseSigma)
+```
+`history=200` : 히스토리 길이
+
+`nmixtures=5` : 가우시안 믹스처의 개수
+
+`backgroundRatio=0.7` : 배경 비율
+
+`noiseSigma=0` : 노이즈 강도 (0=자동)
+
+<br><br>
+
+배경 제거 객체 인터페이스 함수는 다음 주 종류가 있다.
+
+```
+foregroundmask = backgroundsubtractor.apply(img, foregroundmask, learningRate)
+```
+`img` : 입력 영상
+
+`foregroundmask` : 전경 마스크
+
+`learningRate=-1` : 배경 훈련 속도(0~1, -1: 자동)
+
+<br><br>
+
+```
+backgroundImage = backgroundsubtractor.getBackgroundImage(backgroundImage)
+```
+`backgroundImage` : 훈련용 배경 이미지
+
+<br><br>
+
+```python3
+# BackgroundSubtractorMOG로 배경 제거
+
+import numpy as np, cv2
+
+cap = cv2.VideoCapture('../img/walking.avi')
+fps = cap.get(cv2.CAP_PROP_FPS) # 프레임 수 구하기
+delay = int(1000/fps)
+
+# 배경 제거 객체 생성
+# history : 과거 프레임의 객수, 배경을 학습하는데 얼마나 많으 프레임을 기억할지 정함
+# varThreshold : 픽셀이 객체인지 배경인지 구분하는 기준
+fgbg = cv2.createBackgroundSubtractorMOG2(50, 45, detectShadows=False)
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+    # 배경 제거 마스크 계산 --- ②
+    fgmask = fgbg.apply(frame)
+    cv2.imshow('frame',frame)
+    cv2.imshow('bgsub',fgmask)
+    if cv2.waitKey(1) & 0xff == 27:
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+<img width="600" height="241" alt="image" src="https://github.com/user-attachments/assets/9967e633-dfd9-4cd8-87b4-5da698d990e8" />
+
+<br><br>
+
