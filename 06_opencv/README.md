@@ -632,7 +632,7 @@ matcher = cv2.DescriptorMatcher_create(matcherType): 매칭기 생성자
 
 cv2.DescriptorMatcher_create() 함수를 사용하여 생성된 특징 매칭기에서 두 개의 디스크립터를 비교하는 함수는 세 가지가 있다.
 
-
+<br><br>
 
 **[1. matcher.match()]**
 ```
@@ -646,7 +646,7 @@ matches: matcher.match(queryDescriptors, trainDescriptors, mask): 1개의 최적
 
 `matches` : 매칭 결과, DMatch 객체의 리스트
 
-
+<br><br>
 
 **[2. matcher.knnMatch()]**
 ```
@@ -655,7 +655,7 @@ matches = matcher.knnMatch(queryDescriptors, trainDescriptors, k, mask, compactR
 `k` : 매칭할 근접 이웃 개수
 `compactResult(optional)` : True: 매칭이 없는 경우 매칭 결과에 불포함 (default=False)
 
-
+<br><br>
 
 **[3. matcher.radiusMatch()]**
 ```
@@ -663,7 +663,7 @@ matches = matcher.radiusMatch(queryDescriptors, trainDescriptors, maxDistance, m
 ```
 `maxDistance` : 매칭 대상 거리
 
-
+<br><br>
 
 위의 세 함수의 반환 결과는 DMatch 객체 리스트로 받는다.
 ```
@@ -677,7 +677,7 @@ DMatch: 매칭 결과를 표현하는 객체
 
 `distance` : 유사도 거리
 
-
+<br><br>
 
 매칭 결과를 시작적으로 표현하기 위해서 두 이미지를 하나로 합친 후 매칭점끼리 선으로 연결하는 작업을 drawMatches() 함수로 할 수 있다.
 ```
