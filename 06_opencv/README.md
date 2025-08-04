@@ -1,4 +1,4 @@
-# 이미지 매칭 / 이미지 특징점과 검출기 / 특징 매칭 / 배경 제거
+# 이미지 매칭 / 이미지 특징점과 검출기 / 특징 매칭 / 배경 제거 / 광학 흐름
 
 ## 목차
 1. 이미지 매칭
@@ -21,6 +21,8 @@
 4. 개인 프로젝트 (카메라 캡쳐를 사용한 바코드 특징 매칭)
 
 5. 배경 제거
+
+6. 광학 흐름
 
 ## 1. 이미지 매칭 (Image Matching)
 <details>
@@ -1009,17 +1011,15 @@ cv2.destroyAllWindows()
 
 <br><br>
 
-cv2.bgsegm.createBackgroundSubtractorMOG() 함수를 사용한다.
+cv2.createBackgroundSubtractorMOG2() 함수를 사용한다.
 ```
-cv2.bgsegm.createBackgroundSubtractorMOG(history, nmixtures, backgroundRatio, noiseSigma)
+cv2.createBackgroundSubtractorMOG2(history, varThreshold, detectShadows)
 ```
-`history=200` : 히스토리 길이
+`history=500` : 히스토리 개수
 
-`nmixtures=5` : 가우시안 믹스처의 개수
+`varThreshold=16` : 분산 임계 값
 
-`backgroundRatio=0.7` : 배경 비율
-
-`noiseSigma=0` : 노이즈 강도 (0=자동)
+`detectShadows=True` : 그림자 표시
 
 <br><br>
 
@@ -1070,7 +1070,236 @@ while cap.isOpened():
 cap.release()
 cv2.destroyAllWindows()
 ```
-<img width="600" height="241" alt="image" src="https://github.com/user-attachments/assets/9967e633-dfd9-4cd8-87b4-5da698d990e8" />
+<img width="600" height="241" alt="image" src="https://github.com/user-attachments/assets/68a2f4d8-aadb-461b-8268-9d99499e8cf1" />
+
+</div>
+</details>
+
+## 6. 광학 흐름(Optical Flow)
+
+<details>
+<semmary></semmary>
+<div markdown="1">
+
+## **6-1. 공학 흐름이란?**
+
+**영상 내 물체의 움직임 패턴을 뜻한다.**
+
+영상 내 물체가 어느 방향으로 얼마나 움직였는지 파악하는 것은 물론, 추가 연산을 통해 움직임을 예측 할 수도 있다.
+
+<img width="437" height="194" alt="image" src="https://github.com/user-attachments/assets/52bf5f21-9be6-4d0a-8c41-bb95ca87e6b9" />
+
+<br><br>
+
+_광학 흐름은 다음 두가지 가설을 가정한다._
+
+`1. 연속된 프레임 사이에서 움직이는 물체의 픽셀 강도(intensity)는 변함이 없다.`
+
+`2. 이웃하는 픽셀은 비슷한 움직임을 갖는다.`
+
+## **6-2. 루카스-카나데(Lucas-Kanade) 알고리즘**
+
+**이웃하는 픽셀은 비슷한 움직임을 갖는다는 가정을 활용한 광학 흐름 알고리즘**
+
+cv2.calcOpticalFlowPyrLK() 함수를 사용한다.
+```
+nextPts, status, err = cv2.calcOpticalFlowPyrLK(prevImg, nextImg, prevPts, nextPts, status, err, wirnSize, maxLevel, criteria, flags, minEigThreshold)
+```
+`prevImg` : 이전 프레임 영상
+
+`nextImg` : 다음 프레임 영상
+
+`prevPts` : 이전 프레임의 코너 특징점, cv2.goodFeaturesToTrack()으로 검출
+
+`nextPst` : 다음 프레임에서 이동한 코너 특징점
+
+`status` : 결과 상태 벡터, nextPts와 같은 길이, 대응점이 있으면 1, 없으면 0
+
+`err` : 결과 에러 벡터, 대응점 간의 오차
+
+`winSize=(21,21)` : 각 이미지 피라미드의 검색 윈도 크기
+
+`maxLevel=3` : 이미지 피라미드 계층 수
+
+`criteria=(COUNT+EPS, 30, 0.01)` : 반복 탐색 중지 요건
+
+cv2.TERM_CRITERIA_EPS: 정확도가 epsilon보다 작으면 중지,
+
+cv2.TERM_CRITERIA_MAX_ITER: max_iter 횟수를 채우면 중지,
+
+cv2.TERM_CRITERIA_COUNT: MAX_ITER와 동일,
+
+max_iter: 최대 반복 횟수, epsilon: 최소 정확도)
+
+`flgs=0` : 연산 모드 (0: prevPts를 nextPts의 초기 값으로 사용,
+
+cv2.OPTFLOW_USE_INITAL_FLOW: nextPts의 값을 초기 값으로 사용,
+
+cv2.OPTFLOW_LK_GET_MIN_EIGENVALS: 오차를 최소 고유 값으로 계산)
+
+`minEigThreshold=1e-4` : 대응점 계산에 사용할 최소 임계 고유 값
+
+<br><br>
+
+```python3
+# calcOpticalFlowPyrLK 추적
+
+import numpy as np, cv2
+
+cap = cv2.VideoCapture('../img/walking.avi')
+fps = cap.get(cv2.CAP_PROP_FPS) # 프레임 수 구하기
+delay = int(1000/fps)
+# 추적 경로를 그리기 위한 랜덤 색상
+
+color = np.random.randint(0,255,(200,3))
+lines = None  #추적 선을 그릴 이미지 저장 변수
+prevImg = None  # 이전 프레임 저장 변수
+
+# calcOpticalFlowPyrLK 중지 요건 설정
+termcriteria =  (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
+
+while cap.isOpened():
+    ret,frame = cap.read()
+    if not ret:
+        break
+    img_draw = frame.copy()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # 최초 프레임 경우
+    if prevImg is None:
+        prevImg = gray
+
+        # 추적선 그릴 이미지를 프레임 크기에 맞게 생성
+        lines = np.zeros_like(frame)
+
+        # 추적 시작을 위한 코너 검출
+        prevPt = cv2.goodFeaturesToTrack(prevImg, 200, 0.01, 10)
+    else:
+        nextImg = gray
+
+        # 옵티컬 플로우로 다음 프레임의 코너점  찾기
+        nextPt, status, err = cv2.calcOpticalFlowPyrLK(prevImg, nextImg, \
+                                        prevPt, None, criteria=termcriteria)
+       
+        # 대응점이 있는 코너, 움직인 코너 선별
+        prevMv = prevPt[status==1]
+        nextMv = nextPt[status==1]
+        for i,(p, n) in enumerate(zip(prevMv, nextMv)):
+            px,py = p.ravel()
+            nx,ny = n.ravel()
+         
+            # 이전 코너와 새로운 코너에 선그리기
+            cv2.line(lines, (int(px), int(py)), (int(nx),int(ny)), color[i].tolist(), 2)
+        
+            # 새로운 코너에 점 그리기
+            cv2.circle(img_draw, (int(nx),int(ny)), 2, color[i].tolist(), -1)
+       
+        # 누적된 추적 선을 출력 이미지에 합성
+        img_draw = cv2.add(img_draw, lines)
+      
+        # 다음 프레임을 위한 프레임과 코너점 이월
+        prevImg = nextImg
+        prevPt = nextMv.reshape(-1,1,2)
+
+    cv2.imshow('OpticalFlow-LK', img_draw)
+    key = cv2.waitKey(delay)
+    if key == 27 : # Esc:종료
+        break
+    elif key == 8: # Backspace:추적 이력 지우기
+        prevImg = None
+cv2.destroyAllWindows()
+cap.release()
+```
+<img width="600" height="472" alt="image" src="https://github.com/user-attachments/assets/66a6e28e-f3a6-4b87-bd2e-4f603648d932" />
+
+<br><br>
+
+## **6-3. 군나르 파너백(Gunner Farneback) 알고리즘**
+
+**영상 전체의 픽셀을 활용하여 광학 흐름을 계산하는 밀집 방식을 활용한 알고리즘**
+
+cv2.calOpticalFlowFarneback() 함수를 사용한다.
+```
+flow = cv2.calcOpticalFlowFarneback(prev, next, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags)
+```
+`prev, next` : 이전, 이후 프레임
+
+`flow` : 광학 흐름 계산 결과, 각 픽셀이 이동한 거리 (입력과 동일한 크기)
+
+`pyr_scale` : 이미지 피라미드 스케일
+
+`levels` : 이미지 피라미드 개수
+
+`winsize` : 평균 윈도 크기
+
+`iterations` : 각 피라미드에서 반복할 횟수
+
+`poly_n` : 다항식 근사를 위한 이웃 크기, 5 또는 7
+
+`poly_sigma` : 다항식 근사에서 사용할 가우시안 시그마 (poly_n=5일 때는 1.1, poly_n=7일 때는 1.5)
+
+`flags` : 연산 모드 (cv2.OPTFLOW_USE_INITAL_FLOW: flow 값을 초기 값으로 사용
+
+cv2.OPTFLOW_FARNEBACK_GAUSSIAN : 박스 필터 대신 가우시안 필터 사용)
+
+<br><br>
+
+```python3
+# calcOPticalFlowFarneback 추적
+
+import cv2, numpy as np
+
+# 플로우 결과 그리기
+def drawFlow(img,flow,step=16):
+  h,w = img.shape[:2]
+
+  # 16픽셀 간격의 그리드 인덱스 구하기
+  idx_y,idx_x = np.mgrid[step/2:h:step,step/2:w:step].astype(int)
+  indices =  np.stack( (idx_x,idx_y), axis =-1).reshape(-1,2)
+  
+  for x,y in indices:   # 인덱스 순회
+
+    # 각 그리드 인덱스 위치에 점 그리기
+    cv2.circle(img, (x,y), 1, (0,255,0), -1)
+
+    # 각 그리드 인덱스에 해당하는 플로우 결과 값 (이동 거리)
+    dx,dy = flow[y, x].astype(int)
+
+    # 각 그리드 인덱스 위치에서 이동한 거리 만큼 선 그리기
+    cv2.line(img, (x,y), (x+dx, y+dy), (0,255, 0),2, cv2.LINE_AA )
+
+
+prev = None # 이전 프레임 저장 변수
+
+cap = cv2.VideoCapture('../img/walking.avi')
+fps = cap.get(cv2.CAP_PROP_FPS) # 프레임 수 구하기
+delay = int(1000/fps)
+
+while cap.isOpened():
+  ret,frame = cap.read()
+  if not ret: break
+  gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+  # 최초 프레임 경우 
+  if prev is None: 
+    prev = gray # 첫 이전 프레임
+  else:
+    # 이전, 이후 프레임으로 옵티컬 플로우 계산
+    flow = cv2.calcOpticalFlowFarneback(prev,gray,None,\
+                0.5,3,15,3,5,1.1,cv2.OPTFLOW_FARNEBACK_GAUSSIAN) 
+   
+    # 계산 결과 그리기, 선언한 함수 호출
+    drawFlow(frame,flow)
+    
+    # 다음 프레임을 위해 이월
+    prev = gray
+  
+  cv2.imshow('OpticalFlow-Farneback', frame)
+  if cv2.waitKey(delay) == 27:
+      break
+cap.release()
+cv2.destroyAllWindows()
+```
+<img width="600" height="472" alt="image" src="https://github.com/user-attachments/assets/59f56c6f-a7d5-4289-ae36-44db171a1140" />
 
 <br><br>
 
