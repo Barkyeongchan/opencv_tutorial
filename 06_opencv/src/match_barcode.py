@@ -6,9 +6,10 @@
 '''
 
 import cv2, numpy as np
-import time     # @타임 라이브러리 추가
+import time     # @@@타임 라이브러리 추가
 
-last_match_time = 0     # @초기 값 선언
+last_match_time = 0     # @@@초기 값 선언
+is_matching = False     # @@@현재 매칭 상태
 
 # @초기 설정
 img1 = None                     # ROI로 선택할 이미지
@@ -105,19 +106,25 @@ while cap.isOpened():         # 카메라가 계속 작동하는 동안
                         pts = np.float32([[[0, 0]], [[0, h-1]], [[w-1, h-1]], [[w-1, 0]]])
                         dst = cv2.perspectiveTransform(pts, mtrx)
                         img2 = cv2.polylines(img2, [np.int32(dst)], True, (0, 255, 0), 3, cv2.LINE_AA)
-            
-                        if mask.size >= 30 and accuracy * 100 >= 95.0:
+
+                        # @@@ MATCH! 텍스트 출력 조건 추가
+                        if mask.size >= 40 and accuracy * 100 >= 95.0:
                             last_match_time = time.time()
-          
+                            is_matching = True
+            
             # @매칭점 그리기
             res = cv2.drawMatches(img1, kp1, img2, kp2, good_matches, None, 
                                 matchColor=(0, 255, 0),
                                 singlePointColor=None,
                                 matchesMask=matchesMask,
                                 flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
+ 
+            # @@@ MATCH! 글자 출력 2초 동안 유지
             if time.time() - last_match_time <= 2.0:  # 최근 2초 이내라면
                 cv2.putText(res, 'MATCH!', (50, 70), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (0, 0, 255), 4, cv2.LINE_AA)
-
+            else:
+                cv2.putText(res, 'NOT MATCH', (50, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 0, 0), 3, cv2.LINE_AA)
+   
     # @결과 출력
     cv2.imshow(win_name, res)
     key = cv2.waitKey(1) & 0xFF
