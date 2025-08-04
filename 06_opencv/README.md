@@ -8,7 +8,13 @@
    - 템플릿 매칭 (Template Matching)
 
 2. 이미지 특징점과 검출기
-   - 
+   - 이미지 특징점이란?
+   - 해리스 코너 검출 (Harris Corner Detection)
+   - 시-토마시 검출 (Shi & Tomasi Detection)
+   - 특징점 검출기
+   - 검출기 예제
+  
+3. 
 
 ## 1. 이미지 매칭 (Image Matching)
 <details>
@@ -596,3 +602,9 @@ cv2.waitKey(0)
 </details>
 
 ## 3. 
+
+<details>
+<sumarry></sumarry>
+<div markdown="1">
+
+## **3-1. 
