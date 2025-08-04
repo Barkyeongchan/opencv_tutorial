@@ -69,12 +69,105 @@ cv2.waitKey(0)
 
 
 
-## **1-3. 유클리드 거리 (Euclidian distance)와 해밍 거리(Hamming distance)
+## **1-3. 유클리드 거리 (Euclidian distance)와 해밍 거리(Hamming distance)**
 
-**두 이미지가 얼마나 비슷한지를 측정하는 방법 중 가장 대표적인 두 가지는 다음과 같다.**
+*두 이미지가 얼마나 비슷한지를 측정하는 방법 중 가장 대표적인 두 가지는 다음과 같다.*
 
 ## [유클리드 거리]
 
 **두 값의 차이로 거리를 계산한다.**
 
-예) 5를 각각 1과 7로 비교할 경우, 5와의 유클리드 거리 5-1 = 4와 7과의 유클리드 거리 7 - 5 = 2이므로 차이가 작은 7이 5와 더 유사하다.
+예) 5를 각각 1과 7로 비교할 경우
+5와의 유클리드 거리 5-1 = 4와, 7과의 유클리드 거리 7 - 5 = 2이므로 차이가 작은 7이 5와 더 유사하다.
+
+openCV에서는 cv2.norm() 함수를 사용한다.
+```
+distance = cv2.norm(src1, src2, cv2.NORM_L2)
+```
+`src1` :	첫 번째 입력 배열 (NumPy 벡터, 이미지 등)
+
+`src2` :	두 번째 입력 배열 (크기/타입 동일해야 함)
+
+`cv2.NORM_L2` :	유클리드 거리 방식 (L2 노름)
+
+`distance` :	반환값 - 두 배열 간 유클리드 거리 (float)
+
+## [해밍 거리]
+
+**두 값의 길이가 같을 때 각 자릿 값이 다른 것이 몇개인지를 계산한다.**
+
+예) 12345를 각각 12354와 92345로 비교할 경우
+12354와 마지막 두자리가 다르므로 해밍 거리 = 2와, 92345와 처음 한자리가 다르므로 햄이 거리 = 1이므로 92345와 더 유사하다.
+
+openCV에서는 cv2.norm() 함수를 사용한다.
+```
+distance = cv2.norm(src1, src2, cv2.NORM_HAMMING)
+```
+`src1` :	첫 번째 이진 시퀀스 (예: dtype=uint8의 배열)
+
+`src2` :	두 번째 이진 시퀀스 (크기 같아야 함)
+
+`cv2.NORM_HAMMING` :	해밍 거리 방식 (각 비트 비교)
+
+`distance` :	반환값 - 두 배열 간 해밍 거리 (int)
+
+```python3
+# 사물 이미지 중에서 권총 이미지 찾기, 16X16 평균 해쉬 사용
+
+import cv2
+import numpy as np
+import glob
+
+img = cv2.imread('../img/pistol.jpg')
+cv2.imshow('query', img)
+
+# @비교할 영상들이 있는 경로
+search_dir = '../img/101_ObjectCategories'
+
+# @이미지를 16x16 크기의 평균 해쉬로 변환
+def img2hash(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.resize(gray, (16, 16))
+    avg = gray.mean()
+    bi = 1 * (gray > avg)
+    return bi
+
+# @해밍 거리 측정 함수
+def hamming_distance(a, b):
+    a = a.reshape(1,-1)
+    b = b.reshape(1,-1)
+    # 같은 자리의 값이 서로 다른 것들의 합
+    distance = (a !=b).sum()
+    return distance
+
+# @권총 영상의 해쉬 구하기
+query_hash = img2hash(img)
+
+# @이미지 데이타 셋 디렉토리의 모든 영상 파일 경로
+img_path = glob.glob(search_dir+'/**/*.jpg')
+for path in img_path:
+
+    # 데이타 셋 영상 한개 읽어서 표시
+    img = cv2.imread(path)
+    cv2.imshow('searching...', img)
+    cv2.waitKey(5)
+
+    # 데이타 셋 영상 한개의 해시
+    a_hash = img2hash(img)
+
+    # 해밍 거리 산출
+    dst = hamming_distance(query_hash, a_hash)
+
+    # 해밍거리 25% 이내만 출력
+    if dst/256 < 0.25: 
+        print(path, dst/256)
+        cv2.imshow(path, img)
+        
+cv2.destroyWindow('searching...')
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+<img width="1280" height="700" alt="image" src="https://github.com/user-attachments/assets/c53f2746-1d31-4eef-8fa5-9a65cffe7227" />
+
+
+
