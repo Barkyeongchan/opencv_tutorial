@@ -1009,7 +1009,7 @@ cv2.destroyAllWindows()
 ## 5. 배경 제거
 
 <details>
-<semmary></semmary>
+<summary></summary>
 <div markdown="1">
 
 ## **5-1. 객체 추적 (Object Tracking)**
@@ -1093,7 +1093,7 @@ cv2.destroyAllWindows()
 ## 6. 광학 흐름(Optical Flow)
 
 <details>
-<semmary></semmary>
+<summary></summary>
 <div markdown="1">
 
 ## **6-1. 공학 흐름이란?**
@@ -1479,7 +1479,7 @@ cv2.destroyAllWindows()
 ## 7. Tracking API
 
 <details>
-<semmary></semmary>
+<summary></summary>
 <div markdown="1">
 
 ## **7-1. Tracking API란?**
@@ -1604,7 +1604,7 @@ cv2.destroyAllWindows()
 ## 8. 개인 프로젝트 (책 표지 검색 시스템)
 
 <details>
-<semmary></semmary>
+<summary></summary>
 <div markdown="1">
 
 ## **8-1. 예제 방법**
