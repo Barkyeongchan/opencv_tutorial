@@ -17,7 +17,7 @@ while cap.isOpened():
         # 전체 영상 히스토그램과 roi 히스트그램 역투영 ---②
         dst = cv2.calcBackProject([hsv], [0], roi_hist, [0,180], 1)
         # 역 투영 결과와 초기 추적 위치로 평균 이동 추적 ---③
-        ret, (x,y,w,h) = cv2.meanShift(dst, (x,y,w,h), termination)
+        ret, (x,y,w,h) = cv2.CamShift(dst, (x,y,w,h), termination)
         # 새로운 위치에 사각형 표시 ---④
         cv2.rectangle(img_draw, (x,y), (x+w, y+h), (0,255,0), 2)
         # 컬러 영상과 역투영 영상을 통합해서 출력
