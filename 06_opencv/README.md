@@ -2,7 +2,11 @@
 
 ## 목차
 1. 이미지 매칭
- - 
+ - 이미지 매칭이란?
+ - 평균 해시 매칭(Average Hash Matching)
+ - 유클리드 거리 (Euclidian distance)와 해밍 거리(Hamming distance)
+ - 템플릿 매칭 (Template Matching)
+
 2. 
 
 ## 1. 이미지 매칭 (Image Matching)
@@ -168,6 +172,96 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 <img width="1280" height="700" alt="image" src="https://github.com/user-attachments/assets/c53f2746-1d31-4eef-8fa5-9a65cffe7227" />
+
+
+
+## **1-4. 템플릿 매칭 (Template Matching)**
+
+특정 물체에 대한 이미지를 준비해 두고 **그 물체가 포함되어 있을 것이라 에상할 수 있는 이미지와 비교 매칭**하여 위치는 찾는 방법
+
+cv2.matchTemplate() 함수를 사용한다.
+```
+result = cv2.matchTemplate(img, templ, method, result, mask)
+```
+`img `: 입력 이미지
+
+`templ` : 템플릿 이미지
+
+`method` : 매칭 메서드
+
+(cv2.TM_SQDIFF: 제곱 차이 매칭, 완벽 매칭:0, 나쁜 매칭: 큰 값
+
+cv2.TM_SQDIFF_NORMED: 제곱 차이 매칭의 정규화
+
+cv2.TM_CCORR: 상관관계 매칭, 완벽 매칭: 큰 값, 나쁜 매칭: 0
+
+cv2.TM_CCORR_NORMED: 상관관계 매칭의 정규화
+
+cv2.TM_CCOEFF: 상관계수 매칭, 완벽 매칭:1, 나쁜 매칭: -1
+
+cv2.TM_CCOEFF_NORMED: 상관계수 매칭의 정규화)
+
+`result(optional)` : 매칭 결과, (W - w + 1) x (H - h + 1) 크기의 2차원 배열
+
+`mask(optional)` : TM_SQDIFF, TM_CCORR_NORMED인 경우 사용할 마스크
+
+cv2.matchTemplate() 함수를 사용하여 반환된 베열의 최소값 또는 최대값을 구할 때는 cv2.minMaxLoc() 함수를 사용한다.
+```
+minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(src, mask)
+```
+`src` : 입력 1 채널 배열
+
+`minVal, maxVal` : 배열 전체에서의 최소 값, 최대 값
+
+`minLoc, maxLoc` : 최소 값과 최대 값의 좌표 (x, y)
+
+```python3
+# 템플릿 매칭으로 객체 위치 검출
+
+import cv2
+import numpy as np
+
+# @입력이미지와 템플릿 이미지 읽기
+img = cv2.imread('../img/figures.jpg')
+template = cv2.imread('../img/taekwonv1.jpg')
+th, tw = template.shape[:2]
+cv2.imshow('template', template)
+
+# @3가지 매칭 메서드 순회
+methods = ['cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR_NORMED', \
+                                     'cv2.TM_SQDIFF_NORMED']
+for i, method_name in enumerate(methods):
+    img_draw = img.copy()
+    method = eval(method_name)
+
+    # 템플릿 매칭
+    res = cv2.matchTemplate(img, template, method)
+
+    # 최솟값, 최댓값과 그 좌표 구하기
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    print(method_name, min_val, max_val, min_loc, max_loc)
+
+    # TM_SQDIFF의 경우 최솟값이 좋은 매칭, 나머지는 그 반대
+    if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+        top_left = min_loc
+        match_val = min_val
+    else:
+        top_left = max_loc
+        match_val = max_val
+
+    # 매칭 좌표 구해서 사각형 표시      
+    bottom_right = (top_left[0] + tw, top_left[1] + th)
+    cv2.rectangle(img_draw, top_left, bottom_right, (0,0,255),2)
+
+    # 매칭 포인트 표시
+    cv2.putText(img_draw, str(match_val), top_left, \
+                cv2.FONT_HERSHEY_PLAIN, 2,(0,255,0), 1, cv2.LINE_AA)
+    cv2.imshow(method_name, img_draw)
+    
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+```
+<img width="1280" height="470" alt="image" src="https://github.com/user-attachments/assets/da7b2714-c98c-477d-a650-3bcfeffc02a5" />
 
 
 
