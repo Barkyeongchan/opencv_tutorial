@@ -11,10 +11,9 @@
    - k-means 랜덤 설정
    - k-means 색상 분류
    - MNIST
-   - 
+   - k-means 손글씨 숫자 군집화
   
-3. Mdfg
-   - fgdfg
+3. 개인 프로젝트 (차선 색상 분류)
 
 ## 1. 머신러닝
 
@@ -400,21 +399,155 @@ def digit2data(src, reshape=True):
 
 <br><br>
 
-## **2-6. k-means 손글씨**
+## **2-6. k-means 손글씨 숫자 군집화**
 
+```python3
+import cv2, numpy as np
+import matplotlib.pyplot as plt
+import mnist
 
+# 공통 모듈로 부터 MINST 전체 이미지 데이타 읽기
+data, _ = mnist.getData()
+
+# 중지 요건 
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+
+# 평균 클러스터링 적용, 10개의 그룹으로 묶음
+ret,label,center=cv2.kmeans(data,10,None,criteria,10,cv2.KMEANS_RANDOM_CENTERS)
+
+# 중앙점 이미지 출력
+for i in range(10):
+    # 각 중앙점 값으로 이미지 생성
+    cent_img = center[i].reshape(20,20).astype(np.uint8)
+    plt.subplot(2,5, i+1)
+    plt.imshow(cent_img, 'gray')
+    plt.xticks([]);plt.yticks([])
+    
+plt.show()
+```
+<img width="639" height="545" alt="image" src="https://github.com/user-attachments/assets/416f7a93-08a0-4f6c-af50-576db3f81d4f" />
+
+_**비지도 학습 모델이기 때문에 누락된 숫자가 발생한다.**_
 
 </div>
 </details>
 
-## 3. ㅇㅁㄴㅇ
+## 3. 개인 프로젝트 (차선 색상 분류)
 
 <details>
 <summary></summary>
 <div markdown="1">
 
-
-
 ```python3
+'''
+1. 이미지를 불러온다.
+2. 평균 클러스터링을 사용해 색상을 분류한다.
+3. 분류한 이미지를 출력한다.
+'''
 
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+K = 8  # 군집화 갯수
+
+img = cv2.imread('../img/load_line.jpg')
+# 이미지 사이즈를 1/5로 줄임
+img = cv2.resize(img, None, fx=0.2, fy=0.2, interpolation=cv2.INTER_AREA)
+
+data = img.reshape((-1, 3)).astype(np.float32)
+
+# 반복 중지 조건
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+# 10회 반복, 결과 확인 후 변경
+
+# 평균 클러스터링 적용
+ret, label, center = cv2.kmeans(data, K, None, criteria, 10, cv2.KMEANS_PP_CENTERS)
+
+# 중심값을 정수형으로 변환
+
+center = np.uint8(center)
+print(center)
+
+# 각 레이블에 해당하는 중심값으로 픽셀 값 선택
+res = center[label.flatten()]
+
+# 원본 영상의 형태로 변환
+res = res.reshape((img.shape))
+
+# 결과 출력
+merged = np.hstack((img, res))
+cv2.imshow('Load Line', merged)
+
+# --- 색상 팔레트 생성 ---
+
+# 픽셀 수 계산
+unique, counts = np.unique(label, return_counts=True)
+total_pixels = data.shape[0]
+
+# 픽셀 수 내림차순 정렬 인덱스
+sorted_idx = np.argsort(counts)[::-1]
+
+# 상위 3개 클러스터 인덱스와 값들만 선택
+top3_idx = sorted_idx[:3]
+top3_centers = center[top3_idx]
+top3_counts = counts[top3_idx]
+top3_ratios = top3_counts / total_pixels
+
+palette = np.zeros((50, 300, 3), dtype=np.uint8)
+step = 300 // 3
+for i, color in enumerate(top3_centers):
+    palette[:, i*step:(i+1)*step, :] = color
+cv2.imshow('Top 3 Color Palette', palette)
+
+# --- 색상 분포 차트 및 상세 분석 ---
+
+# 클러스터 별 비율 계산
+ratios = counts / total_pixels
+
+# BGR → RGB 변환 (matplotlib는 RGB)
+colors_rgb = center[:, ::-1] / 255.0  # 0~1 정규화
+
+# 분포 차트 출력
+plt.figure(figsize=(8, 4))
+plt.bar(range(K), ratios, color=colors_rgb, tick_label=[f'C{i}' for i in range(K)])
+plt.title('Cluster Color Distribution')
+plt.xlabel('Cluster')
+plt.ylabel('Pixel Ratio')
+plt.ylim(0, 1)
+plt.show()
+
+# 상세 분석 출력
+print("\n클러스터 상세 분석:")
+for i in range(K):
+    b, g, r = center[i]
+    print(f"Cluster {i}: BGR=({b}, {g}, {r}), 픽셀 수={counts[i]}, 비율={ratios[i]:.4f}")
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 ```
+**[결과 출력]**
+<img width="1485" height="518" alt="image" src="https://github.com/user-attachments/assets/707ff264-a2cc-4252-bce2-5c5eec5aea57" />
+
+<br><br>
+
+**[추출된 3가지 대표색상]**
+<img width="299" height="79" alt="image" src="https://github.com/user-attachments/assets/0f047eb7-b1ad-4cd6-a666-f86fc8298d22" />
+
+<br><br>
+
+**[색상 분포 차트]**
+<img width="799" height="466" alt="image" src="https://github.com/user-attachments/assets/6fe01437-6dba-4260-b274-f79f5b2a286d" />
+
+<br><br>
+
+**[각 색상의 중심값(Centroid) 좌표]**
+<img width="109" height="141" alt="image" src="https://github.com/user-attachments/assets/f9cdb40e-769e-468d-a1b5-9324d181d484" />
+
+<br><br>
+
+**[클러스터 분석 표]**
+<img width="430" height="160" alt="image" src="https://github.com/user-attachments/assets/c2d30a0b-fe1d-4b4b-9fd5-062936d0ae10" />
+
+</div>
+</details>
