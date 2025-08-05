@@ -6,6 +6,7 @@
 
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 K = 8  # 군집화 갯수
 
@@ -36,6 +37,41 @@ res = res.reshape((img.shape))
 # 결과 출력
 merged = np.hstack((img, res))
 cv2.imshow('Load Line', merged)
+
+# --- 색상 팔레트 생성 ---
+palette = np.zeros((50, 300, 3), dtype=np.uint8)  # 가로 300px, 세로 50px
+step = 300 // K
+for i, color in enumerate(center):
+    palette[:, i*step:(i+1)*step, :] = color
+
+cv2.imshow('Color Palette', palette)
+
+# --- 색상 분포 차트 및 상세 분석 ---
+
+# 픽셀 수 계산
+unique, counts = np.unique(label, return_counts=True)
+total_pixels = data.shape[0]
+
+# 클러스터 별 비율 계산
+ratios = counts / total_pixels
+
+# BGR → RGB 변환 (matplotlib는 RGB)
+colors_rgb = center[:, ::-1] / 255.0  # 0~1 정규화
+
+# 분포 차트 출력
+plt.figure(figsize=(8, 4))
+plt.bar(range(K), ratios, color=colors_rgb, tick_label=[f'C{i}' for i in range(K)])
+plt.title('Cluster Color Distribution')
+plt.xlabel('Cluster')
+plt.ylabel('Pixel Ratio')
+plt.ylim(0, 1)
+plt.show()
+
+# 상세 분석 출력
+print("\n클러스터 상세 분석:")
+for i in range(K):
+    b, g, r = center[i]
+    print(f"Cluster {i}: BGR=({b}, {g}, {r}), 픽셀 수={counts[i]}, 비율={ratios[i]:.4f}")
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
