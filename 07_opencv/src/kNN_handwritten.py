@@ -9,7 +9,7 @@ knn = cv2.ml.KNearest_create()
 knn.train(train, cv2.ml.ROW_SAMPLE, train_labels)
 
 # 인식시킬 손글씨 이미지 읽기
-image = cv2.imread('../img/4027.png')
+image = cv2.imread('../img/1582.png')
 cv2.imshow("image", image)
 cv2.waitKey(0) 
 
@@ -35,7 +35,7 @@ for c in contours:
 
         # 테스트 데이타 형식으로 변환
         data = mnist.digit2data(roi)
-        
+
         # 결과 예측해서 이미지에 표시
         ret, result, neighbours, dist = knn.findNearest(data, k=1)
         cv2.putText(image, "%d"%ret, (x , y + 155), \
