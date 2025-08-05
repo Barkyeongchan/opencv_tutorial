@@ -29,12 +29,17 @@ def knn_predict(X_train, y_train, x, k):
 
 # --- 학습 함수 ---
 def train_model():
+    global label_encoder
     if not os.path.exists(CSV_PATH):
         print("❌ 학습 데이터가 없습니다.")
         return None, None, None
     df = pd.read_csv(CSV_PATH)
     X = df[['R', 'G', 'B']].values / 255.0
     y = label_encoder.fit_transform(df['label'])
+    
+    label_encoder.fit(y)
+    y_encoded = label_encoder.transform(y)
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     acc = 0
     best_k = knn_k
@@ -68,6 +73,9 @@ cv2.setMouseCallback("Color Recognizer", mouse_callback)
 if os.path.exists(MODEL_PATH):
     with open(MODEL_PATH, 'rb') as f:
         X_train, y_train, best_k = pickle.load(f)
+    if os.path.exists(CSV_PATH):
+        df = pd.read_csv(CSV_PATH)
+        label_encoder.fit(df['label'])    
 else:
     X_train, y_train, best_k = train_model()
     if X_train is None:

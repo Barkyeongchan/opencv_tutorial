@@ -64,13 +64,13 @@ click_pos = None
 current_frame = None
 
 def mouse_callback(event, x, y, flags, param):
-    global current_color, click_pos
+    global current_color, click_pos, current_frame
     if event == cv2.EVENT_LBUTTONDOWN:
         if current_frame is None:
             return
         if (cx - roi_size//2 <= x <= cx + roi_size//2) and (cy - roi_size//2 <= y <= cy + roi_size//2):
             # ROI 내 클릭했으면 평균 색상 추출
-            roi = frame[cy - roi_size//2:cy + roi_size//2, cx - roi_size//2:cx + roi_size//2]
+            roi = current_frame[cy - roi_size//2:cy + roi_size//2, cx - roi_size//2:cx + roi_size//2]
             avg_color = np.mean(roi.reshape(-1,3), axis=0).astype(int)
             current_color = avg_color
             click_pos = (x, y)
@@ -123,7 +123,7 @@ while True:
     elif key == ord('s'):
         # 수집한 샘플 저장
         if samples:
-            df = pd.DataFrame(samples, columns=['B', 'G', 'R', 'Label'])
+            df = pd.DataFrame(samples, columns=['B', 'G', 'R', 'label'])
             df.to_csv('color_dataset.csv', index=False)
             print(f"샘플 {len(samples)}개 저장됨 (color_dataset.csv)")
             model_ready = load_dataset_and_train()
