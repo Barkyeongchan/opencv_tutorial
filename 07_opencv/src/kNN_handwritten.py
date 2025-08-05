@@ -32,13 +32,15 @@ for c in contours:
         # 숫자 영역만 roi로 확보하고 사각형 그리기
         roi = gray[y:y + h, x:x + w]
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 1)
-        # 테스트 데이타 형식으로 변환 ---⑩
+
+        # 테스트 데이타 형식으로 변환
         data = mnist.digit2data(roi)
-        # 결과 예측해서 이미지에 표시---⑪
+        
+        # 결과 예측해서 이미지에 표시
         ret, result, neighbours, dist = knn.findNearest(data, k=1)
         cv2.putText(image, "%d"%ret, (x , y + 155), \
                         cv2.FONT_HERSHEY_DUPLEX, 2, (255, 0, 0), 2)
         cv2.imshow("image", image)
         cv2.waitKey(0) 
-        
+
 cv2.destroyAllWindows()
