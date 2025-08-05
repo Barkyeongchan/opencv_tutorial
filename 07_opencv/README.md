@@ -72,9 +72,11 @@
    - 지도 학습에는 훈련 데이터에 레이블(label) 또는 타깃(garget)이라는 정답지가 포함되어 있음
 
 1) 분류(classification)
+   
 <img width="924" height="364" alt="image" src="https://github.com/user-attachments/assets/d826aded-2184-45b5-881b-c97ac89d1f6e" />
 
 2) 회귀(regression)
+   
 <img width="753" height="412" alt="image" src="https://github.com/user-attachments/assets/707a4500-3fcd-45e5-b9db-636fe84bcd88" />
 
 3) 지도 학습 알고리즘
@@ -200,6 +202,7 @@ X[50:100, :] = X1
 plt.scatter(X[ : , 0], X[ :, 1], s = 50, c = 'b')
 plt.show()
 ```
+
 <img width="374" height="252" alt="image" src="https://github.com/user-attachments/assets/ea8d6fc7-47d2-4453-b0b6-20bcf9f49acc" />
 
 <br><br>
@@ -218,6 +221,7 @@ plt.scatter(-0.94665068, -0.97138368, s=200, c='g', marker='s')
 plt.scatter(2.01559419, 2.02597093, s=200, c='r', marker='s')
 plt.show()
 ```
+
 <img width="374" height="252" alt="image" src="https://github.com/user-attachments/assets/705df97f-9534-490f-a773-e6e275e121cf" />
 
 <br><br>
@@ -262,6 +266,7 @@ plt.scatter(center[0,0],center[0,1], s=100, c='r', marker='s')
 plt.scatter(center[1,0],center[1,1], s=100, c='b', marker='s')
 plt.show()
 ```
+
 <img width="640" height="545" alt="image" src="https://github.com/user-attachments/assets/e70f83e8-03fb-4b3f-a42f-4037a1362ab3" />
 
 <br><br>
@@ -304,6 +309,7 @@ cv2.imshow('Kmeans color', merged)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
+
 <img width="797" height="475" alt="image" src="https://github.com/user-attachments/assets/d1ad69ee-2782-4976-a323-67b5dc33bc00" />
 
 <img width="111" height="278" alt="image" src="https://github.com/user-attachments/assets/411d309f-da71-4560-b910-754d2564e674" />
@@ -425,6 +431,7 @@ for i in range(10):
     
 plt.show()
 ```
+
 <img width="639" height="545" alt="image" src="https://github.com/user-attachments/assets/416f7a93-08a0-4f6c-af50-576db3f81d4f" />
 
 _**비지도 학습 모델이기 때문에 누락된 숫자가 발생한다.**_
@@ -526,27 +533,33 @@ for i in range(K):
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
+
 **[결과 출력]**
+
 <img width="1485" height="518" alt="image" src="https://github.com/user-attachments/assets/707ff264-a2cc-4252-bce2-5c5eec5aea57" />
 
 <br><br>
 
 **[추출된 3가지 대표색상]**
+
 <img width="299" height="79" alt="image" src="https://github.com/user-attachments/assets/0f047eb7-b1ad-4cd6-a666-f86fc8298d22" />
 
 <br><br>
 
 **[색상 분포 차트]**
+
 <img width="799" height="466" alt="image" src="https://github.com/user-attachments/assets/6fe01437-6dba-4260-b274-f79f5b2a286d" />
 
 <br><br>
 
 **[각 색상의 중심값(Centroid) 좌표]**
+
 <img width="109" height="141" alt="image" src="https://github.com/user-attachments/assets/f9cdb40e-769e-468d-a1b5-9324d181d484" />
 
 <br><br>
 
 **[클러스터 분석 표]**
+
 <img width="430" height="160" alt="image" src="https://github.com/user-attachments/assets/c2d30a0b-fe1d-4b4b-9fd5-062936d0ae10" />
 
 </div>
