@@ -5,7 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
-# 기본 색상 레이블 (숫자 키와 매핑)
+# 숫자 키와 색상 이름 매핑 (키보드 ASCII 코드 기준)
 color_labels = {
     49: "Red",    # '1'
     50: "Blue",   # '2'
@@ -16,42 +16,49 @@ color_labels = {
     55: "Gray"    # '7'
 }
 
-# 수집 데이터 저장용 리스트 (B, G, R, label)
+# 수집한 색상 샘플 저장 리스트 (B, G, R, 라벨)
 samples = []
 
-# ROI 설정 (중앙, 크기 100x100)
+# ROI(관심 영역) 크기와 초기 위치 설정 (중앙 기준)
 roi_size = 100
 frame_width, frame_height = 640, 480
 cx, cy = frame_width // 2, frame_height // 2
 
-# 학습용 KNN 모델 및 스케일러 (초기엔 None)
+# KNN 모델과 데이터 스케일러 (초기값 None)
 knn_model = None
 scaler = None
 
+# --- CSV에서 데이터 불러와 KNN 모델 학습 ---
 def load_dataset_and_train():
     global knn_model, scaler
     try:
+        # 저장된 CSV 불러오기
         df = pd.read_csv('color_dataset.csv')
-        X = df[['B', 'G', 'R']].values.astype(float)
-        y = df['Label'].values
+        X = df[['B', 'G', 'R']].values.astype(float)  # 특징값 (BGR)
+        y = df['Label'].values                         # 라벨(문자열)
 
+        # 데이터 정규화 (0~1 사이)
         scaler = MinMaxScaler()
         X_scaled = scaler.fit_transform(X)
 
+        # 학습/검증 데이터 분리 (20% 검증)
         X_train, X_test, y_train, y_test = train_test_split(
             X_scaled, y, test_size=0.2, random_state=42)
 
+        # KNN 분류기 생성 및 학습 (k=3)
         knn_model = KNeighborsClassifier(n_neighbors=3)
         knn_model.fit(X_train, y_train)
 
+        # 검증 데이터 정확도 출력
         acc = knn_model.score(X_test, y_test)
         print(f"K-NN 모델 학습 완료, 테스트 정확도: {acc*100:.2f}%")
         return True
     except Exception as e:
+        # 데이터 없거나 오류 시 안내 메시지 출력
         print("데이터셋 없음 또는 학습 실패:", e)
         return False
 
-# 웹캠 열기
+# 웹캠 초기화 및 프레임 크기 설정
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, frame_width)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
@@ -59,46 +66,52 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frame_height)
 print("웹캠 실행 중. ESC 키로 종료")
 print("마우스 왼쪽 클릭으로 ROI 내 색상 샘플 수집 후 1~7 숫자키로 라벨링")
 
+# 현재 선택된 색상과 클릭 위치, 프레임 저장 변수
 current_color = None
 click_pos = None
 current_frame = None
 
+# --- 마우스 클릭 이벤트 처리 함수 ---
 def mouse_callback(event, x, y, flags, param):
     global current_color, click_pos, current_frame
     if event == cv2.EVENT_LBUTTONDOWN:
+        # 프레임 없으면 무시
         if current_frame is None:
             return
+        # ROI 내부 클릭했는지 확인
         if (cx - roi_size//2 <= x <= cx + roi_size//2) and (cy - roi_size//2 <= y <= cy + roi_size//2):
-            # ROI 내 클릭했으면 평균 색상 추출
+            # ROI 영역 평균 색상 계산
             roi = current_frame[cy - roi_size//2:cy + roi_size//2, cx - roi_size//2:cx + roi_size//2]
             avg_color = np.mean(roi.reshape(-1,3), axis=0).astype(int)
             current_color = avg_color
             click_pos = (x, y)
             print(f"샘플 색상 추출됨: BGR = {avg_color}")
 
+# OpenCV 윈도우 생성 및 마우스 콜백 연결
 cv2.namedWindow("Color Collect & Predict")
 cv2.setMouseCallback("Color Collect & Predict", mouse_callback)
 
+# 학습 데이터 불러와 모델 학습 시도
 model_ready = load_dataset_and_train()
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
-    current_frame = frame.copy()
+    current_frame = frame.copy()  # 원본 프레임 복사 (마우스 이벤트용)
 
-    # ROI 사각형 표시
+    # ROI 위치에 사각형 그리기 (초록색)
     x1, y1 = cx - roi_size//2, cy - roi_size//2
     x2, y2 = cx + roi_size//2, cy + roi_size//2
     cv2.rectangle(frame, (x1,y1), (x2,y2), (0,255,0), 2)
 
-    # 현재 샘플 색상 표시
+    # 클릭해 추출한 샘플 색상과 위치 표시
     if current_color is not None:
         cv2.putText(frame, f"Sampled BGR: {current_color}", (10,30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
         cv2.circle(frame, click_pos, 5, (0,255,0), -1)
 
-    # 예측 (모델 준비되면)
+    # 모델이 준비된 경우 ROI 내 색상 예측 결과 표시
     if model_ready:
         roi = frame[y1:y2, x1:x2]
         avg_color = np.mean(roi.reshape(-1,3), axis=0).astype(int)
@@ -111,9 +124,10 @@ while True:
 
     key = cv2.waitKey(1)
 
-    if key == 27:  # ESC 종료
+    if key == 27:  # ESC 키 누르면 종료
         break
     elif key in color_labels and current_color is not None:
+        # 숫자키(1~7) 눌러 라벨링 시 샘플 리스트에 저장
         label = color_labels[key]
         b, g, r = current_color
         samples.append([int(b), int(g), int(r), label])
@@ -121,24 +135,25 @@ while True:
         current_color = None
 
     elif key == ord('s'):
-        # 수집한 샘플 저장
+        # 's' 키 누르면 지금까지 수집한 샘플 CSV로 저장 후 모델 재학습
         if samples:
-            df = pd.DataFrame(samples, columns=['B', 'G', 'R', 'label'])
+            df = pd.DataFrame(samples, columns=['B', 'G', 'R', 'Label'])
             df.to_csv('color_dataset.csv', index=False)
             print(f"샘플 {len(samples)}개 저장됨 (color_dataset.csv)")
             model_ready = load_dataset_and_train()
         else:
             print("저장할 샘플이 없습니다")
 
-    # ROI 위치 조절 (화살표 키)
-    elif key == 81:  # 왼쪽
+    # 방향키로 ROI 위치 이동 (좌, 우, 상, 하)
+    elif key == 81:  # 왼쪽 화살표
         cx = max(cx - 10, roi_size//2)
-    elif key == 83:  # 오른쪽
+    elif key == 83:  # 오른쪽 화살표
         cx = min(cx + 10, frame_width - roi_size//2)
-    elif key == 82:  # 위
+    elif key == 82:  # 위쪽 화살표
         cy = max(cy - 10, roi_size//2)
-    elif key == 84:  # 아래
+    elif key == 84:  # 아래쪽 화살표
         cy = min(cy + 10, frame_height - roi_size//2)
 
+# 종료 처리
 cap.release()
 cv2.destroyAllWindows()
