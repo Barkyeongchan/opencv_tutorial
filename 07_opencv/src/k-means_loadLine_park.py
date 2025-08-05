@@ -39,18 +39,27 @@ merged = np.hstack((img, res))
 cv2.imshow('Load Line', merged)
 
 # --- 색상 팔레트 생성 ---
-palette = np.zeros((50, 300, 3), dtype=np.uint8)  # 가로 300px, 세로 50px
-step = 300 // K
-for i, color in enumerate(center):
-    palette[:, i*step:(i+1)*step, :] = color
-
-cv2.imshow('Color Palette', palette)
-
-# --- 색상 분포 차트 및 상세 분석 ---
 
 # 픽셀 수 계산
 unique, counts = np.unique(label, return_counts=True)
 total_pixels = data.shape[0]
+
+# 픽셀 수 내림차순 정렬 인덱스
+sorted_idx = np.argsort(counts)[::-1]
+
+# 상위 3개 클러스터 인덱스와 값들만 선택
+top3_idx = sorted_idx[:3]
+top3_centers = center[top3_idx]
+top3_counts = counts[top3_idx]
+top3_ratios = top3_counts / total_pixels
+
+palette = np.zeros((50, 300, 3), dtype=np.uint8)
+step = 300 // 3
+for i, color in enumerate(top3_centers):
+    palette[:, i*step:(i+1)*step, :] = color
+cv2.imshow('Top 3 Color Palette', palette)
+
+# --- 색상 분포 차트 및 상세 분석 ---
 
 # 클러스터 별 비율 계산
 ratios = counts / total_pixels
