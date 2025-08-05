@@ -20,7 +20,7 @@
    - Lazy Model
    - 유클리드 거리 계산법
    - 맨해튼 거리 계산법
-   - 실습 예제
+   - KNN 랜덤 설정
 
 ## 1. 머신러닝
 
@@ -588,6 +588,9 @@ cv2.destroyAllWindows()
 
 [K = 3 일때는 Class B로 분류, K = 6일때는 Class A로 분류]
 
+> 시각화 시물레이션 사이트 : http://vision.stanford.edu/teaching/cs231n-demos/knn/
+> 시물레이션 해설 사이트 : https://pangguinland.tistory.com/127
+
 ## **4-2. Lazt Model**
 
 KNN은 사전 모델링이 따로 필요 없는 모델이므로 처리 속도가 빠름
@@ -612,8 +615,143 @@ KNN은 사전 모델링이 따로 필요 없는 모델이므로 처리 속도가
 
 <img width="749" height="647" alt="image" src="https://github.com/user-attachments/assets/d0d664df-e605-4f53-8bdf-06be5ca62546" />
 
-## **4-5. 실습 예제**
+## **4-5. KNN 랜덤 설정 **
 
 ```python3
+import cv2, numpy as np, matplotlib.pyplot as plt
 
+# 0~200 사이의 무작위 수 50x2개 데이타 생성
+red = np.random.randint(0, 110, (25,2)).astype(np.float32)
+blue = np.random.randint(90, 200, (25, 2)).astype(np.float32)
+trainData = np.vstack((red, blue))
+
+# 50x1개 레이블 생성
+labels = np.zeros((50,1), dtype=np.float32) # 0:빨강색 삼각형
+labels[25:] = 1           # 1:파랑색 사각형
+
+# 레이블 값 0과 같은 자리는 red, 1과 같은 자리는 blue로 분류해서 표시
+plt.scatter(red[:,0], red[:,1], s=80, c='r', marker='^') # 빨강색 삼각형
+plt.scatter(blue[:,0], blue[:,1], s=80, c='b', marker='s')# 파랑색 사각형
+
+# 0 ~ 200 사이의 1개의 새로운 무작위 수 생성
+newcomer = np.random.randint(0,200,(1,2)).astype(np.float32)
+plt.scatter(newcomer[:,0], newcomer[:,1], s=80, c='g', marker='o') # 초록색 원
+
+# KNearest 알고리즘 객체 생성
+knn = cv2.ml.KNearest_create()
+
+# train, 행 단위 샘플
+knn.train(trainData, cv2.ml.ROW_SAMPLE, labels)
+
+# 예측
+#ret, results = knn.predict(newcomer)
+ret, results, neighbours, dist = knn.findNearest(newcomer, 3) #K=3
+
+# 결과 출력
+print('ret:%s, result:%s, neighbours:%s, distance:%s' \
+        %(ret, results, neighbours, dist))
+plt.annotate('red' if ret==0.0 else 'blue', xy=newcomer[0], \
+             xytext=(newcomer[0]+1))
+plt.show()
 ```
+
+<img width="640" height="546" alt="image" src="https://github.com/user-attachments/assets/46477e38-ccf8-4a69-9374-bb15d9c9e62d" />
+
+<img width="538" height="22" alt="image" src="https://github.com/user-attachments/assets/cb12f0c9-82f1-4070-8af9-87787278b837" />
+
+| 키워드          | 값                   | 의미                              |
+| ------------ | ------------------- | ------------------------------- |
+| `ret`        | `1.0`               | 최종 예측 클래스 (여기선 `1`: 파랑 사각형)     |
+| `result`     | `[[1.]]`            | 예측 결과 (same as `ret`)           |
+| `neighbours` | `[[1. 1. 1.]]`      | 가장 가까운 3개의 이웃의 클래스 (모두 `1`)     |
+| `distance`   | `[[49. 409. 436.]]` | newcomer와 각 이웃 간의 거리 (작을수록 가까움) |
+
+
+## **4-6. KNN MNIST 분류**
+
+```python3
+import numpy as np, cv2
+import mnist
+
+# 훈련 데이타와 테스트 데이타 가져오기
+train, train_labels = mnist.getTrain()
+test, test_labels = mnist.getTest()
+
+# kNN 객체 생성 및 훈련
+knn = cv2.ml.KNearest_create()
+knn.train(train, cv2.ml.ROW_SAMPLE, train_labels)
+
+# k값을 1~10까지 변경하면서 예측
+for k in range(1, 11):
+    # 결과 예측
+    ret, result, neighbors, distance = knn.findNearest(test, k=k)
+
+    # 정확도 계산 및 출력
+    correct = np.sum(result == test_labels)
+    accuracy = correct / result.size * 100.0
+    print("K:%d, Accuracy :%.2f%%(%d/%d)" % (k, accuracy, correct, result.size))
+```
+
+<img width="998" height="562" alt="image" src="https://github.com/user-attachments/assets/01017012-dbde-4b06-84c6-654d6d90fd1a" />
+
+
+<img width="226" height="173" alt="image" src="https://github.com/user-attachments/assets/249359c5-eb06-4aa2-967e-d2468eda4ec0" />
+
+## **4-7. KNN 손글씨 숫자 예제**
+
+```python3
+import numpy as np, cv2
+import mnist
+
+# 훈련 데이타 가져오기
+train, train_labels = mnist.getData()
+
+# Knn 객체 생성 및 학습
+knn = cv2.ml.KNearest_create()
+knn.train(train, cv2.ml.ROW_SAMPLE, train_labels)
+
+# 인식시킬 손글씨 이미지 읽기
+image = cv2.imread('../img/4027.png')
+cv2.imshow("image", image)
+cv2.waitKey(0) 
+
+# 그레이 스케일 변환과 스레시홀드
+gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+gray = cv2.GaussianBlur(gray, (5, 5), 0)
+_, gray = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
+
+# 최외곽 컨투어만 찾기
+contours, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, \
+                                        cv2.CHAIN_APPROX_SIMPLE)[-2:]
+
+# 모든 컨투어 순회
+for c in contours:
+    # 컨투어를 감싸는 외접 사각형으로 숫자 영역 좌표 구하기
+    (x, y, w, h) = cv2.boundingRect(c) 
+
+    # 외접 사각형의 크기가 너무 작은것은 제외
+    if w >= 5 and h >= 25:
+        # 숫자 영역만 roi로 확보하고 사각형 그리기
+        roi = gray[y:y + h, x:x + w]
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 1)
+
+        # 테스트 데이타 형식으로 변환
+        data = mnist.digit2data(roi)
+        
+        # 결과 예측해서 이미지에 표시
+        ret, result, neighbours, dist = knn.findNearest(data, k=1)
+        cv2.putText(image, "%d"%ret, (x , y + 155), \
+                        cv2.FONT_HERSHEY_DUPLEX, 2, (255, 0, 0), 2)
+        cv2.imshow("image", image)
+        cv2.waitKey(0) 
+
+cv2.destroyAllWindows()
+```
+
+<img width="597" height="229" alt="image" src="https://github.com/user-attachments/assets/8b76e04a-2229-4056-8b7f-4f4f0c101504" />
+
+**[결과가 틀린 경우]**
+<img width="896" height="344" alt="image" src="https://github.com/user-attachments/assets/80584b73-7192-44ac-815a-da5b6c48f1bd" />
+
+</div>
+</details>
