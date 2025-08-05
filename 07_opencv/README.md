@@ -16,6 +16,11 @@
 3. 개인 프로젝트 (차선 색상 분류)
 
 4. K-최근접 이웃(KNN)
+   - K-최근접 이웃이란?
+   - Lazy Model
+   - 유클리드 거리 계산법
+   - 맨해튼 거리 계산법
+   - 실습 예제
 
 ## 1. 머신러닝
 
@@ -581,3 +586,34 @@ cv2.destroyAllWindows()
 
 <img width="753" height="563" alt="image" src="https://github.com/user-attachments/assets/c5f56640-6365-4031-968e-28b271478694" />
 
+[K = 3 일때는 Class B로 분류, K = 6일때는 Class A로 분류]
+
+## **4-2. Lazt Model**
+
+KNN은 사전 모델링이 따로 필요 없는 모델이므로 처리 속도가 빠름
+
+## **4-3. 유클리드 거리 계산법 (Euclidean Distance)**
+
+**일반적으로 점과 점 사이의 거리를 구하는 방법**
+
+<img width="792" height="171" alt="image" src="https://github.com/user-attachments/assets/1e1865ad-5d34-4889-93a0-3b01fa2baa1a" />
+
+<br><br>
+
+[3차원에서 유클리드 거리를 구하는 방법]
+
+<img width="778" height="636" alt="image" src="https://github.com/user-attachments/assets/dcad2be9-ccd3-44cd-89b6-e2f8671a6016" />
+
+<img width="539" height="104" alt="image" src="https://github.com/user-attachments/assets/7043e91e-040b-4cfe-b608-60806e0e33d2" />
+
+## **4-4. 맨해튼 거리 계산법 (Manhattan Distance)**
+
+**점과 점사이의 직선거리가 아닌 X축, Y축을 따라 간 거리를 구하는 방법**
+
+<img width="749" height="647" alt="image" src="https://github.com/user-attachments/assets/d0d664df-e605-4f53-8bdf-06be5ca62546" />
+
+## **4-5. 실습 예제**
+
+```python3
+
+```
