@@ -25,6 +25,8 @@
    - KNN 손글씨 숫자 예제
 
 5. 개인 프로젝트 (옷 색상 kNN 분류)
+   - 옷 색상 데이터셋 만들기
+   - 옷 색상 KNN 분류 알고리즘 코드
 
 ## 1. 머신러닝
 
@@ -930,16 +932,26 @@ cap.release()
 cv2.destroyAllWindows()
 ```
 
+**[색상 학습 화면]**
+
 <img width="639" height="511" alt="image" src="https://github.com/user-attachments/assets/d65c85de-b14c-48ff-90de-90fc3b9110cb" />
 
+<br><br>
+
+**[샘플 저장 시 터미널 출력]**
+
 <img width="303" height="36" alt="image" src="https://github.com/user-attachments/assets/9e5c604c-6348-4f41-b326-7757ab9b78a3" />
+
+<br><br>
+
+**[저장된 color_dataset.csv 데이터셋 값]**
 
 <img width="109" height="295" alt="image" src="https://github.com/user-attachments/assets/f794509b-e504-4cdd-a7f9-4df5651c5d13" />
 
 
 **각 색상별로 15개의 데이터 입력**
 
-## **5-2. 옷 색상 KNN 분류 알고리즘 코드**
+## **5-2. 옷 색상 KNN 분류 알고리즘 (kNN_shortsColor_park.py)**
 
 ```python3
 import cv2
