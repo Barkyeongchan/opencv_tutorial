@@ -1,6 +1,6 @@
 # [학습 목표 : OpenCV 머신러닝을 활용해 얼굴을 구별하고 표정을 구별 할 수 있다.]
 
-# 하르 캐스케이드 분류기 (Haarcascade) / LBPH 알고리즘
+# 하르 캐스케이드 분류기 (Haarcascade) / LBPH 알고리즘 / DLIB 라이브러리
 
 ## 목차
 
@@ -19,6 +19,8 @@
    - 목표
    - 실행 코드
    - 실행 결과
+
+4. DLIB 라이브러리
 
 ## 1. 하르 캐스케이드 분류기 (Haarcascade)
 
@@ -766,4 +768,116 @@ def save_user_data():
 </div>
 </details>
 
+## 4. Dlib 라이브러리
+
+<details>
+<summary></summary>
+<div markdown="1">
+
+## **4-1. DLIB 라이브러리란?**
+
+`dlib`은 **얼굴 인식 및 머신 러닝 기능을 포함**한 C++ 기반의 고성능 라이브러리이다.
+
+```terminal
+pip instll dlib-bin
+```
+
+**[API]**
+
+`detector` : dlib.get_frontal_face_detector(): 얼굴 검출기 생성
+
+`predictor` : dlib.shap_predictor(file): 랜드마크 검출기 생성
+
+`rects` : detector(img) : 얼굴 검출
+
+`shape` : predictor(img, rect) : 랜드마크 검출
+
+<img width="1856" height="1496" alt="image" src="https://github.com/user-attachments/assets/68203192-0580-4b38-b8f8-a9bbfb1baa88" />
+
+## **4-2. 얼굴 랜드마크 검출 실습**
+
+```python3
+import cv2
+import dlib
+
+# 얼굴 검출기와 랜드마크 검출기 생성
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+
+img = cv2.imread("../img/like_lenna.png")
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# 얼굴 영역 검출
+faces = detector(gray)
+for rect in faces:
+    # 얼굴 영역을 좌표로 변환 후 사각형 표시
+    x,y = rect.left(), rect.top()
+    w,h = rect.right()-x, rect.bottom()-y
+    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 1)
+
+    # 얼굴 랜드마크 검출
+    shape = predictor(gray, rect)
+    for i in range(68):
+        # 부위별 좌표 추출 및 표시
+        part = shape.part(i)
+        cv2.circle(img, (part.x, part.y), 2, (0, 0, 255), -1)
+        cv2.putText(img, str(i), (part.x, part.y), cv2.FONT_HERSHEY_PLAIN, \
+                                         0.5,(255,255,255), 1, cv2.LINE_AA)
+
+cv2.imshow("face landmark", img)
+cv2.waitKey(0)
+```
+
+<img width="510" height="525" alt="image" src="https://github.com/user-attachments/assets/afbc7225-1526-4e8b-b1bf-bab76258cf07" />
+
+<img width="639" height="502" alt="image" src="https://github.com/user-attachments/assets/adbc5c82-c4db-481e-8968-7ec3b0f897dd" />
+
+
+## **4-3. 카메라 캡쳐로 얼굴 랜드마크 검출 실습**
+
+```python3
+import cv2
+import dlib
+
+# 얼굴 검출기와 랜드마크 검출기 생성
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+
+cap = cv2.VideoCapture(0)
+#cap.set(cv2.cv2.CAP_PROP_FRAME_WIDTH, 480)
+#cap.set(cv2.cv2.CAP_PROP_FRAME_HEIGHT, 320)
+
+while cap.isOpened():
+    ret, img = cap.read()
+    if not ret:
+        print('no frame.');break
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    # 얼굴 영역 검출
+    faces = detector(gray)
+    for rect in faces:
+
+        # 얼굴 영역을 좌표로 변환 후 사각형 표시
+        x,y = rect.left(), rect.top()
+        w,h = rect.right()-x, rect.bottom()-y
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 1)
+    
+        # 얼굴 랜드마크 검출
+        shape = predictor(gray, rect)
+        for i in range(68):
+            # 부위별 좌표 추출 및 표시
+            part = shape.part(i)
+            cv2.circle(img, (part.x, part.y), 2, (0, 0, 255), -1)
+#            cv2.putText(img, str(i), (part.x, part.y), cv2.FONT_HERSHEY_PLAIN, 0.5,(255,255,255), 1, cv2.LINE_AA)
+    
+    cv2.imshow("face landmark", img)
+    if cv2.waitKey(1)== 27:
+        break
+cap.release()
+```
+
+<img width="638" height="511" alt="image" src="https://github.com/user-attachments/assets/f42a11c0-99b5-442b-8254-4f81519630ed" />
+
+
+</div>
+</details>
 
