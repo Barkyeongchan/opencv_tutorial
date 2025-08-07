@@ -85,9 +85,15 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 ```
 
+<br><br>
+
 **[2. haarcascade_frontalface_default.xml / haarcascade_eye.xml 다운로드]**
 
-[openCV github](https://github.com/opencv/opencv/tree/master/data/haarcascades)
+[haarcascade_frontalface_default.xml](https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml)
+
+[haarcascade_eye.xml](https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_eye.xml)
+
+<br><br>
 
 **[3. 코드 실행 결과]**
 
@@ -96,3 +102,4 @@ cv2.destroyAllWindows()
 
 </div>
 </details>
+
