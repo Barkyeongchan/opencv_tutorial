@@ -24,15 +24,25 @@ while cap.isOpened():
         w,h = rect.right()-x, rect.bottom()-y
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 1)
     
-        # 얼굴 랜드마크 검출
-        shape = predictor(gray, rect)
-        for i in range(68):
-            # 부위별 좌표 추출 및 표시
-            part = shape.part(i)
-            cv2.circle(img, (part.x, part.y), 2, (0, 0, 255), -1)
-#            cv2.putText(img, str(i), (part.x, part.y), cv2.FONT_HERSHEY_PLAIN, 0.5,(255,255,255), 1, cv2.LINE_AA)
-    
     cv2.imshow("face landmark", img)
     if cv2.waitKey(1)== 27:
         break
+
+rate = 15               # 모자이크에 사용할 축소 비율 (1/rate)
+win_title = 'mosaic'    # 창 제목
+img = cv2.imread('../img/like_lenna.png')    # 이미지 읽기
+
+while True:
+    x,y,w,h = cv2.selectROI(win_title, img, False) # 관심영역 선택
+    if w and h:
+        roi = img[y:y+h, x:x+w]   # 관심영역 지정
+        roi = cv2.resize(roi, (w//rate, h//rate)) # 1/rate 비율로 축소
+        # 원래 크기로 확대
+        roi = cv2.resize(roi, (w,h), interpolation=cv2.INTER_AREA)  
+        img[y:y+h, x:x+w] = roi   # 원본 이미지에 적용
+        cv2.imshow(win_title, img)
+    else:
+        break
+    
+cv2.destroyAllWindows()
 cap.release()
