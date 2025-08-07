@@ -3,7 +3,7 @@ import dlib
 
 # 얼굴 검출기와 랜드마크 검출기 생성
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('../shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('./models/shape_predictor_68_face_landmarks.dat')
 
 # 카메라 캡쳐 열기
 cap = cv2.VideoCapture(0)
