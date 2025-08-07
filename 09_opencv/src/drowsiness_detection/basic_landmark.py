@@ -3,7 +3,7 @@ import dlib
 
 # 얼굴 검출기와 랜드마크 검출기 생성
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('../shape_predictor_68_face_landmarks.dat')
 
 cap = cv2.VideoCapture(0)
 #cap.set(cv2.cv2.CAP_PROP_FRAME_WIDTH, 480)
@@ -30,7 +30,7 @@ while cap.isOpened():
             # 부위별 좌표 추출 및 표시
             part = shape.part(i)
             cv2.circle(img, (part.x, part.y), 2, (0, 0, 255), -1)
-#            cv2.putText(img, str(i), (part.x, part.y), cv2.FONT_HERSHEY_PLAIN, 0.5,(255,255,255), 1, cv2.LINE_AA)
+            cv2.putText(img, str(i), (part.x, part.y), cv2.FONT_HERSHEY_PLAIN, 0.5,(255,255,255), 1, cv2.LINE_AA)
     
     cv2.imshow("face landmark", img)
     if cv2.waitKey(1)== 27:
