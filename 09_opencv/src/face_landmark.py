@@ -7,6 +7,7 @@ predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
 
 img = cv2.imread("../img/man_face.jpg")
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
 # 얼굴 영역 검출
 faces = detector(gray)
 for rect in faces:
@@ -18,6 +19,7 @@ for rect in faces:
     # 얼굴 랜드마크 검출
     shape = predictor(gray, rect)
     for i in range(68):
+        
         # 부위별 좌표 추출 및 표시
         part = shape.part(i)
         cv2.circle(img, (part.x, part.y), 2, (0, 0, 255), -1)
