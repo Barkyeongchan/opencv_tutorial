@@ -29,13 +29,19 @@ def check_drowsiness(ear_value):
     global consecutive_frames
     if ear_value < settings.EAR_THRESHOLD:
         consecutive_frames += 1
-        if consecutive_frames >= settings.DROWSY_FRAMES_THRESHOLD:
-            return True
     else:
         consecutive_frames = 0
-    return False
 
-def draw_results(frame, landmarks, ear_value, drowsy_state):
+    if consecutive_frames == 0:
+        return 'NORMAL'
+    elif consecutive_frames < 10:
+        return 'DROWSY'
+    elif consecutive_frames < 20:
+        return 'ALERT'
+    else:
+        return 'DANGER'
+
+def draw_results(frame, landmarks, ear_value, drowsiness_level):
     left_eye = get_eye_landmarks(landmarks, settings.LEFT_EYE)
     right_eye = get_eye_landmarks(landmarks, settings.RIGHT_EYE)
 
@@ -45,14 +51,14 @@ def draw_results(frame, landmarks, ear_value, drowsy_state):
     cv2.putText(frame, f"EAR: {ear_value:.3f}", (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, settings.GREEN, 2)
 
-    if drowsy_state:
-        alert_text = "DROWSY"
-        color = settings.RED
-    else:
-        alert_text = "AWAKE"
-        color = settings.GREEN
-
-    cv2.putText(frame, alert_text, (10, 60),
+    color_map = {
+        'NORMAL': settings.GREEN,
+        'DROWSY': settings.YELLOW,
+        'ALERT': (0, 165, 255),  # 주황색
+        'DANGER': settings.RED
+    }
+    color = color_map.get(drowsiness_level, settings.GREEN)
+    cv2.putText(frame, drowsiness_level, (10, 60),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 3)
 
 def main():
@@ -70,8 +76,8 @@ def main():
         if len(faces) > 0:
             landmarks = get_landmarks(frame, faces[0], predictor)
             ear_value = calculate_ear_from_landmarks(landmarks)
-            drowsy_state = check_drowsiness(ear_value)
-            draw_results(frame, landmarks, ear_value, drowsy_state)
+            drowsiness_level = check_drowsiness(ear_value)
+            draw_results(frame, landmarks, ear_value, drowsiness_level)
         else:
             consecutive_frames = 0
             cv2.putText(frame, "No face detected", (10, 30),
