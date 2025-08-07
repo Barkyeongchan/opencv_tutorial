@@ -1,18 +1,64 @@
-# 전역 변수로 상태 관리 (간단하고 이해하기 쉬움)
-consecutive_frames = 0      # 연속으로 눈 감은 프레임 수
-ear_history = []           # EAR 값 이력 (그래프 그리기용)
-alert_level = "정상"     # 현재 경고 레벨
-last_alert_time = 0        # 마지막 경고 시간
+import cv2
+import dlib
+from utils.landmark_utils import get_eye_landmarks, calculate_ear
 
-# 설정값들
-EAR_THRESHOLD = 0.25       # EAR 임계값
-DROWSY_FRAMES = 20         # 졸음 판단 프레임 수
-MAX_HISTORY = 50           # 이력 저장 최대 개수
+# 설정값은 settings.py에서 가져온다고 가정
+import config.settings as settings
+
+# 상태 변수
+consecutive_frames = 0
+
+def detect_faces(frame, detector):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = detector(gray)
+    return faces
+
+def get_landmarks(frame, face_rect, predictor):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    shape = predictor(gray, face_rect)
+    return shape
+
+def calculate_ear_from_landmarks(landmarks):
+    left_eye = get_eye_landmarks(landmarks, settings.LEFT_EYE)
+    right_eye = get_eye_landmarks(landmarks, settings.RIGHT_EYE)
+    left_ear = calculate_ear(left_eye)
+    right_ear = calculate_ear(right_eye)
+    return (left_ear + right_ear) / 2.0
+
+def check_drowsiness(ear_value):
+    global consecutive_frames
+    if ear_value < settings.EAR_THRESHOLD:
+        consecutive_frames += 1
+        if consecutive_frames >= settings.DROWSY_FRAMES_THRESHOLD:
+            return True
+    else:
+        consecutive_frames = 0
+    return False
+
+def draw_results(frame, landmarks, ear_value, drowsy_state):
+    left_eye = get_eye_landmarks(landmarks, settings.LEFT_EYE)
+    right_eye = get_eye_landmarks(landmarks, settings.RIGHT_EYE)
+
+    for (x, y) in left_eye + right_eye:
+        cv2.circle(frame, (x, y), 2, settings.GREEN, -1)
+
+    cv2.putText(frame, f"EAR: {ear_value:.3f}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, settings.GREEN, 2)
+
+    if drowsy_state:
+        alert_text = "DROWSY"
+        color = settings.RED
+    else:
+        alert_text = "AWAKE"
+        color = settings.GREEN
+
+    cv2.putText(frame, alert_text, (10, 60),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 3)
 
 def main():
-    # 초기화
+    global consecutive_frames
     detector = dlib.get_frontal_face_detector()
-    predictor = dlib.shape_predictor('./models/shape_predictor_68_face_landmarks.dat')
+    predictor = dlib.shape_predictor(settings.LANDMARK_MODEL_PATH)
     cap = cv2.VideoCapture(0)
 
     while cap.isOpened():
@@ -20,27 +66,21 @@ def main():
         if not ret:
             break
 
-        # 1단계: 얼굴 검출
         faces = detect_faces(frame, detector)
-
         if len(faces) > 0:
-            # 2단계: 랜드마크 추출
             landmarks = get_landmarks(frame, faces[0], predictor)
-
-            # 3단계: EAR 계산
             ear_value = calculate_ear_from_landmarks(landmarks)
-       
-            # 4단계: 졸음 판단
             drowsy_state = check_drowsiness(ear_value)
-
-            # 5단계: 결과 표시
             draw_results(frame, landmarks, ear_value, drowsy_state)
+        else:
+            consecutive_frames = 0
+            cv2.putText(frame, "No face detected", (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, settings.RED, 2)
 
-        
         cv2.imshow('Drowsiness Detection', frame)
-        if cv2.waitKey(1) == 27:  # ESC 키
+        if cv2.waitKey(1) == 27:
             break
-      
+
     cap.release()
     cv2.destroyAllWindows()
 
