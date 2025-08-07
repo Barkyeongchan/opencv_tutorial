@@ -9,10 +9,10 @@ def draw_eye_landmarks(frame, landmarks):
 def draw_alert_message(frame, alert_level):
     # 경고 메시지 표시
     colors = {
-        '정상': (0, 255, 0),
-        '주의': (0, 255, 255),
-        '경고': (0, 165, 255),
-        '위험': (0, 0, 255)
+        'NORMAL': (0, 255, 0),
+        'DROWSY': (0, 255, 255),
+        'ALERT': (0, 165, 255),
+        'DANGER': (0, 0, 255)
     }
     color = colors.get(alert_level, (255, 255, 255))
     cv2.putText(frame, f'Status: {alert_level}', (10, 30),

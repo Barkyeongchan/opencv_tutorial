@@ -11,7 +11,7 @@ cap = cv2.VideoCapture(0)
 while cap.isOpened():
     ret, img = cap.read()
     if not ret:
-        print('카메라가 연결되지 않았습니다.')
+        print('No camera!')
         break
 
     # 에러 처리
@@ -42,7 +42,7 @@ while cap.isOpened():
     
     # 에러 처리
     except Exception as e:
-        print(f'[ERROR] 처리 중 예외 발생: {e}')
+        print(f'[ERROR] : {e}')
         continue
 
 cap.release()

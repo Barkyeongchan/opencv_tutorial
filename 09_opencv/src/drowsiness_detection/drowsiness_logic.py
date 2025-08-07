@@ -13,10 +13,10 @@ def get_drowsiness_level(consecutive_frames):
     # 졸음 레벨 반환 (정상/주의/경고/위험)
     # consecutive_frames (int): 연속으로 눈 감은 프레임 수    
     if consecutive_frames == 0:
-        return '정상'
+        return 'NORMAL'
     elif consecutive_frames < 10:
-        return '주의'
+        return 'DROWSY'
     elif consecutive_frames < 20:
-        return '경고'
+        return 'ALERT'
     else:
-        return '위험'
+        return 'DANGER'
