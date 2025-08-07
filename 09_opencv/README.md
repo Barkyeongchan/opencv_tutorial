@@ -21,6 +21,13 @@
    - 실행 결과
 
 4. DLIB 라이브러리
+   - DLIB 라이브러리란?
+   - 얼굴 랜드마크 검출 실습
+
+5. 개인 프로젝트 (카메라 캡쳐를 활용한 얼굴 모자이크)
+   - 목표
+   - 실행 코드
+   - 실행 결과
 
 ## 1. 하르 캐스케이드 분류기 (Haarcascade)
 
@@ -877,7 +884,257 @@ cap.release()
 
 <img width="638" height="511" alt="image" src="https://github.com/user-attachments/assets/f42a11c0-99b5-442b-8254-4f81519630ed" />
 
+## **4-4. 들로네 삼각형 표시**
+
+```pyhon3
+import cv2
+import numpy as np
+import dlib
+
+# 얼굴 검출기와 랜드마크 검출기 생성
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+
+img = cv2.imread("../img/man_face.jpg")
+h, w = img.shape[:2]
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# 얼굴 영역 검출
+rects = faces = detector(gray)
+
+points = []
+for rect in rects:
+    # 랜드마크 검출
+    shape = predictor(gray, rect)
+    for i in range(68):
+        part = shape.part(i)
+        points.append((part.x, part.y))
+        
+
+# 들로네 삼각 분할 객체 생성
+x,y,w,h = cv2.boundingRect(np.float32(points))
+subdiv = cv2.Subdiv2D((x,y,x+w,y+h))
+# 랜드마크 좌표 추가
+subdiv.insert(points)
+# 들로네 삼각형 좌표 계산
+triangleList = subdiv.getTriangleList()
+# 들로네 삼각형 그리기
+h, w = img.shape[:2]
+cnt = 0
+for t in triangleList :
+    pts = t.reshape(-1,2).astype(np.int32)
+    # 좌표 중에 이미지 영역을 벗어나는 것을 제외(음수 등)
+    if (pts < 0).sum() or (pts[:, 0] > w).sum() or (pts[:, 1] > h).sum():
+        print(pts) 
+        continue
+    cv2.polylines(img, [pts], True, (255, 255,255), 1, cv2.LINE_AA)
+    cnt+=1
+print(cnt)
+
+
+cv2.imshow("Delaunay",img)
+cv2.waitKey(0)
+```
+
+<img width="639" height="505" alt="image" src="https://github.com/user-attachments/assets/478a42f3-3c98-441e-854c-b5e637c4810e" />
+
+## **4-5. 얼굴 스왑**
+
+```python3
+import cv2
+import numpy as np
+import dlib
+import sys
+
+# 얼굴 검출기와 랜드마크 검출기 생성
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+
+# 얼굴 및 랜드마크 검출해서 좌표 반환하는 함수
+def getPoints(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    rects = detector(gray)
+    points = []
+    for rect in rects:
+        shape = predictor(gray, rect)
+        for i in range(68):
+            part = shape.part(i)
+            points.append((part.x, part.y))
+    return points    
+
+# 랜드마크 좌표로 들로네 삼각형 반환
+def getTriangles(img, points):
+    w,h = img2.shape[:2]
+    subdiv = cv2.Subdiv2D((0,0,w,h));
+    subdiv.insert(points) 
+    triangleList = subdiv.getTriangleList();
+    triangles = []
+    for t in triangleList:        
+        pt = t.reshape(-1,2)
+        if not (pt < 0).sum() and not (pt[:, 0] > w).sum() \
+                              and not (pt[:, 1] > h).sum(): 
+            indice = []
+            for i in range(0, 3):
+                for j in range(0, len(points)):                    
+                    if(abs(pt[i][0] - points[j][0]) < 1.0 \
+                        and abs(pt[i][1] - points[j][1]) < 1.0):
+                        indice.append(j)    
+            if len(indice) == 3:                                                
+                triangles.append(indice)
+    return triangles
+
+# 삼각형 어핀 변환 함수
+def warpTriangle(img1, img2, pts1, pts2):
+    x1,y1,w1,h1 = cv2.boundingRect(np.float32([pts1]))
+    x2,y2,w2,h2 = cv2.boundingRect(np.float32([pts2]))
+    
+    roi1 = img1[y1:y1+h1, x1:x1+w1]
+    roi2 = img2[y2:y2+h2, x2:x2+w2]
+    
+    offset1 = np.zeros((3,2), dtype=np.float32)
+    offset2 = np.zeros((3,2), dtype=np.float32)
+    for i in range(3):
+        offset1[i][0], offset1[i][1] = pts1[i][0]-x1, pts1[i][1]-y1
+        offset2[i][0], offset2[i][1] = pts2[i][0]-x2, pts2[i][1]-y2
+    
+    mtrx = cv2.getAffineTransform(offset1, offset2)
+    warped = cv2.warpAffine( roi1, mtrx, (w2, h2), None, \
+                        cv2.INTER_LINEAR, cv2.BORDER_REFLECT_101 )
+    
+    mask = np.zeros((h2, w2), dtype = np.uint8)
+    cv2.fillConvexPoly(mask, np.int32(offset2), (255))
+    
+    warped_masked = cv2.bitwise_and(warped, warped, mask=mask)
+    roi2_masked = cv2.bitwise_and(roi2, roi2, mask=cv2.bitwise_not(mask))
+    roi2_masked = roi2_masked + warped_masked
+    img2[y2:y2+h2, x2:x2+w2] = roi2_masked
+
+if __name__ == '__main__' :
+    # 이미지 읽기
+    img1 = cv2.imread('../img/boy_face.jpg')
+    img2 = cv2.imread('../img/girl_face.jpg')
+    cv2.imshow('img1', img1)
+    cv2.imshow('img2', img2)
+    img_draw = img2.copy()
+    
+    # 각 이미지에서 얼굴 랜드마크 좌표 구하기
+    points1 = getPoints(img1)
+    points2 = getPoints(img2)
+    
+    # 랜드마크 좌표로 볼록 선체 구하기
+    hullIndex = cv2.convexHull(np.array(points2), returnPoints = False)
+    hull1 = [points1[int(idx)] for idx in hullIndex]
+    hull2 = [points2[int(idx)] for idx in hullIndex]
+    
+    # 볼록 선체 안 들로네 삼각형 좌표 구하기
+    triangles = getTriangles(img2, hull2)
+    
+    # 각 삼각형 좌표로 삼각형 어핀 변환   
+    for i in range(0, len(triangles)):
+        t1 = [hull1[triangles[i][j]] for j in range(3)]
+        t2 = [hull2[triangles[i][j]] for j in range(3)]
+        warpTriangle(img1, img_draw, t1, t2)
+   
+    # 볼록선체를 마스크로 써서 얼굴 합성
+    mask = np.zeros(img2.shape, dtype = img2.dtype)  
+    cv2.fillConvexPoly(mask, np.int32(hull2), (255, 255, 255))
+    r = cv2.boundingRect(np.float32([hull2]))    
+    center = ((r[0]+int(r[2]/2), r[1]+int(r[3]/2)))
+    output = cv2.seamlessClone(np.uint8(img_draw), img2, mask, center, \
+                                cv2.NORMAL_CLONE)
+    
+    cv2.imshow("Face Swapped", output)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+```
+
+<img width="935" height="315" alt="image" src="https://github.com/user-attachments/assets/f58791e1-e68c-4756-9e57-e8a0bf5e77ad" />
+
+## **4-6. 모자이크 처리**
+
+```python3
+import cv2
+
+rate = 15               # 모자이크에 사용할 축소 비율 (1/rate)
+win_title = 'mosaic'    # 창 제목
+img = cv2.imread('../img/like_lenna.png')    # 이미지 읽기
+
+while True:
+    x,y,w,h = cv2.selectROI(win_title, img, False) # 관심영역 선택
+    if w and h:
+        roi = img[y:y+h, x:x+w]   # 관심영역 지정
+        roi = cv2.resize(roi, (w//rate, h//rate)) # 1/rate 비율로 축소
+        # 원래 크기로 확대
+        roi = cv2.resize(roi, (w,h), interpolation=cv2.INTER_AREA)  
+        img[y:y+h, x:x+w] = roi   # 원본 이미지에 적용
+        cv2.imshow(win_title, img)
+    else:
+        break
+cv2.destroyAllWindows()
+```
+
+<img width="510" height="525" alt="image" src="https://github.com/user-attachments/assets/06811cad-c590-4b37-a902-bf6e05b9a5ae" />
+
+<img width="510" height="525" alt="image" src="https://github.com/user-attachments/assets/e2c77240-66d3-4519-a773-a14d863d3a3d" />
 
 </div>
 </details>
 
+## 5. 개인 프로젝트 (카메라 캡쳐를 활용한 얼굴 모자이크)
+
+<details>
+<summary></summary>
+<div markdown="1">
+
+## **5-1. 목표**
+
+카메라 캡쳐를 통해 찍은 영상에서 **얼굴을 자동으로 인식하고 모자이크하는**프로그램 생성
+
+## **5-2. 실행 코드**
+
+```python3
+import cv2
+import dlib
+
+# 얼굴 검출기와 랜드마크 검출기 생성
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor('./shape_predictor_68_face_landmarks.dat')
+
+cap = cv2.VideoCapture(0)
+rate = 15  # 모자이크 비율
+
+while cap.isOpened():
+    ret, img = cap.read()
+    if not ret:
+        print('no frame.');break
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    # 얼굴 영역 검출
+    faces = detector(gray)
+
+    for rect in faces:
+
+        # 얼굴 영역을 좌표로 변환 후 사각형 표시
+        x,y = rect.left(), rect.top()
+        w,h = rect.right()-x, rect.bottom()-y
+
+        roi = img[y:y+h, x:x+w]
+        if roi.size == 0:
+            continue
+        roi = cv2.resize(roi, (w // rate, h // rate))
+        roi = cv2.resize(roi, (w, h), interpolation=cv2.INTER_AREA)
+        img[y:y+h, x:x+w] = roi
+    
+    cv2.imshow("mosaic", img)
+    if cv2.waitKey(1)== 27:
+        break
+
+cv2.destroyAllWindows()
+cap.release()
+```
+
+## **5-3. 실행 결과**
+
+<img width="640" height="511" alt="image" src="https://github.com/user-attachments/assets/5d9349ed-663f-4f76-9503-7130e6b65b12" />
+
+</div>
+</details>
