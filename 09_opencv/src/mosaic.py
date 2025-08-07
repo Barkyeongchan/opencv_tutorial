@@ -2,7 +2,7 @@ import cv2
 
 rate = 15               # 모자이크에 사용할 축소 비율 (1/rate)
 win_title = 'mosaic'    # 창 제목
-img = cv2.imread('../img/like_lwnna.png')    # 이미지 읽기
+img = cv2.imread('../img/like_lenna.png')    # 이미지 읽기
 
 while True:
     x,y,w,h = cv2.selectROI(win_title, img, False) # 관심영역 선택
