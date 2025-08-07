@@ -2,13 +2,13 @@ import numpy as np
 import cv2
 
 # 얼굴 검출을 위한 케스케이드 분류기 생성
-face_cascade = cv2.CascadeClassifier('./data/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('../data/haarcascade_frontalface_default.xml')
 
 # 눈 검출을 위한 케스케이드 분류기 생성
-eye_cascade = cv2.CascadeClassifier('./data/haarcascade_eye.xml')
+eye_cascade = cv2.CascadeClassifier('../data/haarcascade_eye.xml')
 
 # 검출할 이미지 읽고 그레이 스케일로 변환
-img = cv2.imread('../img/children.jpg')
+img = cv2.imread('../img/like_lenna.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # 얼굴 검출
