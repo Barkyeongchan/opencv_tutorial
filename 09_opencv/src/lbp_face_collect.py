@@ -15,6 +15,10 @@ face_classifier = cv2.CascadeClassifier(\
 name = input("Insert User Name(Only Alphabet):")
 id = input("Insert User Id(Non-Duplicate number):")
 dir = os.path.join(base_dir, name+'_'+ id)
+
+# 상위 폴더까지 모두 생성
+os.makedirs(dir, exist_ok=True)
+
 if not os.path.exists(dir):
     os.mkdir(dir)
 
