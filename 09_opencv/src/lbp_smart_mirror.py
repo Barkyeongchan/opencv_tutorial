@@ -1,32 +1,37 @@
+# 스마트미러 얼굴 인식 시스템
+# - 사용자 얼굴 등록 및 학습
+# - 인식된 사용자 정보 터미널 및 화면에 출력
+# - 사용자 맞춤 정보(날씨, 뉴스, 캘린더) 제공
+
 import cv2
 import os
 import json
 import numpy as np
 import datetime
 
-# --- 경로 설정 ---
+# --- [1] 경로 설정 및 초기화 ---
 BASE_DIR = "../project"
-FACES_DIR = os.path.join(BASE_DIR, "faces")
-MODELS_DIR = os.path.join(BASE_DIR, "models")
-USER_DATA_PATH = os.path.join(FACES_DIR, "user_data.json")
-MODEL_PATH = os.path.join(MODELS_DIR, "lbph_model.xml")
-LABEL_MAP_PATH = os.path.join(MODELS_DIR, "label_map.json")
+FACES_DIR = os.path.join(BASE_DIR, "faces")            # 얼굴 이미지 저장 폴더
+MODELS_DIR = os.path.join(BASE_DIR, "models")          # 모델 저장 폴더
+USER_DATA_PATH = os.path.join(FACES_DIR, "user_data.json")  # 사용자 데이터 파일
+MODEL_PATH = os.path.join(MODELS_DIR, "lbph_model.xml")     # 학습된 모델 경로
+LABEL_MAP_PATH = os.path.join(MODELS_DIR, "label_map.json") # 라벨 매핑 파일
 
-# --- 디렉토리 자동 생성 ---
+# 폴더 및 파일 생성
 os.makedirs(FACES_DIR, exist_ok=True)
 os.makedirs(MODELS_DIR, exist_ok=True)
 if not os.path.exists(USER_DATA_PATH):
     with open(USER_DATA_PATH, "w", encoding="utf-8") as f:
         json.dump({}, f, ensure_ascii=False)
 
-# --- 얼굴 인식기 초기화 ---
+# --- [2] 모델 및 데이터 로딩 ---
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-# --- 사용자 설정 불러오기 ---
 with open(USER_DATA_PATH, "r", encoding="utf-8") as f:
     user_data = json.load(f)
 
+# --- [3] 데이터 저장 함수들 ---
 def save_user_data():
     with open(USER_DATA_PATH, "w", encoding="utf-8") as f:
         json.dump(user_data, f, indent=4, ensure_ascii=False)
@@ -41,29 +46,30 @@ def load_label_map():
             return json.load(f)
     return {}
 
-# --- 실시간 정보 함수 ---
+# --- [4] 정보 제공 함수 ---
 def get_weather():
-    return "☁️ 맑음 28도"
+    return "☁️ 매우 냉감 28도"
 
 def get_calendar():
     now = datetime.datetime.now()
     return f"📅 오늘은 {now.strftime('%Y년 %m월 %d일')}"
 
 def get_news():
-    return "📰 오늘의 뉴스: OpenAI, GPT-5 출시 예정!"
+    return "📰 오늘의 뉴스: GPT-5 c시 예정!"
 
-# --- 사용자별 정보 표시(터미널) ---
+# --- [5] 사용자 정보 출력 ---
 def print_user_info(user_id):
     info = user_data[user_id]["info"]
     print(f"\n👤 사용자: {user_id}")
     if "날씨" in info:
         print(get_weather())
-    if "캘린더" in info:
+    if "카드" in info:
         print(get_calendar())
     if "뉴스" in info:
         print(get_news())
-    print("\n--- [단축키] ---\n[r]: 새 사용자 등록   [u]: 설정 수정   [p]: 정보 재출력   [ESC]: 종료")
+    print("\n--- [단\u축키] ---\n[r]: 새 사용자 등록   [u]: 설정 수정   [p]: 정보 재출보   [ESC]: 종료")
 
+# --- [6] 사용자 정보 선택 ---
 def select_user_info():
     options = ["날씨", "캘린더", "뉴스"]
     print("\n✅ 표시할 정보를 선택하세요 (쉼표로 구분):")
@@ -78,10 +84,10 @@ def select_user_info():
             pass
     return selected
 
-# --- 새로운 사용자 등록 ---
+# --- [7] 새 사용자 등록 ---
 def register_new_user():
     while True:
-        new_id = input("\n🆕 새로운 사용자 ID 입력 (중복 불가): ")
+        new_id = input("\n🆕️ 새로운 사용자 ID 입력 (중복 불가): ")
         if new_id in user_data:
             print("⚠️ 이미 존재하는 ID입니다. 다른 ID를 입력하세요.")
         else:
@@ -93,6 +99,7 @@ def register_new_user():
     print("😄 얼굴 데이터를 수집합니다. 정면을 바라보세요...")
     cap = cv2.VideoCapture(0)
     count = 0
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -114,18 +121,19 @@ def register_new_user():
     cap.release()
     cv2.destroyAllWindows()
 
-    # 사용자 정보 설정 입력
+    # 사용자 설정 저장
     user_data[new_id] = {"info": select_user_info()}
     save_user_data()
 
-    # 모델 학습
+    # 모델 재학습
     train_model()
     print(f"✅ 사용자 {new_id} 등록 및 학습 완료")
 
-# --- 모델 학습 ---
+# --- [8] 모델 학습 ---
 def train_model():
     faces = []
     labels = []
+
     for user_id in os.listdir(FACES_DIR):
         user_folder = os.path.join(FACES_DIR, user_id)
         if not os.path.isdir(user_folder):
@@ -144,24 +152,22 @@ def train_model():
     global label_map, reverse_label_map
     label_map = {uid: idx for idx, uid in enumerate(set(labels))}
     reverse_label_map = {v:k for k,v in label_map.items()}
-
     numeric_labels = np.array([label_map[uid] for uid in labels])
 
     recognizer.train(faces, numeric_labels)
     recognizer.write(MODEL_PATH)
-    save_label_map()  # 저장 추가
+    save_label_map()
     print("✅ 모델 학습 완료")
     return True
 
-# --- 사용자 인식용 라벨 매핑 ---
+# --- [9] 라벨을 사용자 ID로 변환 ---
 def get_user_from_label(label):
-    if label in reverse_label_map:
-        return reverse_label_map[label]
-    return None
+    return reverse_label_map.get(label)
 
-# --- 실행 시작 ---
+# --- [10] 메인 실행 루프 ---
 def main():
     global label_map, reverse_label_map
+
     label_map = load_label_map()
     reverse_label_map = {v:k for k,v in label_map.items()}
 
@@ -213,7 +219,7 @@ def main():
         cv2.imshow("Smart Mirror", frame)
 
         key = cv2.waitKey(1) & 0xFF
-        if key == 27:
+        if key == 27:  # ESC
             break
         elif key == ord('r'):
             register_new_user()
@@ -231,5 +237,6 @@ def main():
     cap.release()
     cv2.destroyAllWindows()
 
+# --- [11] 실행 시작 ---
 if __name__ == "__main__":
     main()
