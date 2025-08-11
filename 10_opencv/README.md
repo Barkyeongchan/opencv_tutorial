@@ -5,6 +5,9 @@
 ## 목차
 
 1. EasyORC
+   - EasyORC란
+   - 중국어 교통 표지판 인식
+   - 한국 교통 표지판 인식
 
 ## 1. EasyORC
 
@@ -119,4 +122,5 @@ plt.show()
 
 </div>
 </details>
+
 
