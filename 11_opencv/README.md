@@ -1,6 +1,6 @@
 # 학습 목표 : TensorFlow를 활용해 openCV 프로젝트를 진행한다.
 
-# TensorFlow / 
+# TensorFlow
 
 ## 목차
 
@@ -379,6 +379,7 @@ print(test_dataset.class_indices)
 
 </div>
 </details>
+
 
 
 
