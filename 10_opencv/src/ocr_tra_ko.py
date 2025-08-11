@@ -3,7 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
-font_path = "C:/Windows/Fonts/malgun.ttf"  # 말굿체
+font_path = "C:/Windows/Fonts/batang.ttc"  # 바탕체
 fontprop = fm.FontProperties(fname=font_path, size=14)
 plt.rc('font', family=fontprop.get_name())
 
