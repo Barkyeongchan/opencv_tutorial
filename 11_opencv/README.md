@@ -316,7 +316,16 @@ print(accuracy_score(test_dataset.classes, preds))
 network.save('../models/emotion_model.h5')
 ```
 
+<br><br>
+
+## **2-4. 감정 분류**
+
+```python3
+
+```
+
 </div>
 </details>
+
 
 
