@@ -112,9 +112,11 @@ plt.show()
 
 <img width="476" height="329" alt="image" src="https://github.com/user-attachments/assets/9d1cb551-bb05-4332-bbf3-37a81ab716e9" />
 
-<img width="787" height="571" alt="image" src="https://github.com/user-attachments/assets/9d1dd01a-3fe4-451a-b923-7f8eeca94a32" />
+<img width="789" height="568" alt="image" src="https://github.com/user-attachments/assets/4b958f53-138d-4793-85f8-601a00a38982" />
+
 
 <img width="330" height="276" alt="image" src="https://github.com/user-attachments/assets/be41518e-a04d-416f-ae03-38ed65dcdd81" />
 
 </div>
 </details>
+
