@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten, BatchNormalization
+from sklearn.metrics import accuracy_score
 
 img = tf.keras.preprocessing.image.load_img('../data/train/happy/Training_1206.jpg')
 
@@ -43,10 +45,7 @@ test_dataset = test_generator.flow_from_directory(directory='../data/test',
                                                   shuffle=False,
                                                   seed=10)
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten, BatchNormalization
-from sklearn.metrics import accuracy_score
-
+# CNN 모델 설계
 num_classes = 7
 num_detectors = 32
 width, height = 48, 48
