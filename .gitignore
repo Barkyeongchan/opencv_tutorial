@@ -7,3 +7,4 @@ myvenv/
 09_opencv/src/shape_predictor_68_face_landmarks.dat
 09_opencv/src/drowsiness_detection/models/shape_predictor_68_face_landmarks.dat
 11_opencv/data/*
+11_opencv/models/*
