@@ -114,7 +114,7 @@ source tfvenv/bin/activate
 
 4. 가상환경 진입 후 ros2 충돌시 pip list 해결방법
 
-가상환경 종료` 후
+_가상환경 종료 후_
 
 ```terminal
 # 백업 파일 생성
@@ -177,3 +177,4 @@ python3 -m pip install tensorflow
 
 </div>
 </details>
+
