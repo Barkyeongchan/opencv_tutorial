@@ -377,8 +377,18 @@ print(pred)
 print(test_dataset.class_indices)
 ```
 
+<img width="850" height="1134" alt="image" src="https://github.com/user-attachments/assets/d34a07ac-fbe4-4753-bdb1-02ceac318df8" />
+
+
+<img width="142" height="141" alt="image" src="https://github.com/user-attachments/assets/fba71ec1-3034-44f0-8541-9299240d2c8b" />
+
+`{'Angry': 0, 'Disgust': 1, 'Fear': 2, 'Happy': 3, 'Neutral': 4, 'Sad': 5, 'Surprise': 6}`
+
+출력 : `3`
+
 </div>
 </details>
+
 
 
 
