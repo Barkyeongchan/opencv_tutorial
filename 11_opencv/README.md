@@ -9,6 +9,10 @@
    - Tensorflow 설치
   
 2. Tensorflow 실습 (얼굴 이미지에서 감정 분류)
+   - 훈련, 테스트 데이터셋 만들기
+   - CNN 모델 설계
+   - 모델 훈련과 성능 평가
+   - 감정 분류
 
 ## 1. Tensorflow
 
@@ -316,16 +320,66 @@ print(accuracy_score(test_dataset.classes, preds))
 network.save('../models/emotion_model.h5')
 ```
 
+<img width="426" height="824" alt="image" src="https://github.com/user-attachments/assets/36285412-35b2-44d3-8972-b603938a068c" />
+
+<img width="360" height="106" alt="image" src="https://github.com/user-attachments/assets/dc48d2da-362a-442a-bd25-0655b75906f1" />
+
+
 <br><br>
 
 ## **2-4. 감정 분류**
 
 ```python3
+import cv2
+import matplotlib.pyplot as plt
+import dlib
+import tensorflow as tf
+import numpy as np
 
+
+image = cv2.imread('../data/img/charles.jpg')
+
+# plt.figure(figsize=(8,8))
+# plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+# plt.show()
+
+face_detector = dlib.cnn_face_detection_model_v1('../data/weights/mmod_human_face_detector.dat')
+face_detection = face_detector(image, 1)
+
+left, top, right, bottom = face_detection[0].rect.left(),\
+      face_detection[0].rect.top(), face_detection[0].rect.right(), face_detection[0].rect.bottom()
+roi = image[top:bottom, left:right]
+
+# cv2.imshow('roi', roi)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+
+print(roi.shape)
+
+# 이미지 리사이징
+roi = cv2.resize(roi, (48, 48))
+print(roi.shape)
+
+# 정규화
+roi = roi / 255
+
+roi = np.expand_dims(roi, axis=0)
+print(roi.shape)
+
+network = tf.keras.model.load_model('../data/models/emotion_model.h5')
+
+pred_probability = network.predict(roi)
+print(pred_probability)
+
+pred = np.argmax(pred_probability)
+print(pred)
+
+print(test_dataset.class_indices)
 ```
 
 </div>
 </details>
+
 
 
 
