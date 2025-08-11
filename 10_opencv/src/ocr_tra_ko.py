@@ -3,13 +3,6 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 
-font_path = "C:/Windows/Fonts/batang.ttc"  # 바탕체
-fontprop = fm.FontProperties(fname=font_path, size=14)
-plt.rc('font', family=fontprop.get_name())
-
-# EasyOCR 리더: 한글 + 영어 사용
-reader = easyocr.Reader(['ko', 'en'], gpu=False)
-
 # 교통 표지판 이미지 경로
 img_path = '../img/ko_sign.png'  # ← 여기에 교통표지판 이미지 파일 이름
 
@@ -29,8 +22,6 @@ for bbox, text, conf in results:
     bottom_right = tuple(map(int, bottom_right))
 
     cv2.rectangle(img, top_left, bottom_right, (0, 255, 0), 2)
-    cv2.putText(img, text, (top_left[0], top_left[1] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
 
 # 이미지 출력
 plt.figure(figsize=(10, 10))
