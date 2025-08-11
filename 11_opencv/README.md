@@ -8,7 +8,7 @@
    - TensorFlow란?
    - Tensorflow 설치
   
-2. Tensorflow 실습
+2. Tensorflow 실습 (얼굴 이미지에서 감정 분류)
 
 ## 1. Tensorflow
 
@@ -178,7 +178,7 @@ python3 -m pip install tensorflow
 </div>
 </details>
 
-## 2. Tensorflow 실습
+## 2. Tensorflow 실습 (얼굴 이미지에서 감정 분류)
 
 <details>
 <summary></summary>
@@ -186,9 +186,7 @@ python3 -m pip install tensorflow
 
 **[데이터셋 다운로드](https://www.kaggle.com/datasets/msambare/fer2013)**
 
-## **2-1. 얼굴 이미지에서 감정 분류**
-
-**[1. 훈련, 테스트 데이터셋 만들기]**
+## **2-1. 훈련, 테스트 데이터셋 만들기**
 
 ```python3
 import tensorflow as tf
@@ -239,7 +237,7 @@ test_dataset = test_generator.flow_from_directory(directory='../data/test',
 
 <br><br>
 
-**[2. CNN 모델 설계]**
+## **2-2. CNN 모델 설계**
 
 ```python3
 from tensorflow.keras.models import Sequential
@@ -296,7 +294,7 @@ network.summary()
 
 <br><br>
 
-**[3. 모델 훈련과 성능 평가]**
+## **2-3. 모델 훈련과 성능 평가**
 
 ```python3
 # 모델 훈련
@@ -320,4 +318,5 @@ network.save('../models/emotion_model.h5')
 
 </div>
 </details>
+
 
