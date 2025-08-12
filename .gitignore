@@ -11,3 +11,4 @@ myvenv/
 11_opencv/data/weights/*
 11_opencv/models/*
 yolovenv/
+12_opencv/src/*pt
