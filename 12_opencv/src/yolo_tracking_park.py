@@ -22,7 +22,11 @@ for _ in range(start_frame):
         break
 
 # 2배 속도 → 대기 시간 절반
-delay = max(1, int(1000 / (fps * 4)))
+delay = max(1, int(1000 / (fps * 2)))
+
+excluded_classes = [0, 72]  # person, refrigerator 제외
+all_classes = list(range(80))
+included_classes = [c for c in all_classes if c not in excluded_classes]
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -30,7 +34,7 @@ while cap.isOpened():
         break
 
     # YOLO로 객체 탐지
-    results = model(frame)
+    results = model(frame, classes=included_classes)
 
     # 시각화
     annotated_frame = results[0].plot()
