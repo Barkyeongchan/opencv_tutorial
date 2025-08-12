@@ -1,6 +1,6 @@
 # 힉습 목표 : YOLO를 활용하여 컴퓨터 비전 프로젝트를 진행한다.
 
-# YOLO
+# YOLO / RoboFlow
 
 ## 목차
 
@@ -14,6 +14,8 @@
    - 실시간 교통상황 감지 예제 실습
   
 2. 개인 프로젝트 (원하는 객체만 탐지)
+
+3. RoboFlow
 
 ## 1. YOLO
 
@@ -427,6 +429,77 @@ cv2.destroyAllWindows()
 <img width="355" height="668" alt="image" src="https://github.com/user-attachments/assets/ca56efdd-50d1-4cb6-a73a-78a5c291a715" />
 
 <img width="358" height="668" alt="image" src="https://github.com/user-attachments/assets/bf39f701-0191-493b-92d8-9327b6b0719d" />
+
+</div>
+</details>
+
+## 3. RoboFlow
+
+<details>
+<summary></summary>
+<div markdown="1">
+
+## **3-1. RoboFlow란?**
+
+이미지 데이터셋 관리, 라벨링, 증강, 그리고 머신러닝 모델 학습과 배포를 쉽게 할 수 있도록 도와주는 플랫폼
+
+[roboflow](https://roboflow.com/)
+
+## **3-2. 튜토리얼 해보기**
+
+**[1. 회원가입 후 새로운 프로젝트 만들기]**
+
+<img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/1d6f3067-4fb0-4b00-a2ef-25cd874499c1" />
+
+<br><br>
+
+**[2. Counting Screws Computer Vision Model 다운로드]**
+
+[링크](https://universe.roboflow.com/capjamesg/counting-screws/dataset/8)
+
+<img width="475" height="317" alt="image" src="https://github.com/user-attachments/assets/dddf4f2d-bf8d-4ba7-9488-19d55037d717" />
+
+<img width="300" height="261" alt="image" src="https://github.com/user-attachments/assets/763080ad-9818-4754-872a-b8a7152d4f32" />
+
+<img width="400" height="200" alt="image" src="https://github.com/user-attachments/assets/ee9476e0-0cdf-4bc3-9c32-87994ee228ee" />
+
+<br><br>
+
+**[3. 압축 해재 후 업로드]**
+
+<img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/cc350d3b-aee3-4b24-852a-bb2e894d15ef" />
+
+<br><br>
+
+**[4. 어노테이션(Annotations) 이미지 수정]**
+
+<img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/43c2c70d-c9eb-4499-8fe3-540438a10298" />
+
+<br><br>
+
+**[5. 모델 학습 시키기]**
+
+_**Rogoflow Instant Model 클릭**_
+
+<img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/8dbaf89d-286b-45f2-9ab5-ce5f047f540d" />
+
+<img width="285" height="175" alt="image" src="https://github.com/user-attachments/assets/7e422a9e-892b-4a70-89d6-437c2feaa542" />
+
+<img width="424" height="67" alt="image" src="https://github.com/user-attachments/assets/58466932-8bb2-4ef6-8ad9-9acc29a359a7" />
+
+<img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/ec8aa95e-488c-4e67-bdf0-2c1eff1d1d07" />
+
+<img width="475" height="440" alt="image" src="https://github.com/user-attachments/assets/51e67c8f-8ae1-46cc-9070-b2cc3e630f6c" />
+
+<br><br>
+
+**[6. 워크플로우에서 실행하기]**
+
+<img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/43b43222-799a-40aa-9d79-d1aad0459652" />
+
+_출력 결과_
+
+<img width="864" height="576" alt="image" src="https://github.com/user-attachments/assets/79ca746c-08f9-4ee7-a175-4bb198e3f7cb" />
 
 </div>
 </details>
