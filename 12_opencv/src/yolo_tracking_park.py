@@ -28,22 +28,50 @@ excluded_classes = [0, 72]  # person, refrigerator 제외
 all_classes = list(range(80))
 included_classes = [c for c in all_classes if c not in excluded_classes]
 
+# 이름을 unknown으로 바꿀 클래스 번호 목록 (motorcycle, bicycle, chair)
+rename_classes = {3, 1, 56}
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
         break
 
-    # YOLO로 객체 탐지
+    # YOLO로 객체 탐지 (제외 클래스 제외)
     results = model(frame, classes=included_classes)
 
-    # 시각화
-    annotated_frame = results[0].plot()
+    # 원본 이미지 복사
+    img = frame.copy()
+
+    # 탐지된 박스 좌표, 클래스 번호, 신뢰도 가져오기
+    boxes = results[0].boxes.xyxy.cpu().numpy().astype(int)  # (N, 4)
+    classes = results[0].boxes.cls.cpu().numpy().astype(int)  # (N,)
+    scores = results[0].boxes.conf.cpu().numpy()             # (N,)
+
+    # 탐지된 객체 하나씩 반복
+    for box, cls, score in zip(boxes, classes, scores):
+        x1, y1, x2, y2 = box
+        # 기본 클래스명 가져오기
+        cls_name = model.names[cls]
+
+        # rename_classes에 있으면 이름을 unknown으로 바꿈
+        if cls in rename_classes:
+            display_name = "unknown"
+        else:
+            display_name = cls_name
+
+        label = f"{display_name} {score:.2f}"
+
+        # 박스와 텍스트 그리기
+        color = (0, 255, 0)  # 초록색
+        cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+        cv2.putText(img, label, (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
     # 화면 표시
-    cv2.imshow("YOLO Detection", annotated_frame)
+    cv2.imshow("YOLO Detection", img)
 
     # q 키 누르면 종료
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(delay) & 0xFF == ord('q'):
         break
 
 cap.release()
