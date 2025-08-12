@@ -10,6 +10,17 @@ cap = cv2.VideoCapture('./video.mp4')
 # 원본 FPS 가져오기
 fps = cap.get(cv2.CAP_PROP_FPS)
 
+start_seconds = 10  # 자를 앞부분 초
+start_frame = int(fps * start_seconds)
+
+print(f"FPS: {fps}, 자를 프레임 수: {start_frame}")
+
+# 앞부분 프레임 버리기
+for _ in range(start_frame):
+    ret = cap.grab()  # 프레임을 읽고 버림
+    if not ret:
+        break
+
 # 2배 속도 → 대기 시간 절반
 delay = max(1, int(1000 / (fps * 2)))
 
