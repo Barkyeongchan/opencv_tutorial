@@ -10,3 +10,4 @@ myvenv/
 11_opencv/data/train/*
 11_opencv/data/weights/*
 11_opencv/models/*
+yolovenv/
