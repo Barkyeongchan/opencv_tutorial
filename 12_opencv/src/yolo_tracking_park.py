@@ -7,6 +7,8 @@ model = YOLO('yolo11n.pt')
 # 비디오 열기
 cap = cv2.VideoCapture('./video.mp4')
 
+delay = max(1, int(1000 / (cap * 2)))
+
 while cap.isOpened():
     ret, frame = cap.read()
     if not ret:
