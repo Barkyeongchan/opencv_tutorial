@@ -28,8 +28,12 @@ excluded_classes = [0, 72]  # person, refrigerator 제외
 all_classes = list(range(80))
 included_classes = [c for c in all_classes if c not in excluded_classes]
 
-# 이름을 unknown으로 바꿀 클래스 번호 목록 (motorcycle, bicycle, chair)
-rename_classes = {3, 1, 56}
+# 이름을 바꿀 클래스 번호와 대응 이름 (motorcycle, bicycle → unknown, chair → person)
+rename_map = {
+    3: "unknown",  # motorcycle
+    1: "unknown",  # bicycle
+    56: "person"   # chair
+}
 
 while cap.isOpened():
     ret, frame = cap.read()
@@ -53,11 +57,8 @@ while cap.isOpened():
         # 기본 클래스명 가져오기
         cls_name = model.names[cls]
 
-        # rename_classes에 있으면 이름을 unknown으로 바꿈
-        if cls in rename_classes:
-            display_name = "unknown"
-        else:
-            display_name = cls_name
+        # rename_map에 있으면 이름 바꾸기, 없으면 기본 이름 사용
+        display_name = rename_map.get(cls, cls_name)
 
         label = f"{display_name} {score:.2f}"
 
