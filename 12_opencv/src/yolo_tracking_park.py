@@ -7,7 +7,11 @@ model = YOLO('yolo11n.pt')
 # 비디오 열기
 cap = cv2.VideoCapture('./video.mp4')
 
-delay = max(1, int(1000 / (cap * 2)))
+# 원본 FPS 가져오기
+fps = cap.get(cv2.CAP_PROP_FPS)
+
+# 2배 속도 → 대기 시간 절반
+delay = max(1, int(1000 / (fps * 2)))
 
 while cap.isOpened():
     ret, frame = cap.read()
