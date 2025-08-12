@@ -12,3 +12,4 @@ myvenv/
 11_opencv/models/*
 yolovenv/
 12_opencv/src/*pt
+12_opencv/src/video.mp4
