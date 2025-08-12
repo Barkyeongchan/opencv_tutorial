@@ -429,7 +429,7 @@ cv2.destroyAllWindows()
 **[5. 이후 영상 출력]**
 
 <img width="355" height="668" alt="image" src="https://github.com/user-attachments/assets/ca56efdd-50d1-4cb6-a73a-78a5c291a715" />
-
+<br><br>
 <img width="358" height="668" alt="image" src="https://github.com/user-attachments/assets/bf39f701-0191-493b-92d8-9327b6b0719d" />
 
 </div>
@@ -460,9 +460,9 @@ cv2.destroyAllWindows()
 [링크](https://universe.roboflow.com/capjamesg/counting-screws/dataset/8)
 
 <img width="475" height="317" alt="image" src="https://github.com/user-attachments/assets/dddf4f2d-bf8d-4ba7-9488-19d55037d717" />
-
+<br><br>
 <img width="300" height="261" alt="image" src="https://github.com/user-attachments/assets/763080ad-9818-4754-872a-b8a7152d4f32" />
-
+<br><br>
 <img width="400" height="200" alt="image" src="https://github.com/user-attachments/assets/ee9476e0-0cdf-4bc3-9c32-87994ee228ee" />
 
 <br><br>
@@ -484,13 +484,13 @@ cv2.destroyAllWindows()
 _**Rogoflow Instant Model 클릭**_
 
 <img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/8dbaf89d-286b-45f2-9ab5-ce5f047f540d" />
-
+<br><br>
 <img width="285" height="175" alt="image" src="https://github.com/user-attachments/assets/7e422a9e-892b-4a70-89d6-437c2feaa542" />
-
+<br><br>
 <img width="424" height="67" alt="image" src="https://github.com/user-attachments/assets/58466932-8bb2-4ef6-8ad9-9acc29a359a7" />
-
+<br><br>
 <img width="475" height="475" alt="image" src="https://github.com/user-attachments/assets/ec8aa95e-488c-4e67-bdf0-2c1eff1d1d07" />
-
+<br><br>
 <img width="475" height="440" alt="image" src="https://github.com/user-attachments/assets/51e67c8f-8ae1-46cc-9070-b2cc3e630f6c" />
 
 <br><br>
@@ -505,4 +505,5 @@ _출력 결과_
 
 </div>
 </details>
+
 
