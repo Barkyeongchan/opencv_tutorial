@@ -1,16 +1,29 @@
 from ultralytics import YOLO
-import yt_dlp
-
-# 유튜브 영상 다운로드
-url = 'https://www.youtube.com/shorts/mnPQH9RRZqc'
-ydl_opts = {'outtmpl': 'video.mp4'}  # 저장 파일명 지정
-with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-    ydl.download([url])
+import cv2
 
 # YOLO 모델 로드
 model = YOLO('yolo11n.pt')
 
-# 로컬로 저장된 영상 탐지
-results = model('video.mp4', stream=True)
-for r in results:
-    r.show()  # 프레임별 결과 표시
+# 비디오 열기
+cap = cv2.VideoCapture('./video.mp4')
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    # YOLO로 객체 탐지
+    results = model(frame)
+
+    # 시각화
+    annotated_frame = results[0].plot()
+
+    # 화면 표시
+    cv2.imshow("YOLO Detection", annotated_frame)
+
+    # q 키 누르면 종료
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
