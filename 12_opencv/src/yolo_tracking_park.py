@@ -22,7 +22,7 @@ for _ in range(start_frame):
         break
 
 # 2배 속도 → 대기 시간 절반
-delay = max(1, int(1000 / (fps * 2)))
+delay = max(1, int(1000 / (fps * 4)))
 
 while cap.isOpened():
     ret, frame = cap.read()
