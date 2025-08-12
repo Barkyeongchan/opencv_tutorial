@@ -7,6 +7,8 @@
 1. YOLO
    - YOLO란?
    - YOLO 모델별 특징
+   - YOLO11 설치
+   - 예제 실습
 
 ## 1. YOLO
 
@@ -98,3 +100,4 @@ results[0].show()
 
 </div>
 </details>
+
